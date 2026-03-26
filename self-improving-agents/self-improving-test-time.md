@@ -1,0 +1,136 @@
+# Self-Improving LLM Agents at Test-Time
+
+> **原文链接:** [arXiv:2510.07841](https://arxiv.org/abs/2510.07841)
+> **作者:** Emre Can Acikgoz, Cheng Qian, Heng Ji, Dilek Hakkani-Tur, Gokhan Tur
+> **发表:** 2025
+> **主题:** 测试时自我改进，检测不确定场景并自动生成补充数据
+
+---
+
+## Abstract
+
+Deploying language model agents in real-world environments exposes a critical weakness: the distribution of tasks encountered at test time often differs from the training distribution, leading to degraded performance on unfamiliar inputs. This paper presents a framework for self-improving LLM agents at test time — agents that detect their own uncertainty, automatically generate supplementary training data for weak areas, and perform targeted fine-tuning on the fly. The method operates in three stages: Self-Awareness (detecting uncertain inputs via Relative Softmax Scoring), Self-Augmentation (generating synthetic training examples similar to the uncertain input), and Self-Learning (performing LoRA fine-tuning on these examples before responding). The approach achieves a +5.48% accuracy improvement while using 68 times fewer training samples than standard supervised fine-tuning, and works even with a single synthetic example per uncertain case.
+
+## 摘要
+
+将语言模型智能体部署在真实世界环境中暴露了一个关键弱点：测试时遇到的任务分布往往与训练分布不同，导致在不熟悉的输入上性能下降。本文提出了一个测试时自我改进 LLM 智能体的框架——这些智能体能检测自身的不确定性，自动为薄弱领域生成补充训练数据，并即时执行针对性微调。该方法分三个阶段运作：自我感知（通过相对 Softmax 评分检测不确定输入）、自我增强（生成与不确定输入相似的合成训练示例）和自我学习（在响应前对这些示例执行 LoRA 微调）。该方法实现了 +5.48% 的准确率提升，同时使用的训练样本比标准监督微调少 68 倍，即使每个不确定案例仅使用单个合成示例也能生效。
+
+---
+
+## 1. Introduction / 引言
+
+The gap between training and deployment is one of the most persistent challenges in machine learning. Language model agents are trained on carefully curated datasets, but deployed in environments where the distribution of inputs is unpredictable and constantly shifting. A customer service agent encounters novel product issues. A coding assistant faces unfamiliar frameworks. A medical Q&A system receives questions about newly discovered conditions.
+
+训练与部署之间的差距是机器学习中最持久的挑战之一。语言模型智能体在精心策划的数据集上训练，但被部署在输入分布不可预测且不断变化的环境中。客户服务智能体遇到新的产品问题。编码助手面对不熟悉的框架。医疗问答系统收到关于新发现病症的问题。
+
+Traditional approaches address this through periodic retraining or retrieval augmentation. Retraining is expensive and slow, unable to respond to distribution shifts in real time. Retrieval helps but does not update the model's parameters and therefore cannot fix fundamental capability gaps. What is needed is a mechanism for rapid, targeted self-improvement that operates within the deployment loop itself.
+
+传统方法通过定期重新训练或检索增强来解决这个问题。重新训练既昂贵又缓慢，无法实时响应分布偏移。检索有所帮助，但不更新模型的参数，因此无法修复根本性的能力差距。需要的是一种在部署循环本身内运作的快速、针对性自我改进机制。
+
+This paper proposes exactly such a mechanism. The core idea is simple but powerful: before answering a question, the agent first assesses whether it is confident in its ability to answer correctly. If not, it generates a few synthetic training examples that resemble the uncertain input, fine-tunes itself on these examples, produces its response, and then reverts to its original parameters. This ensures that each uncertain input triggers a targeted micro-learning episode, without permanently altering the base model.
+
+本文恰好提出了这样一种机制。核心思想简单但强大：在回答问题之前，智能体首先评估自己是否有信心正确回答。如果没有，它会生成几个与不确定输入相似的合成训练示例，在这些示例上微调自身，产生响应，然后恢复到原始参数。这确保了每个不确定的输入都触发一个针对性的微学习片段，而不会永久改变基础模型。
+
+---
+
+## 2. Stage 1: Self-Awareness / 第一阶段：自我感知
+
+The first challenge is determining when the model needs help. Not every input requires test-time adaptation — for familiar inputs, the base model performs well and the overhead of adaptation is unnecessary. The key is to identify inputs where the model is uncertain and likely to fail.
+
+第一个挑战是确定模型何时需要帮助。并非每个输入都需要测试时适应——对于熟悉的输入，基础模型表现良好，适应的开销是不必要的。关键是识别模型不确定且可能失败的输入。
+
+The paper introduces Relative Softmax Scoring (RSS) as the uncertainty detection mechanism. For a given input, the model generates a response and computes the softmax probabilities at each token position. RSS compares these probabilities against a reference distribution derived from the model's behavior on known-good inputs. When the softmax distribution at multiple token positions deviates significantly from the reference, the input is flagged as uncertain.
+
+论文引入了相对 Softmax 评分（RSS）作为不确定性检测机制。对于给定输入，模型生成响应并计算每个 token 位置的 softmax 概率。RSS 将这些概率与从模型在已知良好输入上的行为推导出的参考分布进行比较。当多个 token 位置的 softmax 分布显著偏离参考时，该输入被标记为不确定。
+
+RSS has several advantages over simpler uncertainty metrics like raw perplexity. It is normalized against the model's typical behavior, making it robust to variations in input length and complexity. It also captures positional uncertainty patterns — for example, a model might be confident about the structure of its response but uncertain about specific factual claims, and RSS can detect this nuanced uncertainty.
+
+RSS 相比更简单的不确定性度量（如原始困惑度）有几个优势。它根据模型的典型行为进行归一化，使其对输入长度和复杂性的变化具有鲁棒性。它还捕捉位置性不确定性模式——例如，模型可能对其响应的结构有信心，但对具体的事实声明不确定，RSS 能够检测到这种细微的不确定性。
+
+---
+
+## 3. Stage 2: Self-Augmentation / 第二阶段：自我增强
+
+Once an uncertain input is identified, the system must generate training data that addresses the model's weakness. The Self-Augmentation stage creates synthetic question-answer pairs that are semantically similar to the uncertain input but for which correct answers can be verified.
+
+一旦识别出不确定的输入，系统必须生成解决模型弱点的训练数据。自我增强阶段创建与不确定输入语义相似的合成问答对，并且这些问答对的正确答案可以被验证。
+
+The generation process leverages the model itself. Given the uncertain input, the model is prompted to generate similar questions along with their answers. To ensure quality, the generated examples are filtered through a verification step — for tasks with verifiable answers (like math or factual questions), the answers are checked; for other tasks, consistency checks are applied (multiple generations are compared for agreement).
+
+生成过程利用模型自身。给定不确定的输入，提示模型生成类似的问题及其答案。为确保质量，生成的示例通过验证步骤进行过滤——对于具有可验证答案的任务（如数学或事实性问题），检查答案；对于其他任务，应用一致性检查（比较多次生成的一致性）。
+
+A remarkable finding is that even a single synthetic example per uncertain case is sufficient to produce meaningful improvement. This extreme data efficiency makes the approach practical for real-time deployment, where generating and training on many examples would introduce unacceptable latency.
+
+一个显著的发现是，即使每个不确定案例仅使用单个合成示例也足以产生有意义的改进。这种极端的数据效率使得该方法在实时部署中可行，因为在许多示例上生成和训练会引入不可接受的延迟。
+
+---
+
+## 4. Stage 3: Self-Learning / 第三阶段：自我学习
+
+The Self-Learning stage performs rapid parameter adaptation using the synthetic examples from Stage 2. The approach uses Low-Rank Adaptation (LoRA), which adds small trainable matrices to the model's attention layers while keeping the base parameters frozen. LoRA is ideal for this setting because it enables fast adaptation with minimal memory overhead and allows easy reversion to the original model.
+
+自我学习阶段使用第二阶段的合成示例执行快速参数适应。该方法使用低秩适应（LoRA），在保持基础参数冻结的同时向模型的注意力层添加小型可训练矩阵。LoRA 非常适合这种场景，因为它能够以最小的内存开销实现快速适应，并允许轻松恢复到原始模型。
+
+The training is extremely brief — typically just a few gradient steps on the synthetic examples. After training, the adapted model generates its response to the original uncertain input. Once the response is produced, the LoRA weights are discarded and the model reverts to its base parameters. This "adapt-respond-reset" cycle ensures that each adaptation is isolated and does not affect subsequent inputs.
+
+训练极为简短——通常仅在合成示例上进行几个梯度步骤。训练后，适应后的模型对原始不确定输入生成响应。一旦响应产生，LoRA 权重被丢弃，模型恢复到基础参数。这种"适应-响应-重置"循环确保每次适应都是隔离的，不影响后续输入。
+
+The decision to reset after each instance is deliberate. Persistent adaptation could cause catastrophic forgetting, where improvements on one type of input degrade performance on others. By resetting, the system maintains the stability of the base model while gaining targeted improvements on challenging inputs.
+
+每次实例后重置的决定是经过深思熟虑的。持久适应可能导致灾难性遗忘，即对一种输入的改进会降低在其他输入上的性能。通过重置，系统维持了基础模型的稳定性，同时在具有挑战性的输入上获得针对性的改进。
+
+---
+
+## 5. Experimental Results / 实验结果
+
+The framework is evaluated across multiple benchmarks including question answering, mathematical reasoning, and agent-based task completion. The headline result is a +5.48% accuracy improvement over the base model, achieved with 68 times fewer training samples than standard supervised fine-tuning.
+
+该框架在多个基准测试上进行了评估，包括问答、数学推理和基于智能体的任务完成。标题性结果是比基础模型提高了 +5.48% 的准确率，同时使用的训练样本比标准监督微调少 68 倍。
+
+The accuracy improvements are concentrated on inputs that the RSS mechanism identifies as uncertain, where gains of 10-15% are common. On inputs where the model is already confident, the system correctly avoids unnecessary adaptation, maintaining baseline performance with no overhead.
+
+准确率提升集中在 RSS 机制识别为不确定的输入上，在这些输入上 10-15% 的提升是常见的。在模型已经有信心的输入上，系统正确地避免了不必要的适应，在没有开销的情况下维持基线性能。
+
+Ablation studies reveal the contribution of each component. Removing the Self-Awareness stage (adapting on every input) reduces overall performance due to unnecessary adaptation on already-handled inputs. Removing the Self-Augmentation stage (using only the original uncertain input for training) significantly reduces the improvement, confirming that synthetic augmentation provides essential additional signal.
+
+消融研究揭示了每个组件的贡献。移除自我感知阶段（对每个输入都进行适应）由于对已处理输入的不必要适应而降低了整体性能。移除自我增强阶段（仅使用原始不确定输入进行训练）显著减少了改进，确认了合成增强提供了必要的额外信号。
+
+---
+
+## 6. Efficiency Analysis / 效率分析
+
+A natural concern with test-time adaptation is latency. The paper provides detailed timing analysis showing that the full adapt-respond-reset cycle adds approximately 2-5 seconds per uncertain input, depending on the model size and the number of synthetic examples. For inputs classified as confident, no additional latency is incurred.
+
+测试时适应的一个自然关注点是延迟。论文提供了详细的时序分析，表明完整的适应-响应-重置循环对每个不确定输入增加约 2-5 秒，取决于模型大小和合成示例的数量。对于被分类为有信心的输入，不会产生额外延迟。
+
+The 68x reduction in training samples compared to standard SFT is particularly significant for deployment scenarios. Rather than collecting and training on thousands of examples for each potential distribution shift, the system handles novel inputs on the fly with minimal data requirements.
+
+与标准 SFT 相比训练样本减少 68 倍，这对部署场景尤为重要。系统不是为每个潜在的分布偏移收集和训练数千个示例，而是以最小的数据需求即时处理新颖输入。
+
+---
+
+## 7. Connection to Meta-Learning / 与元学习的联系
+
+The test-time self-improvement framework can be understood as a form of meta-learning. The base model serves as a meta-learned initialization that can be rapidly adapted to new distributions. The RSS mechanism acts as a task-identification step, determining when adaptation is needed. The LoRA fine-tuning step is the inner loop of a meta-learning algorithm, performing rapid specialization.
+
+测试时自我改进框架可以被理解为元学习的一种形式。基础模型充当元学习的初始化，可以快速适应新的分布。RSS 机制充当任务识别步骤，确定何时需要适应。LoRA 微调步骤是元学习算法的内循环，执行快速专门化。
+
+This connection suggests potential improvements: the base model could be explicitly trained with meta-learning objectives to improve its adaptability at test time, and the augmentation strategy could be optimized to generate maximally informative examples.
+
+这种联系暗示了潜在的改进方向：基础模型可以使用元学习目标进行显式训练以提高其测试时的适应性，增强策略可以被优化以生成信息量最大的示例。
+
+---
+
+## 8. Limitations / 局限性
+
+The approach has several limitations. The quality of self-augmented data depends on the model's ability to generate relevant examples, which may be poor for highly specialized domains. The RSS uncertainty detection may produce false positives (adapting unnecessarily) or false negatives (missing truly uncertain inputs). The method also assumes that a few gradient steps of LoRA fine-tuning can meaningfully shift the model's behavior, which may not hold for large capability gaps.
+
+该方法有几个局限性。自增强数据的质量取决于模型生成相关示例的能力，在高度专业化的领域这可能较差。RSS 不确定性检测可能产生假阳性（不必要地适应）或假阴性（遗漏真正不确定的输入）。该方法还假设几个梯度步骤的 LoRA 微调可以有意义地改变模型的行为，这对于较大的能力差距可能不成立。
+
+---
+
+## 9. Conclusion / 结论
+
+Self-Improving LLM Agents at Test-Time presents an elegant solution to the deployment distribution shift problem. By combining uncertainty detection, synthetic data generation, and rapid parameter adaptation, the framework enables agents to handle novel inputs that would otherwise cause failures. The extreme data efficiency — meaningful improvement from a single synthetic example — makes the approach practical for real-time deployment. This work points toward a future where deployed AI systems are not static artifacts but adaptive agents that continuously learn and improve in response to the challenges they encounter.
+
+测试时自我改进 LLM 智能体为部署分布偏移问题提供了一个优雅的解决方案。通过结合不确定性检测、合成数据生成和快速参数适应，该框架使智能体能够处理否则会导致失败的新颖输入。极端的数据效率——从单个合成示例中获得有意义的改进——使该方法在实时部署中可行。这项工作指向一个未来，在那里部署的 AI 系统不是静态工件，而是不断学习和改进的自适应智能体，以应对它们遇到的挑战。
