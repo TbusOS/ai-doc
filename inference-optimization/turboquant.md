@@ -36,6 +36,11 @@ TurboQuant 通过提供一种理论上有保证的、数据无关的量化算法
 
 ## 2. Core Methodology / 核心方法
 
+![Figure 1: Error distribution of TurboQuant for Inner Product Estimation](images/turboquant/x1.png)
+![](images/turboquant/x2.png)
+
+*图 1：TurboQuant_prod 和 TurboQuant_mse 的内积估计误差分布*
+
 ### 2.1 Two-Stage Approach / 两阶段方法
 
 TurboQuant operates in two complementary stages:
@@ -58,6 +63,11 @@ MSE-optimal quantizers introduce bias for inner product estimation (approximatel
 
 MSE 最优量化器在内积估计中引入偏差（1-bit 时约为 2/π）。为了校正这一点，TurboQuant 对残差应用量化 Johnson-Lindenstrauss (QJL) 变换，将每个值压缩为一个符号位（+1 或 -1）。这在零内存开销的情况下，通过平衡高精度查询和低精度数据的策略性估计，实现了无偏内积估计。
 
+![Figure 2: Variance of inner-product error comparison](images/turboquant/x3.png)
+![](images/turboquant/x4.png)
+
+*图 2：TurboQuant_prod 的内积误差方差保持恒定，而 TurboQuant_mse 的方差随平均内积增加。比特宽度 b=2。*
+
 ### 2.2 The Near-Independence Property / 近独立性质
 
 The theoretical foundation of TurboQuant rests on the observation that after random rotation, coordinates of high-dimensional vectors become nearly independent. This justifies treating each coordinate independently for quantization, dramatically simplifying computation while maintaining theoretical guarantees.
@@ -67,6 +77,11 @@ TurboQuant 的理论基础建立在以下观察之上：经过随机旋转后，
 ---
 
 ## 3. Theoretical Bounds / 理论界
+
+![Figure 3: Comparison of inner-product error and MSE against theoretical bounds](images/turboquant/x5.png)
+![](images/turboquant/x6.png)
+
+*图 3：不同比特率下内积误差和 MSE 与理论界的对比*
 
 TurboQuant achieves provably near-optimal distortion rates:
 
@@ -98,6 +113,15 @@ Where b is the number of bits per coordinate. The information-theoretic lower bo
 
 ### 4.2 Long-Context Benchmarks / 长上下文基准测试
 
+![Figure 4: Needle-In-A-Haystack test on Llama-3.1-8B-Instruct](images/turboquant/x7.png)
+![](images/turboquant/x8.png)
+![](images/turboquant/x9.png)
+![](images/turboquant/x10.png)
+![](images/turboquant/x11.png)
+![](images/turboquant/x12.png)
+
+*图 4：Llama-3.1-8B-Instruct 在大海捞针测试上的评估，对比多种压缩方法*
+
 Perfect downstream results across:
 - **LongBench** — long-context understanding tasks
 - **Needle In A Haystack** — perfect retrieval at 4x compression on Llama-3.1-8B
@@ -111,6 +135,18 @@ Perfect downstream results across:
 - **L-Eval** — 长文档评估
 
 ### 4.3 Vector Search / 向量搜索
+
+![Figure 5a: Recall comparison on GloVe (d=200)](images/turboquant/x13.png)
+
+*图 5a：GloVe 数据集 (d=200) 上的召回率对比*
+
+![Figure 5b: Recall comparison on OpenAI3 (d=1536)](images/turboquant/x14.png)
+
+*图 5b：OpenAI3 数据集 (d=1536) 上的召回率对比*
+
+![Figure 5c: Recall comparison on OpenAI3 (d=3072)](images/turboquant/x15.png)
+
+*图 5c：OpenAI3 数据集 (d=3072) 上的召回率对比*
 
 TurboQuant outperforms Product Quantization (PQ) with zero indexing time on nearest neighbor search tasks, while PQ requires expensive data-dependent codebook construction. It also achieves superior 1@k recall ratios versus state-of-the-art methods including PQ and RabbiQ.
 

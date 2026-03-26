@@ -32,6 +32,10 @@ Large Mixture-of-Experts models like Mixtral-8x7B represent a significant advanc
 
 ### 2.1 Expert Locality Observation / 专家局部性观察
 
+![Figure 1: Expert loading pattern in Mixtral-8x7B-Instruct](images/fast-inference-moe/x1.png)
+
+*图 1：Mixtral-8x7B-Instruct 中的专家加载模式。蓝色单元格表示某个专家在编码某个 token 时被激活；蓝色越深表示门控权重越高。灰色小方块表示在 k=2 的 LRU 缓存中哪些专家被缓存。*
+
 The researchers discovered that MoE models exhibit reusable experts across adjacent tokens. Some experts activate in sequences of 2-4 tokens, creating opportunities for caching rather than constant reloading from host RAM or SSD.
 
 研究者发现 MoE 模型在相邻 token 之间展现出可复用的专家。某些专家在连续 2-4 个 token 中被激活，这为缓存而非从主机 RAM 或 SSD 持续重新加载创造了机会。
@@ -51,6 +55,10 @@ LRU（最近最少使用）缓存在 GPU 内存中为每层保留 k 个缓存的
 - **k=4**: 适用于 16GB GPU
 
 这通过保持频繁访问的专家随时可用，显著减少了 GPU-RAM 通信开销。
+
+![Figure 2: LRU cache hit ratio and speculative loading recall](images/fast-inference-moe/x2.png)
+
+*图 2：左图为不同缓存大小 k 的 LRU 缓存命中率；右图为预加载不同数量专家时的推测性加载召回率（实线=提前 1 层，虚线=提前 2 层，点线=提前 10 层）*
 
 ### 2.3 Speculative Expert Loading / 推测性专家加载
 
@@ -83,6 +91,10 @@ This mixed approach minimizes the memory footprint while preserving model qualit
 ---
 
 ## 3. Experiments / 实验
+
+![Figure 3: System architecture and benchmark results](images/fast-inference-moe/x3.png)
+
+*图 3：系统架构与基准测试结果*
 
 ### 3.1 Results / 实验结果
 

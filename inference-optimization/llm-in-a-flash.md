@@ -20,6 +20,12 @@ Large language models (LLMs) are central to a wide range of natural language pro
 
 ---
 
+![Figure 1: Average inference latency for a single token when only half of the model's memory is available](images/llm-in-a-flash/x1.png)
+
+*图 1：当仅有模型一半内存可用时，单个 token 的平均推理延迟*
+
+---
+
 ## 1. Introduction
 
 The rapid advancements in large language models (LLMs) have led to models with remarkable capabilities. However, these models' sizable memory requirements pose significant challenges, especially when deploying them on resource-constrained devices. The trend of increasing model sizes exacerbates this issue, creating a pressing need for innovative solutions to enable efficient use of LLMs in environments where memory is a bottleneck.
@@ -39,6 +45,14 @@ The central challenge lies in the disparity between the memory requirements of L
 核心挑战在于 LLM 的内存需求与许多设备可用 DRAM 之间的差距。虽然 flash memory 提供了充足的存储容量，但其读取吞吐量远低于 DRAM，使得从 flash 朴素加载整个模型参数在实时推理中不可行。
 
 ### 2.2 Hardware-Aware Cost Model / 硬件感知成本模型
+
+![Figure 2a: Bandwidth in a unified memory architecture](images/llm-in-a-flash/x2.png)
+
+*图 2a：统一内存架构中的带宽*
+
+![Figure 2b: Random read throughput of flash memory](images/llm-in-a-flash/x3.png)
+
+*图 2b：Flash memory 的随机读取吞吐量*
 
 The authors develop a cost model that accounts for flash memory characteristics:
 
@@ -60,6 +74,22 @@ The approach leverages activation sparsity (97% in OPT 6.7B FFN layers):
 2. **Low-rank predictors** — small neural networks predict which neurons will be activated, enabling pre-loading of only necessary parameters
 3. **Sliding window technique** — maintains only recently-activated neuron weights in DRAM, evicting neurons that haven't been used within the window
 
+![Figure 3a: Predictor vs ReLU preactivations of tokens in OPT 6.7B](images/llm-in-a-flash/x4.png)
+
+*图 3a：OPT 6.7B 中 token 的预测器 vs ReLU 预激活对比*
+
+![Figure 3b: Low rank predictor identifies which intermediate neurons will be activated](images/llm-in-a-flash/x5.png)
+
+*图 3b：低秩预测器识别哪些中间神经元将被激活*
+
+![Figure 4a: Aggregated neuron usage of the tenth layer of Falcon 7B](images/llm-in-a-flash/x6.png)
+
+*图 4a：Falcon 7B 第十层的聚合神经元使用情况*
+
+![Figure 4b: Sliding window technique maintaining active neurons of past k tokens](images/llm-in-a-flash/x7.png)
+
+*图 4b：滑动窗口技术维护过去 k 个 token 的活跃神经元*
+
 该方法利用激活稀疏性（在 OPT 6.7B 的 FFN 层中高达 97%）：
 
 1. **选择性持久化** — 注意力权重保留在 DRAM 中，因为它们总是被访问
@@ -68,11 +98,19 @@ The approach leverages activation sparsity (97% in OPT 6.7B FFN layers):
 
 ### 2.4 Row-Column Bundling / 行列捆绑
 
+![Figure 5: Bundling columns of up-projection and rows of down-projection layer](images/llm-in-a-flash/x8.png)
+
+*图 5：将上投影矩阵的列与下投影矩阵的行进行捆绑*
+
 To exploit flash memory's sequential read strengths, the authors store up-projection columns together with corresponding down-projection rows. This bundling strategy effectively doubles the chunk size for each read operation, reducing the number of individual read requests and leveraging sequential access patterns.
 
 为了利用 flash memory 的顺序读取优势，作者将上投影矩阵的列与对应的下投影矩阵的行存储在一起。这种捆绑策略有效地将每次读取操作的数据块大小翻倍，减少了单独读取请求的次数，并利用了顺序访问模式。
 
 ### 2.5 Optimized DRAM Management / 优化的 DRAM 管理
+
+![Figure 6: Memory management - replacing elements and stacking new weights](images/llm-in-a-flash/x9.png)
+
+*图 6：内存管理 — 替换元素并堆叠新权重*
 
 The system uses efficient data structures with preallocation and pointer-based neuron tracking to minimize memory reallocation overhead. Reading is parallelized across 32 threads to amortize latency-to-first-byte costs.
 
@@ -87,6 +125,14 @@ The system uses efficient data structures with preallocation and pointer-based n
 Testing conducted on OPT 6.7B, Falcon 7B, and other models across Apple M1 Max, M2 Ultra, and NVIDIA RTX 4090 hardware.
 
 在 Apple M1 Max、M2 Ultra 和 NVIDIA RTX 4090 硬件上对 OPT 6.7B、Falcon 7B 等模型进行测试。
+
+![Figure 7: Memory-latency tradeoff showing latency reduction with increased DRAM allocation](images/llm-in-a-flash/x10.png)
+
+*图 7：内存-延迟权衡，显示随 DRAM 分配增加延迟降低*
+
+![Figure 8: Weight loading latency of OPT 6.7B with increasing generation length](images/llm-in-a-flash/x11.png)
+
+*图 8：OPT 6.7B 随生成长度增加的权重加载延迟*
 
 ### 3.2 Results / 实验结果
 
@@ -104,6 +150,20 @@ Testing conducted on OPT 6.7B, Falcon 7B, and other models across Apple M1 Max, 
 | 相比朴素加载的加速比 | 4-5 倍 | 20-25 倍 |
 | DRAM 占用率 | ~52% | ~52% |
 | 可运行模型大小 | 可用 DRAM 的 2 倍 | 可用 DRAM 的 2 倍 |
+
+---
+
+![Figure 9: Sparsity patterns of predictors and cached rows across multiple models](images/llm-in-a-flash/x12.png)
+![](images/llm-in-a-flash/x13.png)
+![](images/llm-in-a-flash/x14.png)
+![](images/llm-in-a-flash/x15.png)
+
+*图 9：多个模型中预测器和缓存行的稀疏性模式*
+
+![Figure 10: MMLU performance metrics for Persimmon and Phi models](images/llm-in-a-flash/x16.png)
+![](images/llm-in-a-flash/x17.png)
+
+*图 10：Persimmon 和 Phi 模型在不同预测器配置下的 MMLU 性能指标*
 
 ---
 
