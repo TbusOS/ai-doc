@@ -44,6 +44,7 @@ A curated, open-source knowledge base of high-quality AI papers, articles, and m
 | [Evo-Memory](memory-systems/evo-memory.md) | Google DeepMind | 2025 | Search→Synthesize→Evolve cycle, ReMem pipeline, 92% on BabyAI |
 | [MemGPT](memory-systems/memgpt.md) | Packer et al. (Berkeley) | 2023 | LLM as OS, virtual context management, autonomous memory paging |
 | [LTM & OMNE](memory-systems/long-term-memory-omne.md) | TCCI | 2024 | Long-term memory for AI self-evolution, OMNE #1 on GAIA benchmark (40.53% vs GPT-4's 15%) |
+| [LLM Knowledge Bases](memory-systems/llm-knowledge-bases.md) | Karpathy | 2026 | LLM-maintained personal wiki as a RAG alternative — write-side synthesis, persistent compounding artifact |
 
 ---
 
@@ -175,6 +176,7 @@ AI 领域优质论文、文章与模型的中英双语知识库。为训练模�
 | [Evo-Memory](memory-systems/evo-memory.md) | Google DeepMind | 2025 | Search→Synthesize→Evolve 循环，ReMem 管线，BabyAI 92% |
 | [MemGPT](memory-systems/memgpt.md) | Packer et al. (Berkeley) | 2023 | LLM 作为操作系统，虚拟上下文管理，自主记忆分页 |
 | [LTM & OMNE](memory-systems/long-term-memory-omne.md) | TCCI | 2024 | 长期记忆驱动 AI 自进化，OMNE 在 GAIA 基准第一名 (40.53% vs GPT-4 的 15%) |
+| [LLM Knowledge Bases](memory-systems/llm-knowledge-bases.md) | Karpathy | 2026 | LLM 维护的个人 Wiki 作为 RAG 的替代——写入侧综合，持久累积的知识产物 |
 
 ---
 
