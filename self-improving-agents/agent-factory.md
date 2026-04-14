@@ -1,0 +1,175 @@
+# AgentFactory: A Self-Evolving Framework Through Executable Subagent Accumulation and Reuse
+
+> **原文链接:** [arXiv:2603.18000](https://arxiv.org/abs/2603.18000)
+>
+> **作者:** Zhang Zhang, Shuqi Lu, Hongjin Qian, Di He, Zheng Liu
+>
+> **发表:** 2026 (March) / arXiv cs.AI
+>
+> **代码:** [github.com/zzatpku/AgentFactory](https://github.com/zzatpku/AgentFactory)
+>
+> **主题:** 可执行子 Agent 累积与复用：一种基于代码而非文本经验的自演化 Agent 范式
+
+---
+
+## Abstract
+
+Building LLM-based agents has become increasingly important. Recent works on LLM-based agent self-evolution primarily record successful experiences as textual prompts or reflections, which cannot reliably guarantee efficient task re-execution in complex scenarios. We propose AgentFactory, a new self-evolution paradigm that preserves successful task solutions as executable subagent code rather than textual experience. Crucially, these subagents are continuously refined based on execution feedback, becoming increasingly robust and efficient as more tasks are encountered. Saved subagents are pure Python code with standardized documentation, enabling portability across any Python-capable system. We demonstrate that AgentFactory enables continuous capability accumulation: its library of executable subagents grows and improves over time, progressively reducing the effort required for similar tasks without manual intervention.
+
+## 摘要
+
+构建基于 LLM 的 agent 正变得越来越重要。现有的 LLM agent 自演化工作主要把成功经验记录为文本提示词或反思文本，这种方式在复杂场景下无法可靠地保证任务的高效重现。我们提出 **AgentFactory**——一种新的自演化范式，将成功的任务解保存为**可执行的子 agent 代码**，而不是文本经验。关键在于，这些子 agent 会根据执行反馈不断精炼，随着处理任务的增加变得越来越健壮和高效。保存下来的子 agent 是带有标准化文档的纯 Python 代码，可以移植到任何支持 Python 的系统中。我们证明 AgentFactory 能够实现**持续的能力累积**：可执行子 agent 库随时间增长和改善，逐步降低处理相似任务所需的代价，且无需人工干预。
+
+---
+
+## 1. Introduction / 引言
+
+Building LLM-based agents has become a central research problem because these agents increasingly mediate real work — software engineering, data analysis, scientific research, and enterprise automation. A key question is how an agent can *improve itself over time* without relying on constant human supervision or retraining of the underlying model.
+
+构建基于 LLM 的 agent 已经成为一个核心研究问题，因为这些 agent 日益承担真实的工作——软件工程、数据分析、科学研究和企业自动化。其中的关键问题是：agent 如何能够**随时间自我改进**，而不依赖持续的人工监督或对底层模型的重新训练。
+
+Existing approaches to self-evolution typically accumulate *textual experience* — the agent writes down reflections, prompts, or natural-language lessons, and retrieves them later as context. While conceptually appealing, this approach has two structural weaknesses. First, textual experience is inherently ambiguous: when re-executed, a language prompt can still be misinterpreted by the model, producing inconsistent behavior. Second, textual experience does not compose well: stacking multiple reflections in the context window dilutes attention and increases cost without proportional quality gain.
+
+现有的自演化方法通常累积的是**文本经验**——agent 写下反思、提示词或自然语言形式的教训，之后检索出来作为上下文使用。这种思路概念上很吸引人，但存在两个结构性弱点。第一，文本经验本质上是有歧义的：重新执行时，一段语言提示词仍可能被模型误解，导致行为不一致。第二，文本经验不能很好地组合：在上下文窗口中堆叠多条反思会稀释注意力、抬高成本，但质量提升并不成比例。
+
+We argue that the right unit of experience is not text but **executable code**. Code is unambiguous, directly runnable, composable through imports and function calls, and — crucially — can be modified based on precise execution feedback (traces, errors, test results). We therefore propose AgentFactory, a self-evolving framework in which every successful solution is crystallized into a reusable *subagent*: a self-contained Python module with standardized documentation that encapsulates a particular capability.
+
+我们认为**经验的正确单位不是文本，而是可执行代码**。代码是无歧义的、可直接运行的、可以通过 import 和函数调用来组合的，而且——最关键的是——它可以根据精确的执行反馈（trace、错误、测试结果）被修改。因此我们提出 AgentFactory：一个自演化框架，其中每一次成功的解决方案都会被固化为一个可复用的**子 agent**——一个自包含的 Python 模块，带有标准化的文档，封装着特定的能力。
+
+---
+
+## 2. The AgentFactory Framework / AgentFactory 框架
+
+### 2.1 Three-Phase Lifecycle / 三阶段生命周期
+
+AgentFactory organizes agent behavior around three phases: **Install**, **Self-Evolve**, and **Deploy**. These phases govern how new subagents are born, how existing subagents improve, and how mature subagents are exported for external use.
+
+AgentFactory 围绕三个阶段组织 agent 的行为：**Install（安装）**、**Self-Evolve（自演化）**、**Deploy（部署）**。这三个阶段分别管理新子 agent 的诞生、已有子 agent 的改进，以及成熟子 agent 对外导出供其他系统使用。
+
+**Install Phase.** When the agent encounters a new problem, the Meta-Agent first analyzes the requirements and decomposes the task into sub-problems. For each sub-problem, it dynamically constructs a specialized subagent that addresses exactly that sub-problem. If execution succeeds, the subagent is saved as pure Python code with standardized documentation describing its purpose, inputs, outputs, and known limitations.
+
+**安装阶段。** 当 agent 遇到一个新问题时，Meta-Agent 首先分析需求，把任务分解为若干子问题。对每一个子问题，它会**动态构造**一个专门的子 agent 来精确解决这个子问题。如果执行成功，该子 agent 会被保存为纯 Python 代码，并附带标准化文档，说明它的用途、输入、输出和已知局限。
+
+**Self-Evolve Phase.** When a similar task arrives, the system retrieves relevant saved subagents from its library and attempts to reuse them directly. If a subagent underperforms — producing errors, failing assertions, or returning low-quality outputs — the Meta-Agent performs an autonomous improvement loop: **retrieval → assessment → feedback analysis → autonomous modification → validation**. The refined subagent replaces or augments the old one. Crucially, this loop is driven by *execution feedback* (real program traces), not by the model's introspective guesses.
+
+**自演化阶段。** 当遇到相似任务时，系统从自己的子 agent 库中检索相关的已保存子 agent，直接尝试复用它们。如果某个子 agent 表现不佳——报错、断言失败、或者返回低质量结果——Meta-Agent 会执行一个自主改进循环：**检索 → 评估 → 反馈分析 → 自主修改 → 验证**。精炼后的子 agent 替换或补充旧版本。关键在于，这个循环由**执行反馈**（真实的程序运行轨迹）驱动，而不是由模型自我内省的猜测驱动。
+
+**Deploy Phase.** Mature subagents can be exported as standalone Python modules for use in other AI frameworks or production systems. Because each subagent is a pure Python module with standardized documentation, it carries its semantics with it: any downstream consumer can discover what it does, call it, and integrate it without re-learning AgentFactory's internals.
+
+**部署阶段。** 成熟的子 agent 可以作为独立的 Python 模块导出，供其他 AI 框架或生产系统使用。因为每个子 agent 都是带有标准化文档的纯 Python 模块，它把自身的语义随身携带：任何下游使用者都可以发现它的功能、调用它、并把它集成进来，而无需重新学习 AgentFactory 的内部实现。
+
+### 2.2 Meta-Agent as Central Orchestrator / 作为中央编排器的 Meta-Agent
+
+The Meta-Agent is the core decision-making component. Its responsibilities are threefold: (1) decompose complex problems into sub-problems, (2) dynamically select and allocate tools from the skill library to each subagent, and (3) drive the self-evolution loop when reuse fails.
+
+Meta-Agent 是核心的决策组件。它的职责有三项：（1）把复杂问题分解为子问题；（2）从技能库中动态选择并分配工具给每个子 agent；（3）当复用失败时驱动自演化循环。
+
+A critical design choice is that the Meta-Agent does *not* hard-code which tools belong to which subagent. Instead, tool allocation is *dynamic*: the Meta-Agent reasons about each sub-problem at construction time and picks the minimal set of skills that subagent needs. This keeps the generated subagents lightweight and specialized, which in turn makes them cheaper to run and easier to reuse.
+
+一个关键的设计选择是：Meta-Agent **不**硬编码哪些工具属于哪个子 agent。工具的分配是**动态**的——在构造时，Meta-Agent 会针对每个子问题推理，挑选该子 agent 所需的最小技能集合。这样生成的子 agent 保持轻量和专业化，运行更便宜、复用更容易。
+
+### 2.3 Three-Tiered Skill System / 三层技能系统
+
+The skill library is organized into three tiers:
+
+技能库分为三层：
+
+- **Meta Skills** — orchestration-level operations: task decomposition, subagent retrieval, evaluation, and lifecycle management. These are the primitives the Meta-Agent uses to reason about the system itself.
+- **元技能（Meta Skills）**——编排层的操作：任务分解、子 agent 检索、评估和生命周期管理。这些是 Meta-Agent 用来推理系统自身的原语。
+
+- **Tool Skills** — concrete capabilities such as web search, browser automation, shell command execution, and file operations. These are the agent's "hands" for interacting with the outside world.
+- **工具技能（Tool Skills）**——具体能力，例如网页搜索、浏览器自动化、shell 命令执行、文件操作等。这些是 agent 与外部世界交互的"手"。
+
+- **Subagent Skills** — dynamically generated, executable Python scripts that encapsulate solutions to specific sub-problems. This tier is what grows over time as AgentFactory encounters new tasks. It is the "learned" part of the system.
+- **子 Agent 技能（Subagent Skills）**——动态生成的、可执行的 Python 脚本，封装对特定子问题的解决方案。这一层会随着 AgentFactory 遇到新任务而持续增长。它是系统的"学习"部分。
+
+### 2.4 Workspace Manager / 工作区管理器
+
+Safe self-evolution requires isolation: a subagent under refinement must not corrupt the state of other subagents or leak side effects into the host environment. The Workspace Manager provides an isolated execution environment for each task, ensuring that experimentation during the Self-Evolve phase is sandboxed and reversible.
+
+安全的自演化需要隔离：正在被精炼的子 agent 不能污染其他子 agent 的状态，也不能把副作用泄露到宿主环境。工作区管理器为每个任务提供**隔离的执行环境**，确保自演化阶段中的试探是沙箱化、可回滚的。
+
+---
+
+## 3. Why Executable Code Beats Textual Experience / 为什么可执行代码胜过文本经验
+
+The paper's central thesis is that executable code is a strictly better medium for agent experience than natural-language reflections. There are four reasons.
+
+本文的核心论点是：相比自然语言反思，可执行代码是更优的 agent 经验载体。原因有四个。
+
+1. **Unambiguity.** Code either runs or it does not. A retrieved subagent produces deterministic behavior for the same inputs, whereas a retrieved text prompt is re-interpreted by the model every time and may drift.
+1. **无歧义性。** 代码要么跑得通，要么跑不通。同样的输入，被检索出来的子 agent 会产生确定的行为；而被检索出来的文本提示词每次都要被模型重新解释，可能漂移。
+
+2. **Composability.** Subagents can be composed via imports and function calls — standard software engineering primitives. Text reflections cannot be composed; stacking them in the context just competes for attention.
+2. **可组合性。** 子 agent 可以通过 import 和函数调用进行组合——这是标准的软件工程原语。文本反思无法组合；把它们堆叠在上下文里只会争夺注意力。
+
+3. **Feedback-driven refinement.** Code errors come with line numbers, stack traces, and failing tests. This precision makes the Self-Evolve loop sharper: the Meta-Agent knows exactly which part of the subagent to modify, rather than vaguely "rewriting the lesson."
+3. **反馈驱动的精炼。** 代码错误自带行号、堆栈跟踪和失败的测试。这种精确性让自演化循环更锐利：Meta-Agent 知道该修改子 agent 的**哪一部分**，而不是含糊地"重写教训"。
+
+4. **Portability.** A saved subagent is a Python module. Any system that runs Python can consume it without knowing anything about the framework that produced it. Text reflections, in contrast, are tightly coupled to the prompt strategy that generated them.
+4. **可移植性。** 保存下来的子 agent 是一个 Python 模块，任何能运行 Python 的系统都可以使用它，无需知道生成它的框架的任何信息。而文本反思与生成它的提示策略紧密耦合。
+
+---
+
+## 4. Experiments and Results / 实验与结果
+
+The authors evaluate AgentFactory against ReAct-style baselines on multi-batch task streams, where Batch 2 contains tasks similar to those in Batch 1 so that the value of accumulated subagents can be measured.
+
+作者在多批次任务流上把 AgentFactory 与 ReAct 风格的基线进行对比。在实验设置中，Batch 2 的任务与 Batch 1 相似，这样就可以测量累积子 agent 所带来的价值。
+
+**Key result.** On Batch 2 tasks with saved subagents, AgentFactory consumes approximately **2971 tokens** (Claude Opus 4.6 backbone) versus **8298 tokens** for the ReAct baseline — a roughly **64% reduction** in orchestration tokens. In the paper's framing, reusing executable subagents reduces orchestration cost by up to **57%** compared to ReAct.
+
+**关键结果。** 在 Batch 2 任务上，已保存子 agent 的 AgentFactory 消耗约 **2971 tokens**（Claude Opus 4.6 后端），而 ReAct 基线消耗 **8298 tokens**——编排 token 减少约 **64%**。按照论文的表述，复用可执行子 agent 让编排成本比 ReAct 降低最多 **57%**。
+
+The interpretation is important: the savings come not from smarter prompting but from **the accumulated library paying back its investment**. In Batch 1, AgentFactory's cost is comparable to ReAct because the library starts empty. In Batch 2, the savings appear as retrieval replaces re-derivation. This is the operational definition of "capability accumulation."
+
+这个结果的解释很重要：节省并不来自更聪明的提示词，而是来自**累积的库在偿还最初的投资**。在 Batch 1，AgentFactory 的成本与 ReAct 相当，因为库是空的。在 Batch 2，节省出现了——检索替代了重新推导。这就是"能力累积"的可操作定义。
+
+---
+
+## 5. Discussion / 讨论
+
+**What this paradigm is good for.** AgentFactory shines in settings where the agent faces a stream of tasks with repeating structure: enterprise automation, recurring data pipelines, specific classes of coding tasks, repeated scientific workflows. In these settings, the library grows into a compounding asset.
+
+**这个范式擅长什么。** AgentFactory 在以下场景中表现出色：agent 面对的任务流具有重复的结构——企业自动化、周期性的数据管道、某类特定的编码任务、重复性的科学工作流。在这些场景下，子 agent 库会成长为一项**复利资产**。
+
+**What it is not.** AgentFactory is not a general replacement for textual memory. Tasks that are truly novel — where no prior subagent can be adapted — still require reasoning from scratch. AgentFactory does not eliminate this cost; it amortizes it over future similar tasks.
+
+**它不是什么。** AgentFactory 不是文本记忆的通用替代品。对于真正新颖的任务——没有任何历史子 agent 可以被改造——仍然需要从零推理。AgentFactory 并不消除这部分成本，而是把它**分摊**到未来的相似任务上。
+
+**Connection to the broader "agent factory" research direction.** AgentFactory concretizes an idea that several contemporary works (AFlow, ADAS, EvoAgentX, DebFlow) all converge on: agent systems should be treated as *first-class objects that can be searched, optimized, and reused*. AgentFactory's specific bet is that code — not graphs, not prompts — is the most faithful representation of that object.
+
+**与更广泛的"agent factory"研究方向的联系。** AgentFactory 把一个多部同期工作（AFlow、ADAS、EvoAgentX、DebFlow）共同指向的想法落地了：**agent 系统应当被视为可搜索、可优化、可复用的一等对象**。AgentFactory 的独特押注是：代码——不是图，也不是提示词——才是这个对象最忠实的表示方式。
+
+---
+
+## 6. Conclusion / 结论
+
+AgentFactory proposes a fundamental shift in how LLM agents accumulate experience: from textual reflection to executable subagent code. By organizing its behavior around an Install → Self-Evolve → Deploy lifecycle, coordinating through a Meta-Agent and a three-tiered skill system, and isolating experimentation via a Workspace Manager, the framework turns every solved task into a portable, reusable, and continuously refinable software artifact. The experimental results — up to 57% reduction in orchestration cost on repeating task streams — validate that the library becomes a compounding asset rather than a static log.
+
+AgentFactory 提出了 LLM agent 累积经验方式的根本性转变：**从文本反思转向可执行的子 agent 代码**。通过把行为组织在 Install → Self-Evolve → Deploy 的生命周期中，通过 Meta-Agent 和三层技能系统进行协调，并通过工作区管理器隔离实验，该框架把每一个被解决的任务转化为**可移植、可复用、可持续精炼**的软件产物。实验结果——在重复任务流上编排成本降低最多 57%——验证了子 agent 库确实成为了一项复利资产，而不是一份静态日志。
+
+The broader takeaway for engineers: if you are building a multi-agent system today and you want it to get better over time, store its experience as code, not as prose. Code is the only medium that is precise enough to refine, composable enough to reuse, and portable enough to survive beyond the framework that generated it.
+
+对工程师更广泛的启示是：如果你今天正在构建一个多 agent 系统并希望它随时间变好，那么**把它的经验存为代码，而不是散文**。代码是唯一足够**精确**以便精炼、足够**可组合**以便复用、足够**可移植**以便在生成它的框架消亡之后仍然存活的载体。
+
+---
+
+## 关键洞察（工程师视角）
+
+1. **经验的单位是代码，不是文本。** 这是与大多数"自演化 agent"工作最本质的区别，也是最值得其他系统借鉴的一点。
+2. **动态工具分配**让子 agent 保持最小化——避免了"给每个 agent 塞所有工具"的常见错误。
+3. **三阶段生命周期（Install/Self-Evolve/Deploy）** 给自演化系统提供了清晰的工程边界。Self-Evolve 必须在 Workspace Manager 的沙箱内进行，Deploy 阶段才暴露到外部。
+4. **复利曲线**：第一批任务没有优势，从第二批开始节省才出现。这意味着这个范式适合长生命周期、任务分布稳定的场景，不适合一次性任务。
+5. **与 AFlow / ADAS 的关系**：AFlow 用 MCTS 搜索 workflow 图，ADAS 用 meta-agent 写 agent 代码，AgentFactory 更进一步——让**被写出的 agent 代码**本身成为可持续精炼的一等公民。三者可以组合：用 AFlow 搜索出 workflow，用 AgentFactory 把每个节点固化为可复用的子 agent。
+
+---
+
+## Reference / 参考
+
+- **Paper:** [AgentFactory: A Self-Evolving Framework Through Executable Subagent Accumulation and Reuse (arXiv:2603.18000)](https://arxiv.org/abs/2603.18000)
+- **Code:** [github.com/zzatpku/AgentFactory](https://github.com/zzatpku/AgentFactory)
+- **Related work:**
+  - [AFlow: Automating Agentic Workflow Generation (ICLR 2025 Oral)](https://arxiv.org/abs/2410.10762)
+  - [A Comprehensive Survey of Self-Evolving AI Agents](https://arxiv.org/abs/2508.07407)
+  - [DebFlow: Automating Agent Creation via Agent Debate](https://arxiv.org/abs/2503.23781)
