@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LTM &amp; OMNE — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../en/">Home</a>
+          <a href="../../en/inference-optimization.html">Inference Optimization</a>
+          <a href="../../en/self-improving-agents.html">Self-Improving Agents</a>
+          <a href="../../en/multi-agent-systems.html">Multi-Agent Systems</a>
+          <a href="../../en/memory-systems.html">Memory Systems</a>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../memory-systems.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Memory Systems</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-memory">Memory Systems</span>
+            <span class="anth-caption">2024 · TCCI</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="long-term-memory-the-foundation-of-ai-self-evolution">Long Term Memory: The Foundation of AI Self-Evolution</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2410.15665">arXiv:2410.15665</a>
+<strong>作者:</strong> TCCI (Tianqiao &amp; Chrissy Chen Institute)
+<strong>发表:</strong> 2024
+<strong>主题:</strong> 长期记忆作为 AI 自进化基础，OMNE 框架 GAIA 基准第一名</p>
+</blockquote>
+<hr>
+<h2 id="abstract">Abstract</h2>
+<p>This paper presents a comprehensive framework for understanding long-term memory (LTM) as the foundation of AI self-evolution. Drawing on insights from cognitive science and neuroscience, the authors argue that LTM is not merely a storage mechanism but the essential substrate that enables AI systems to evolve from static models into personalized, self-improving agents. The paper traces three phases of AI evolution — cognitive accumulation, foundation models, and self-evolving personalized systems — and demonstrates how LTM serves as the critical enabler at each stage. The practical impact of this framework is validated through OMNE, a multi-agent system that achieved first place on the GAIA benchmark with a score of 40.53%, dramatically outperforming GPT-4's 15%. The paper concludes by identifying six future research directions for advancing LTM in AI systems.</p>
+<h2 id="_1">摘要</h2>
+<p>本文提出了一个全面的框架，将长期记忆（LTM）理解为 AI 自进化的基础。借鉴认知科学和神经科学的洞察，作者论证了 LTM 不仅仅是一种存储机制，更是使 AI 系统从静态模型演化为个性化、自我改进智能体的核心基底。论文追溯了 AI 进化的三个阶段——认知积累、基础模型和自进化个性化系统——并展示了 LTM 如何在每个阶段充当关键赋能器。该框架的实际影响通过 OMNE 得到验证，这是一个多智能体系统，在 GAIA 基准上以 40.53% 的得分获得第一名，大幅超越 GPT-4 的 15%。论文最后指出了推进 AI 系统中 LTM 研究的六个未来方向。</p>
+<hr>
+<h2 id="1-introduction">1. Introduction / 引言</h2>
+<p>The history of artificial intelligence can be read as a story of increasingly sophisticated memory systems. Early expert systems stored knowledge in rigid rule bases. Machine learning introduced the ability to encode patterns in model parameters. Foundation models scaled this parametric memory to unprecedented levels. Yet despite these advances, current AI systems still lack a crucial capability that defines biological intelligence: the ability to accumulate, organize, and leverage long-term experiential memory for continuous self-improvement.</p>
+<p>Human intelligence is inseparable from long-term memory. Our ability to learn a new skill is built on decades of accumulated knowledge. Our creativity emerges from the recombination of stored experiences. Our personality is essentially a crystallization of long-term memories. If AI systems are to achieve genuine self-evolution — the ability to autonomously improve without human intervention — they must develop analogous long-term memory capabilities.</p>
+<p>This paper argues that long-term memory is not just one component among many in AI architecture, but the foundational capability upon which self-evolution depends. Without LTM, an AI system is perpetually starting from scratch, unable to build upon its own experience.</p>
+<p>人工智能的历史可以被解读为一个记忆系统不断精密化的故事。早期专家系统将知识存储在刚性的规则库中。机器学习引入了在模型参数中编码模式的能力。基础模型将这种参数记忆扩展到前所未有的规模。然而尽管有这些进步，当前的 AI 系统仍然缺乏一种定义生物智能的关键能力：积累、组织和利用长期经验记忆以实现持续自我改进的能力。</p>
+<p>人类智能与长期记忆密不可分。我们学习新技能的能力建立在数十年积累的知识之上。我们的创造力源于对存储经验的重新组合。我们的个性本质上是长期记忆的结晶。如果 AI 系统要实现真正的自进化——无需人类干预即可自主改进的能力——它们必须发展出类似的长期记忆能力。</p>
+<p>本文论证了长期记忆不仅仅是 AI 架构中的众多组件之一，而是自进化所依赖的基础能力。没有 LTM，AI 系统将永远从零开始，无法在自身经验的基础上积累和发展。</p>
+<hr>
+<h2 id="2-three-phases-of-ai-evolution-ai">2. Three Phases of AI Evolution / AI 进化的三个阶段</h2>
+<p>The paper identifies three distinct phases in the evolution of AI systems, each characterized by increasingly sophisticated use of memory.</p>
+<p><strong>Phase 1: Cognitive Accumulation.</strong> The earliest phase of AI development focused on manually encoding human knowledge into machine-readable formats. Expert systems, knowledge graphs, and curated databases represented humanity's attempt to give machines access to accumulated cognitive resources. Memory in this phase was entirely externally managed — humans decided what to store and how to organize it.</p>
+<p><strong>Phase 2: Foundation Models.</strong> The emergence of large-scale pre-training marked a fundamental shift. Foundation models learn to encode vast amounts of knowledge in their parameters through exposure to massive datasets. This parametric memory is powerful but static — once training is complete, the model's knowledge is frozen. Fine-tuning and prompt engineering can adapt this knowledge, but the model itself does not learn from its deployment experiences.</p>
+<p><strong>Phase 3: Self-Evolving Personalized Systems.</strong> The frontier of AI development is systems that can autonomously evolve based on their experiences. These systems maintain dynamic long-term memory that grows and refines itself over time. Each interaction provides new data that the system can integrate into its knowledge base, enabling continuous improvement without retraining. This phase represents the convergence of parametric knowledge (from pre-training) and experiential knowledge (from deployment), with LTM serving as the bridge between them.</p>
+<p>论文识别了 AI 系统进化的三个不同阶段，每个阶段都以对记忆的日益精密使用为特征。</p>
+<p><strong>第一阶段：认知积累。</strong> AI 发展的最早阶段专注于将人类知识手动编码为机器可读的格式。专家系统、知识图谱和策展数据库代表了人类尝试让机器获取积累的认知资源。这一阶段的记忆完全由外部管理——由人类决定存储什么以及如何组织。</p>
+<p><strong>第二阶段：基础模型。</strong> 大规模预训练的出现标志着根本性转变。基础模型通过接触海量数据集，学会在其参数中编码大量知识。这种参数记忆强大但静态——一旦训练完成，模型的知识就被冻结了。微调和提示工程可以调整这些知识，但模型本身不会从其部署经验中学习。</p>
+<p><strong>第三阶段：自进化个性化系统。</strong> AI 发展的前沿是能够基于经验自主进化的系统。这些系统维护动态的长期记忆，随时间增长和自我精炼。每次交互都提供新数据，系统可以将其整合到知识库中，实现无需重新训练的持续改进。这一阶段代表了参数知识（来自预训练）和经验知识（来自部署）的融合，LTM 充当两者之间的桥梁。</p>
+<hr>
+<h2 id="3-ltm-construction-ltm">3. LTM Construction / LTM 构建</h2>
+<p>Constructing effective long-term memory for AI systems involves three critical stages: data collection, knowledge synthesis, and storage.</p>
+<p><strong>Data Collection</strong> encompasses gathering raw experiential data from the system's interactions. This includes conversation logs, task outcomes, user feedback, environmental observations, and any other signals that might contain useful information. The challenge lies in determining what is worth remembering — storing everything is prohibitively expensive, while being too selective risks discarding valuable information.</p>
+<p><strong>Knowledge Synthesis</strong> transforms raw data into structured, reusable knowledge. This involves summarization (condensing verbose interactions into key insights), abstraction (extracting general principles from specific instances), and relationship mapping (identifying connections between different pieces of knowledge). Effective synthesis is what distinguishes a useful memory system from a mere data dump.</p>
+<p><strong>Storage</strong> must support efficient retrieval across multiple access patterns. The paper identifies four primary storage modalities: (1) text-based storage for human-readable summaries and notes, (2) graph-based storage for capturing relationships and dependencies between knowledge elements, (3) vector-based storage for enabling semantic similarity search, and (4) parameter-based storage where knowledge is encoded directly into model weights through techniques like LoRA fine-tuning. Each modality has distinct strengths, and practical systems typically combine multiple modalities.</p>
+<p>为 AI 系统构建有效的长期记忆涉及三个关键阶段：数据收集、知识合成和存储。</p>
+<p><strong>数据收集</strong>涵盖从系统交互中收集原始经验数据。包括对话日志、任务结果、用户反馈、环境观察以及可能包含有用信息的其他任何信号。挑战在于确定什么值得记住——存储一切代价过高，而过于挑剔则有丢弃有价值信息的风险。</p>
+<p><strong>知识合成</strong>将原始数据转化为结构化、可复用的知识。这涉及摘要（将冗长的交互浓缩为关键洞察）、抽象（从具体实例中提取一般原则）和关系映射（识别不同知识片段之间的联系）。有效的合成是区分有用记忆系统与单纯数据堆积的关键。</p>
+<p><strong>存储</strong>必须支持跨多种访问模式的高效检索。论文识别了四种主要存储模态：（1）基于文本的存储，用于人类可读的摘要和笔记；（2）基于图的存储，用于捕获知识元素间的关系和依赖；（3）基于向量的存储，用于实现语义相似性搜索；（4）基于参数的存储，通过 LoRA 微调等技术将知识直接编码到模型权重中。每种模态都有独特的优势，实际系统通常会组合多种模态。</p>
+<hr>
+<h2 id="4-ltm-utilization-ltm">4. LTM Utilization / LTM 利用</h2>
+<p>Once long-term memory is constructed, the challenge shifts to utilizing it effectively. The paper categorizes utilization strategies into three approaches.</p>
+<p><strong>External RAG (Retrieval-Augmented Generation)</strong> keeps long-term memory external to the model and retrieves relevant information at inference time. When the model encounters a query, it searches the LTM store for relevant knowledge and incorporates it into the context. This approach is flexible and does not require model modification, but it is limited by the context window size and the quality of the retrieval mechanism.</p>
+<p><strong>Parameter Updating</strong> encodes long-term knowledge directly into the model's weights. Techniques like LoRA (Low-Rank Adaptation) allow efficient fine-tuning on accumulated experience without full retraining. This approach makes knowledge immediately accessible without retrieval overhead, but it is less flexible — updating parameters is more expensive than updating an external store, and there is a risk of catastrophic forgetting where new knowledge overwrites old.</p>
+<p><strong>Hybrid Approaches</strong> combine external retrieval with parameter updating to leverage the strengths of both. The model's parameters encode general, frequently-used knowledge, while the external store handles specific, situational, or recently acquired knowledge. This mirrors the interplay between semantic memory (general knowledge) and episodic memory (specific experiences) in human cognition.</p>
+<p>一旦长期记忆被构建完成，挑战就转向如何有效利用它。论文将利用策略分为三种方法。</p>
+<p><strong>外部 RAG（检索增强生成）</strong> 将长期记忆保持在模型外部，在推理时检索相关信息。当模型遇到查询时，它在 LTM 存储中搜索相关知识并将其纳入上下文。这种方法灵活且不需要修改模型，但受限于上下文窗口大小和检索机制的质量。</p>
+<p><strong>参数更新</strong>将长期知识直接编码到模型权重中。LoRA（低秩适配）等技术允许在不进行完整重训练的情况下对积累的经验进行高效微调。这种方法使知识无需检索即可立即访问，但灵活性较低——更新参数比更新外部存储成本更高，且存在灾难性遗忘的风险，即新知识覆盖旧知识。</p>
+<p><strong>混合方法</strong>结合外部检索和参数更新以利用两者的优势。模型参数编码通用的、频繁使用的知识，而外部存储处理特定的、情境性的或最近获取的知识。这反映了人类认知中语义记忆（通用知识）和情景记忆（具体经历）之间的相互作用。</p>
+<hr>
+<h2 id="5-omne-framework-omne">5. OMNE Framework / OMNE 框架</h2>
+<p>The paper's theoretical framework is validated through OMNE, a multi-agent system that achieved first place on the GAIA benchmark — a challenging evaluation suite designed to test general AI assistants on real-world tasks requiring multi-step reasoning, tool use, and knowledge integration.</p>
+<p>OMNE's architecture consists of multiple specialized agents, each equipped with its own independent memory system. Rather than a single monolithic agent trying to handle all tasks, OMNE distributes work across agents with complementary expertise. A planning agent breaks down complex tasks into subtasks, specialized agents execute individual subtasks, and a coordination agent manages communication and memory sharing between agents.</p>
+<p>The key to OMNE's success is how its agents leverage long-term memory. Each agent accumulates task-specific knowledge from its experiences, building an increasingly rich understanding of its domain. When a new task arrives, agents can draw upon their accumulated expertise to solve problems more efficiently. The planning agent, for instance, remembers which decomposition strategies worked well for different types of tasks and applies this knowledge to new planning challenges.</p>
+<p>OMNE achieved a score of 40.53% on the GAIA benchmark, dramatically outperforming GPT-4's score of 15%. This gap demonstrates that memory-augmented multi-agent systems can achieve far more than even the most capable single-model systems without persistent memory. The result provides strong empirical evidence for the paper's thesis that long-term memory is the foundation of AI self-evolution.</p>
+<p>论文的理论框架通过 OMNE 得到验证，这是一个多智能体系统，在 GAIA 基准上获得了第一名——GAIA 是一个具有挑战性的评估套件，旨在测试通用 AI 助手在需要多步推理、工具使用和知识整合的真实世界任务上的表现。</p>
+<p>OMNE 的架构由多个专业化智能体组成，每个智能体配备独立的记忆系统。OMNE 不是让单个庞大的智能体尝试处理所有任务，而是将工作分配给具有互补专长的智能体。规划智能体将复杂任务分解为子任务，专业化智能体执行各个子任务，协调智能体管理智能体之间的通信和记忆共享。</p>
+<p>OMNE 成功的关键在于其智能体如何利用长期记忆。每个智能体从其经验中积累任务特定的知识，对其领域建立越来越丰富的理解。当新任务到来时，智能体可以借助积累的专业知识更高效地解决问题。例如，规划智能体会记住哪些分解策略对不同类型的任务效果好，并将此知识应用于新的规划挑战。</p>
+<p>OMNE 在 GAIA 基准上取得了 40.53% 的得分，大幅超越了 GPT-4 的 15%。这一差距表明，配备记忆的多智能体系统可以远超即使是最强大的无持久记忆单模型系统。该结果为论文关于长期记忆是 AI 自进化基础的论点提供了有力的实证支持。</p>
+<hr>
+<h2 id="6-ltm-for-search-space-reduction-ltm">6. LTM for Search Space Reduction / LTM 用于搜索空间缩减</h2>
+<p>An important application of long-term memory discussed in the paper is its ability to reduce the search space for decision-making algorithms like Monte Carlo Tree Search (MCTS). In complex reasoning tasks, the space of possible actions at each step can be enormous. Without guidance, search algorithms must explore vast numbers of possibilities, making them computationally expensive and slow.</p>
+<p>Long-term memory provides a natural solution: by remembering which actions led to successful outcomes in similar past situations, the agent can prune unpromising branches and focus search on the most likely productive paths. This is directly analogous to how human experts use their experience to intuitively narrow down solution spaces — a chess grandmaster does not consider every possible move but focuses immediately on a handful of promising candidates based on pattern recognition developed over years of play.</p>
+<p>The paper demonstrates that LTM-guided MCTS achieves better results with significantly fewer search iterations compared to unguided search. The memory provides both positive guidance (strategies that worked) and negative guidance (approaches to avoid), creating a powerful prior that accelerates the search process.</p>
+<p>论文讨论的长期记忆的一个重要应用是其缩减蒙特卡洛树搜索（MCTS）等决策算法搜索空间的能力。在复杂推理任务中，每一步的可能行动空间可能是巨大的。没有引导，搜索算法必须探索大量可能性，使其计算成本高昂且速度缓慢。</p>
+<p>长期记忆提供了一个自然的解决方案：通过记住在类似过往情境中哪些行动导致了成功结果，智能体可以剪枝不太有希望的分支，将搜索集中在最可能有成效的路径上。这直接类似于人类专家如何利用经验直觉性地缩小解决方案空间——国际象棋大师不会考虑每一步可能的走法，而是基于多年对弈中形成的模式识别能力，立即聚焦于少数几个有前途的候选方案。</p>
+<p>论文展示了 LTM 引导的 MCTS 与无引导搜索相比，以显著更少的搜索迭代次数取得了更好的结果。记忆提供了正面引导（有效的策略）和负面引导（应避免的方法），创造了一个加速搜索过程的强大先验。</p>
+<hr>
+<h2 id="7-future-directions">7. Future Directions / 未来方向</h2>
+<p>The paper concludes by identifying six key research directions for advancing long-term memory in AI systems.</p>
+<p><strong>1. Better LTM Construction.</strong> Current methods for extracting and synthesizing knowledge from raw experience are relatively primitive. Future work should develop more sophisticated methods for identifying what is worth remembering, creating higher-quality abstractions, and maintaining consistency as the memory store grows.</p>
+<p><strong>2. Novel Architectures.</strong> Existing memory architectures are largely adapted from database and information retrieval paradigms. The field needs architectures specifically designed for the unique requirements of LTM in AI agents, including support for temporal reasoning, causal relationships, and multi-modal knowledge.</p>
+<p><strong>3. Cross-Agent Memory Sharing.</strong> When multiple agents operate in the same domain, they should be able to share and benefit from each other's experiences. This requires solving challenges around knowledge representation compatibility, privacy, and trust between agents.</p>
+<p><strong>4. Personalization at Scale.</strong> As LTM enables more personalized AI experiences, systems must be able to maintain separate, high-quality memory stores for millions of individual users without prohibitive computational costs.</p>
+<p><strong>5. Forgetting and Memory Management.</strong> Not all memories are equally valuable, and unbounded memory growth is unsustainable. Systems need sophisticated mechanisms for identifying and removing outdated, incorrect, or low-value memories while preserving critical knowledge.</p>
+<p><strong>6. Evaluation Frameworks.</strong> The field lacks standardized benchmarks for evaluating LTM capabilities. New evaluation frameworks must measure not just retrieval accuracy but the quality of knowledge synthesis, the effectiveness of memory evolution, and the real-world impact of LTM on agent performance over extended time horizons.</p>
+<p>论文最后指出了推进 AI 系统长期记忆研究的六个关键方向。</p>
+<p><strong>1. 更好的 LTM 构建。</strong> 当前从原始经验中提取和合成知识的方法相对原始。未来的工作应开发更精密的方法，用于识别什么值得记住、创建更高质量的抽象，以及在记忆存储增长时保持一致性。</p>
+<p><strong>2. 新型架构。</strong> 现有记忆架构大多改编自数据库和信息检索范式。该领域需要专门为 AI 智能体中 LTM 的独特需求设计的架构，包括对时间推理、因果关系和多模态知识的支持。</p>
+<p><strong>3. 跨智能体记忆共享。</strong> 当多个智能体在同一领域运行时，它们应能共享并受益于彼此的经验。这需要解决知识表示兼容性、隐私和智能体间信任等挑战。</p>
+<p><strong>4. 大规模个性化。</strong> 随着 LTM 实现更个性化的 AI 体验，系统必须能够为数百万个体用户维护独立的高质量记忆存储，而不会产生过高的计算成本。</p>
+<p><strong>5. 遗忘与记忆管理。</strong> 并非所有记忆都同等有价值，且无限的记忆增长是不可持续的。系统需要精密的机制来识别和移除过时的、错误的或低价值的记忆，同时保留关键知识。</p>
+<p><strong>6. 评估框架。</strong> 该领域缺乏评估 LTM 能力的标准化基准。新的评估框架不仅必须衡量检索准确率，还要衡量知识合成的质量、记忆进化的有效性以及 LTM 在长时间范围内对智能体表现的实际影响。</p>
+<hr>
+<h2 id="8-cognitive-science-foundations">8. Cognitive Science Foundations / 认知科学基础</h2>
+<p>A distinctive strength of this paper is its deep grounding in cognitive science and neuroscience. The authors draw extensive parallels between human memory systems and the LTM architectures they propose for AI.</p>
+<p>In human cognition, long-term memory is broadly divided into declarative memory (explicit facts and events) and procedural memory (skills and habits). Declarative memory is further subdivided into semantic memory (general world knowledge) and episodic memory (personal experiences). The paper argues that effective AI LTM must similarly support multiple memory types: factual knowledge (analogous to semantic memory), experience logs (analogous to episodic memory), and learned strategies (analogous to procedural memory).</p>
+<p>The paper also draws on the concept of memory consolidation from neuroscience. In the human brain, newly formed memories are initially stored in the hippocampus and gradually transferred to the neocortex through a process of consolidation that occurs primarily during sleep. The analogous process in AI systems is the periodic refinement and reorganization of recently acquired memories into more stable, integrated knowledge structures. This consolidation process is what enables the transition from raw experience to generalizable knowledge.</p>
+<p>The authors further reference the concept of schemas from cognitive psychology — mental frameworks that help organize and interpret information. In the context of AI LTM, schemas correspond to abstract knowledge structures that enable rapid interpretation of new situations by relating them to familiar patterns. The development of effective schemas through experience is a key component of the self-evolution process the paper describes.</p>
+<p>本文的一个独特优势是其深厚的认知科学和神经科学基础。作者在人类记忆系统与其为 AI 提出的 LTM 架构之间建立了广泛的类比。</p>
+<p>在人类认知中，长期记忆大致分为陈述性记忆（显式的事实和事件）和程序性记忆（技能和习惯）。陈述性记忆进一步细分为语义记忆（一般世界知识）和情景记忆（个人经历）。论文认为，有效的 AI LTM 必须类似地支持多种记忆类型：事实知识（类似于语义记忆）、经验日志（类似于情景记忆）和习得策略（类似于程序性记忆）。</p>
+<p>论文还借鉴了神经科学中的记忆巩固概念。在人脑中，新形成的记忆最初存储在海马体中，并通过主要在睡眠期间发生的巩固过程逐渐转移到新皮层。AI 系统中的类似过程是对最近获取的记忆进行周期性精炼和重组，使其形成更稳定、更集成的知识结构。这种巩固过程使得从原始经验到可泛化知识的转变成为可能。</p>
+<p>作者还引用了认知心理学中的图式概念——帮助组织和解释信息的心理框架。在 AI LTM 的语境中，图式对应于抽象的知识结构，通过将新情境与熟悉模式关联来实现快速解读。通过经验发展有效的图式是论文所描述的自进化过程的关键组成部分。</p>
+          </article>
+
+          <div class="article-nav"><a href="memgpt.html"><div class="nav-label">← Previous</div><div class="nav-title">MemGPT</div></a><a class="nav-right" href="llm-knowledge-bases.html"><div class="nav-label">Next →</div><div class="nav-title">LLM Knowledge Bases</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

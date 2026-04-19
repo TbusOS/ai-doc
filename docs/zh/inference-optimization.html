@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>推理优化 — AI Doc</title>
+    <link rel="stylesheet" href="../assets/fonts.css">
+    <link rel="stylesheet" href="../assets/anthropic.css">
+    <link rel="stylesheet" href="../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../zh/">首页</a>
+          <a href="../zh/inference-optimization.html">推理优化</a>
+          <a href="../zh/self-improving-agents.html">自我改进 Agent</a>
+          <a href="../zh/multi-agent-systems.html">多 Agent 系统</a>
+          <a href="../zh/memory-systems.html">记忆系统</a>
+          <a href="../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../en/" class="">EN</a>
+          <a href="../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-hero" style="padding-block: var(--space-9);">
+        <div class="anth-container">
+          <span class="anth-badge badge-inference">推理优化</span>
+          <h1 style="margin-top:var(--space-4); max-width:780px; margin-left:auto; margin-right:auto;">推理优化</h1>
+          <p style="font-size:20px; line-height:1.55; color:var(--anth-text-secondary); max-width:640px; margin:var(--space-5) auto var(--space-4);">在受限硬件上跑前沿模型</p>
+          <p style="font-size:16px; line-height:1.6; color:var(--anth-text-secondary); max-width:640px; margin:0 auto;">参数外存、稀疏加载、量化、MoE 缓存——让大模型跑在它本不该跑的硬件上所需的工程。</p>
+        </div>
+      </section>
+
+      <section class="anth-section">
+        <div class="anth-container anth-container--wide">
+          <div class="paper-list">
+            <a class="paper-row" href="articles/llm-in-a-flash.html">
+              <span class="paper-year">2023</span>
+              <div>
+                <div class="paper-meta">Alizadeh et al. (Apple)</div>
+                <h3>LLM in a Flash</h3>
+                <p>Flash 存储参数、稀疏感知按需加载，GPU 加速 20–25 倍。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/fast-inference-moe-offloading.html">
+              <span class="paper-year">2023</span>
+              <div>
+                <div class="paper-meta">Eliseev &amp; Mazur</div>
+                <h3>Fast Inference of MoE with Offloading</h3>
+                <p>MoE 专家 offload 到 SSD/CPU，消费级硬件跑 Mixtral-8x7B。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/flashmoe.html">
+              <span class="paper-year">2026</span>
+              <div>
+                <div class="paper-meta">Kim et al.</div>
+                <h3>FlashMoE</h3>
+                <p>ML 驱动缓存替换 + MoE SSD offload，边缘设备加速 2.6 倍。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/turboquant.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">Google Research</div>
+                <h3>TurboQuant</h3>
+                <p>数据无关向量量化，KV Cache 压到 3 bit 无精度损失，H100 加速 8 倍。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

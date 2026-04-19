@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Doc — AI 论文中英双语知识库 / Bilingual AI Paper Knowledge Base</title>
+    <meta name="description" content="A curated, open-source knowledge base of high-quality AI papers, articles, and open-source models with Chinese translations. 精选 AI 论文与开源模型的中英双语知识库。">
+    <link rel="stylesheet" href="assets/fonts.css">
+    <link rel="stylesheet" href="assets/anthropic.css">
+    <link rel="stylesheet" href="assets/site.css">
+  </head>
+  <body>
+    <main>
+      <section class="anth-hero" style="padding-block: var(--space-10);">
+        <div class="anth-container">
+          <div style="display:flex; justify-content:center; margin-bottom:var(--space-6);">
+            <span class="anth-badge">Open knowledge base · 开源知识库</span>
+          </div>
+          <h1 style="max-width:840px; margin:0 auto;">AI Doc</h1>
+          <p style="font-family:var(--font-body); font-size:22px; line-height:1.55; color:var(--anth-text-secondary); max-width:680px; margin:var(--space-5) auto var(--space-6);">
+            A curated, open-source knowledge base of high-quality AI papers, articles, and open-source models — with paragraph-by-paragraph Chinese translations.
+          </p>
+          <p style="font-family:var(--font-body); font-size:18px; line-height:1.6; color:var(--anth-text-secondary); max-width:640px; margin:0 auto var(--space-7);">
+            AI 领域优质论文、文章与模型的中英双语知识库。为训练模型、设计 AI 系统、垂直领域项目落地的工程师而建。
+          </p>
+
+          <div class="lang-picker">
+            <a class="anth-button" href="en/">Read in English</a>
+            <a class="anth-button anth-button--dark" href="zh/">阅读中文版</a>
+          </div>
+
+          <!-- Abstract brand illustration -->
+          <div class="diagram-frame" style="max-width:960px; margin:var(--space-9) auto 0;">
+            <svg viewBox="0 0 960 480" role="img" aria-label="AI Doc knowledge taxonomy">
+              <defs>
+                <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="2"/>
+                </filter>
+              </defs>
+
+              <!-- Central node -->
+              <circle cx="480" cy="240" r="62" fill="#d97757" opacity="0.95"/>
+              <text x="480" y="235" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="600" font-size="16" fill="#ffffff">AI Doc</text>
+              <text x="480" y="256" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="500" font-size="11" fill="#ffffff" opacity="0.85">5 topics</text>
+
+              <!-- 5 orbiting nodes -->
+              <!-- Inference optimization (top-left) -->
+              <line x1="480" y1="240" x2="220" y2="110" stroke="#b0aea5" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <circle cx="220" cy="110" r="52" fill="#6a9bcc" opacity="0.88"/>
+              <text x="220" y="105" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="600" font-size="13" fill="#ffffff">Inference</text>
+              <text x="220" y="122" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="500" font-size="11" fill="#ffffff" opacity="0.85">优化</text>
+
+              <!-- Self-improving (top-right) -->
+              <line x1="480" y1="240" x2="740" y2="110" stroke="#b0aea5" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <circle cx="740" cy="110" r="56" fill="#d97757" opacity="0.85"/>
+              <text x="740" y="105" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="600" font-size="13" fill="#ffffff">Self-Improving</text>
+              <text x="740" y="122" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="500" font-size="11" fill="#ffffff" opacity="0.85">自进化</text>
+
+              <!-- Multi-agent (right) -->
+              <line x1="480" y1="240" x2="840" y2="280" stroke="#b0aea5" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <circle cx="840" cy="280" r="48" fill="#788c5d" opacity="0.9"/>
+              <text x="840" y="275" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="600" font-size="12" fill="#ffffff">Multi-Agent</text>
+              <text x="840" y="291" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="500" font-size="10" fill="#ffffff" opacity="0.85">多 Agent</text>
+
+              <!-- Memory (bottom-right) -->
+              <line x1="480" y1="240" x2="680" y2="400" stroke="#b0aea5" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <rect x="630" y="360" width="100" height="80" rx="14" fill="#141413" opacity="0.88"/>
+              <text x="680" y="395" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="600" font-size="13" fill="#faf9f5">Memory</text>
+              <text x="680" y="412" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="500" font-size="11" fill="#faf9f5" opacity="0.85">记忆</text>
+
+              <!-- Open-source models (bottom-left) -->
+              <line x1="480" y1="240" x2="240" y2="390" stroke="#b0aea5" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <rect x="180" y="355" width="120" height="70" rx="14" fill="#b0aea5" opacity="0.9"/>
+              <text x="240" y="385" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="600" font-size="13" fill="#141413">Models</text>
+              <text x="240" y="402" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="500" font-size="10" fill="#141413" opacity="0.75">开源模型</text>
+
+              <!-- Floating accent shapes -->
+              <circle cx="90" cy="240" r="28" fill="#e8e6dc"/>
+              <rect x="850" y="430" width="40" height="40" rx="8" fill="#f0ede3"/>
+              <circle cx="480" cy="60" r="14" fill="#f0ede3"/>
+            </svg>
+            <p class="diagram-caption">五大主题围绕一个核心知识库 · Five topics orbit one curated knowledge base</p>
+          </div>
+
+          <div class="stat-grid" style="max-width:960px; margin:var(--space-7) auto 0;">
+            <div class="stat">
+              <div class="stat-number">21+</div>
+              <div class="stat-label">Papers · 论文</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">5</div>
+              <div class="stat-label">Topics · 主题</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">2</div>
+              <div class="stat-label">Languages · 语种</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">MIT</div>
+              <div class="stat-label">License · 许可</div>
+            </div>
+          </div>
+
+          <p style="margin-top:var(--space-8); color:var(--anth-text-secondary); font-size:14px;">
+            <a class="anth-link" href="https://github.com/">View on GitHub</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center;">
+        <span class="site-footer-brand">AI Doc</span>
+        <span style="margin-left:var(--space-5);">MIT License · Built with the Anthropic design vocabulary</span>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FlashMoE — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../en/">Home</a>
+          <a href="../../en/inference-optimization.html">Inference Optimization</a>
+          <a href="../../en/self-improving-agents.html">Self-Improving Agents</a>
+          <a href="../../en/multi-agent-systems.html">Multi-Agent Systems</a>
+          <a href="../../en/memory-systems.html">Memory Systems</a>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../inference-optimization.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Inference Optimization</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-inference">Inference Optimization</span>
+            <span class="anth-caption">2026 · Kim et al.</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="flashmoe-reducing-ssd-io-bottlenecks-via-ml-based-cache-replacement-for-mixture-of-experts-inference-on-edge-devices">FlashMoE: Reducing SSD I/O Bottlenecks via ML-Based Cache Replacement for Mixture-of-Experts Inference on Edge Devices</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2601.17063">arXiv:2601.17063</a></p>
+<p><strong>作者:</strong> Byeongju Kim, Jungwan Lee, Donghyeon Han, Hoi-Jun Yoo, Sangyeob Kim</p>
+<p><strong>发表:</strong> 2026</p>
+<p><strong>主题:</strong> MoE 专家权重 SSD Offload + ML-based 缓存替换策略，边缘设备推理优化</p>
+</blockquote>
+<hr>
+<h2 id="abstract">Abstract</h2>
+<p>Mixture-of-Experts (MoE) models have gained attention for efficiently scaling large language models through sparse activation patterns that enable partial model execution. However, deploying these models on resource-limited edge devices remains challenging due to their enormous parameter counts. Recent MoE models grow to hundreds of gigabytes, making RAM-offloading solutions impractical. FlashMoE addresses this by offloading inactive MoE experts to SSD storage and introduces a lightweight ML-based caching strategy that adaptively combines recency and frequency signals to maximize expert reuse, significantly reducing storage I/O. On real hardware, FlashMoE achieves up to 51% improvement in cache hit rates versus traditional policies like LRU and LFU, and a 2.6x speedup relative to competing MoE inference systems.</p>
+<h2 id="_1">摘要</h2>
+<p>混合专家 (MoE) 模型因通过稀疏激活模式实现大语言模型的高效扩展而受到关注，这种模式允许模型的部分执行。然而，由于其巨大的参数量，在资源有限的边缘设备上部署这些模型仍然充满挑战。近期的 MoE 模型增长到数百 GB，使得基于 RAM 的 offloading 方案变得不切实际。FlashMoE 通过将不活跃的 MoE 专家 offload 到 SSD 存储来解决这一问题，并引入了一种轻量级的基于 ML 的缓存策略，自适应地结合时近性和频率信号以最大化专家复用，显著减少存储 I/O。在实际硬件上，FlashMoE 相比 LRU 和 LFU 等传统策略实现了高达 51% 的缓存命中率提升，以及相对于竞争 MoE 推理系统 2.6 倍的加速。</p>
+<hr>
+<p><img alt="Figure 1: Illustration of an MoE model decoder layer" src="images/flashmoe/x1.png"></p>
+<p><em>图 1：MoE 模型解码器层示意图</em></p>
+<h2 id="1-introduction">1. Introduction / 引言</h2>
+<p>As MoE models continue to scale, their parameter counts now reach hundreds of gigabytes. While previous approaches like Fiddler and DAOP rely on DRAM-based offloading, this becomes impractical on devices with only 16-64GB RAM. FlashMoE proposes moving expert weights to SSD storage, which offers much larger capacity at the cost of higher access latency. The key challenge then becomes minimizing SSD I/O through intelligent caching.</p>
+<p>随着 MoE 模型持续扩展，其参数量现已达到数百 GB。虽然 Fiddler 和 DAOP 等先前方法依赖基于 DRAM 的 offloading，但在仅有 16-64GB RAM 的设备上这变得不切实际。FlashMoE 提出将专家权重移至 SSD 存储，SSD 以更高的访问延迟为代价提供更大的容量。关键挑战随之变为通过智能缓存最小化 SSD I/O。</p>
+<hr>
+<h2 id="2-key-technical-contributions">2. Key Technical Contributions / 核心技术贡献</h2>
+<h3 id="21-model-decomposition">2.1 Model Decomposition / 模型分解</h3>
+<p>Experts and non-expert components are stored separately. Experts are subdivided by layer and unit as individual PyTorch files, enabling fine-grained on-demand loading. Non-expert components (attention layers, embeddings) remain in DRAM.</p>
+<p>专家和非专家组件分开存储。专家按层和单元细分为单独的 PyTorch 文件，实现细粒度的按需加载。非专家组件（注意力层、嵌入层）保留在 DRAM 中。</p>
+<h3 id="22-ml-based-cache-replacement-policy-ml">2.2 ML-Based Cache Replacement Policy / 基于 ML 的缓存替换策略</h3>
+<p><img alt="Figure 2: Heatmap comparing LRU and Belady cache policies" src="images/flashmoe/x2.png"></p>
+<p><em>图 2：LRU 与 Belady 缓存策略的热力图对比。最深的颜色表示专家在该时间步被路由，颜色随时间向后变浅。</em></p>
+<p>Rather than relying on traditional LRU/LFU heuristics, FlashMoE trains a lightweight feedforward neural network to approximate Belady's optimal replacement algorithm (which requires future knowledge).</p>
+<p>FlashMoE 没有依赖传统的 LRU/LFU 启发式方法，而是训练了一个轻量级前馈神经网络来近似 Belady 最优替换算法（该算法需要未来知识）。</p>
+<p><strong>Input features / 输入特征:</strong></p>
+<ul>
+<li><strong>Recency (时近性):</strong> <code>1/r_t</code> — inverse of time since last access (距上次访问的时间的倒数)</li>
+<li><strong>Frequency (频率):</strong> <code>f_t/max(f)</code> — normalized access frequency (归一化访问频率)</li>
+</ul>
+<p><strong>Training details / 训练细节:</strong></p>
+<ul>
+<li>Dataset: TriviaQA (512 samples, 512 tokens) / 数据集: TriviaQA（512 个样本，512 个 token）</li>
+<li>Architecture: 3-layer FFN, hidden size 128 / 架构: 3 层前馈网络，隐藏层大小 128</li>
+<li>Loss: MSE / 损失函数: MSE</li>
+<li>Optimizer: AdamW, learning rate 1e-3 / 优化器: AdamW，学习率 1e-3</li>
+</ul>
+<p><img alt="Figure 4: Overall training method illustration of FlashMoE" src="images/flashmoe/x5.png"></p>
+<p><em>图 4：FlashMoE 整体训练方法示意图</em></p>
+<h3 id="23-system-architecture">2.3 System Architecture / 系统架构</h3>
+<p><img alt="Figure 3: (a) Overall system of FlashMoE. (b) FlashMoE's prefill process" src="images/flashmoe/x3.png"></p>
+<p><em>图 3：(a) FlashMoE 整体系统架构。(b) FlashMoE 的预填充过程。</em></p>
+<p><strong>Initialization / 初始化:</strong></p>
+<p>Only non-expert components are loaded into memory initially, reducing load time by ~6.8x versus Fiddler/DAOP.</p>
+<p>仅在初始化时加载非专家组件到内存，相比 Fiddler/DAOP 将加载时间减少约 6.8 倍。</p>
+<p><strong>Prefill Stage / 预填充阶段:</strong></p>
+<p>Identifies routed experts across token batches, loading each required expert once per iteration from SSD. This batch-aware loading avoids redundant reads.</p>
+<p>识别 token 批次中被路由的专家，每次迭代从 SSD 加载每个所需专家一次。这种批次感知的加载方式避免了冗余读取。</p>
+<p><strong>Decoding Stage / 解码阶段:</strong></p>
+<p>Expert loading accounts for over 70% of total decoding time, motivating the sophisticated cache policy. The ML-based cache predicts which experts are least likely to be reused and evicts them first.</p>
+<p>专家加载占总解码时间的 70% 以上，这推动了复杂缓存策略的开发。基于 ML 的缓存预测哪些专家最不可能被复用，并优先驱逐它们。</p>
+<p><img alt="Figure 5: Decoder layer computation pipeline of FlashMoE" src="images/flashmoe/x6.png"></p>
+<p><em>图 5：FlashMoE 解码器层计算流水线</em></p>
+<hr>
+<h2 id="3-experiments">3. Experiments / 实验</h2>
+<h3 id="31-hardware-setup">3.1 Hardware Setup / 硬件配置</h3>
+<ul>
+<li>CPU: AMD Ryzen 9 9600X</li>
+<li>GPU: NVIDIA RTX 5070 Ti</li>
+<li>SSD: SK Hynix P51 NVMe (7.4 GB/s)</li>
+<li>RAM: 16GB DDR5</li>
+</ul>
+<p><img alt="Figure 6: Hit rate by cache size and replacement policy" src="images/flashmoe/x7.png"></p>
+<p><em>图 6：不同缓存大小与替换策略的命中率。(a) OLMoE-1B-7B，(b) Qwen3-30B-A3B。</em></p>
+<h3 id="32-cache-hit-rate-results">3.2 Cache Hit Rate Results / 缓存命中率结果</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>vs LRU</th>
+<th>vs LFU</th>
+<th>vs ARC</th>
+<th>vs LeCaR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OLMoE-1B-7B</td>
+<td>+21%</td>
+<td>+51%</td>
+<td>+28%</td>
+<td>+21%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-inference-speed">3.3 Inference Speed / 推理速度</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Speedup vs LRU</td>
+<td>22% faster (OLMoE-1B-7B)</td>
+</tr>
+<tr>
+<td>Speedup vs existing MoE systems</td>
+<td>2.6x</td>
+</tr>
+<tr>
+<td>Initial loading vs llama.cpp</td>
+<td>4x faster</td>
+</tr>
+<tr>
+<td>Initial loading vs Fiddler/DAOP</td>
+<td>4.1x faster</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><img alt="Figure 7: Latency and speed benchmarks across systems and policies" src="images/flashmoe/x9.png"></p>
+<p><em>图 7：(a,d) MoE 推理系统的模型加载与预填充延迟。(b,e) 不同缓存替换策略下的 token 生成速度。(c,f) 不同推理系统的 token 生成速度。</em></p>
+<hr>
+<h2 id="4-key-insights">4. Key Insights / 核心洞察</h2>
+<p><strong>"Experts exhibit temporal locality and routing-specific reuse patterns."</strong></p>
+<p><strong>"专家展现出时间局部性和路由特定的复用模式。"</strong></p>
+<p>This observation is fundamental to FlashMoE's approach. Unlike traditional cache replacement where access patterns may be random, MoE expert routing follows learnable patterns that can be captured by a lightweight neural network. By combining recency and frequency signals through ML rather than fixed heuristics, the system adapts to the specific access patterns of different models and input distributions.</p>
+<p>这一观察是 FlashMoE 方法的基础。与传统缓存替换中访问模式可能是随机的不同，MoE 专家路由遵循可学习的模式，这些模式可以被轻量级神经网络捕获。通过 ML 而非固定启发式方法结合时近性和频率信号，系统能够适应不同模型和输入分布的特定访问模式。</p>
+<hr>
+<h2 id="5-conclusion">5. Conclusion / 结论</h2>
+<p>FlashMoE demonstrates that SSD-based expert offloading with ML-optimized caching is a viable path for deploying large MoE models on edge devices. By replacing traditional cache heuristics with a lightweight learned policy, the system achieves significant improvements in both cache hit rates and inference speed. The approach is particularly relevant as MoE models continue to grow beyond what DRAM-only solutions can handle, making SSD offloading an increasingly important technique in the inference optimization toolkit.</p>
+<p>FlashMoE 证明了基于 SSD 的专家 offloading 结合 ML 优化的缓存是在边缘设备上部署大型 MoE 模型的可行路径。通过用轻量级学习策略替换传统缓存启发式方法，系统在缓存命中率和推理速度方面都实现了显著提升。随着 MoE 模型持续增长超出仅靠 DRAM 方案能处理的范围，这种方法在推理优化工具包中变得越来越重要。</p>
+          </article>
+
+          <div class="article-nav"><a href="fast-inference-moe-offloading.html"><div class="nav-label">← Previous</div><div class="nav-title">Fast Inference of MoE with Offloading</div></a><a class="nav-right" href="turboquant.html"><div class="nav-label">Next →</div><div class="nav-title">TurboQuant</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

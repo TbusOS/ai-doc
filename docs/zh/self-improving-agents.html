@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>自我改进 Agent — AI Doc</title>
+    <link rel="stylesheet" href="../assets/fonts.css">
+    <link rel="stylesheet" href="../assets/anthropic.css">
+    <link rel="stylesheet" href="../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../zh/">首页</a>
+          <a href="../zh/inference-optimization.html">推理优化</a>
+          <a href="../zh/self-improving-agents.html">自我改进 Agent</a>
+          <a href="../zh/multi-agent-systems.html">多 Agent 系统</a>
+          <a href="../zh/memory-systems.html">记忆系统</a>
+          <a href="../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../en/" class="">EN</a>
+          <a href="../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-hero" style="padding-block: var(--space-9);">
+        <div class="anth-container">
+          <span class="anth-badge badge-self">自我改进 Agent</span>
+          <h1 style="margin-top:var(--space-4); max-width:780px; margin-left:auto; margin-right:auto;">自我改进 Agent</h1>
+          <p style="font-size:20px; line-height:1.55; color:var(--anth-text-secondary); max-width:640px; margin:var(--space-5) auto var(--space-4);">Agent 改自己的代码、数据或 skill</p>
+          <p style="font-size:16px; line-height:1.6; color:var(--anth-text-secondary); max-width:640px; margin:0 auto;">从自博弈、测试时适应到可执行子 agent、autoresearch 棘轮——agent 随时间复利累积能力的路径。</p>
+        </div>
+      </section>
+
+      <section class="anth-section">
+        <div class="anth-container anth-container--wide">
+          <div class="paper-list">
+            <a class="paper-row" href="articles/cherry-llm.html">
+              <span class="paper-year">2024</span>
+              <div>
+                <div class="paper-meta">Li et al.</div>
+                <h3>Cherry LLM</h3>
+                <p>基于 IFD 指标的自引导数据选择，5% 数据胜过全量。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/spin.html">
+              <span class="paper-year">2024</span>
+              <div>
+                <div class="paper-meta">Chen et al.</div>
+                <h3>SPIN</h3>
+                <p>自博弈微调，模型 vs 上一版自己，无需额外标注。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/evolver.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">(see paper)</div>
+                <h3>EvolveR</h3>
+                <p>经验驱动自进化，交互轨迹蒸馏为抽象策略原则。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/rise.html">
+              <span class="paper-year">2024</span>
+              <div>
+                <div class="paper-meta">(see paper)</div>
+                <h3>RISE</h3>
+                <p>递归自省，多轮自我修正，GSM8K 提升 23.9%。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/self-improving-test-time.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">Acikgoz et al.</div>
+                <h3>Self-Improving at Test-Time</h3>
+                <p>检测弱项→自动生成数据→测试时 LoRA，样本量减 68 倍仍提升 5.48%。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/metacognitive-learning.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">Liu &amp; van der Schaar</div>
+                <h3>Metacognitive Learning</h3>
+                <p>框架：真正的自我改进需要自我评估、学习规划、效果评估三种元认知能力。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/agent-factory.html">
+              <span class="paper-year">2026</span>
+              <div>
+                <div class="paper-meta">Zhang et al.</div>
+                <h3>AgentFactory</h3>
+                <p>把成功解保存为可执行 Python 子 agent（而非文本），Install→Self-Evolve→Deploy 生命周期，编排成本降低 57%。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/autoresearch.html">
+              <span class="paper-year">2026</span>
+              <div>
+                <div class="paper-meta">Karpathy</div>
+                <h3>autoresearch</h3>
+                <p>让 AI agent 通宵自主做 ML 研究——改 train.py、跑 5 分钟实验、按 val_bpb 保留或回滚；program.md 作为轻量级 skill。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/darwin-skill.html">
+              <span class="paper-year">2026</span>
+              <div>
+                <div class="paper-meta">Huashu</div>
+                <h3>Darwin Skill · 达尔文</h3>
+                <p>把 autoresearch 的棘轮搬到 SKILL.md 优化——8 维评估（结构+实测）、独立子 agent 评分、退步自动回滚。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

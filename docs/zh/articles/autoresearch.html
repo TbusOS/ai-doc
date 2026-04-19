@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>autoresearch — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../zh/">首页</a>
+          <a href="../../zh/inference-optimization.html">推理优化</a>
+          <a href="../../zh/self-improving-agents.html">自我改进 Agent</a>
+          <a href="../../zh/multi-agent-systems.html">多 Agent 系统</a>
+          <a href="../../zh/memory-systems.html">记忆系统</a>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../self-improving-agents.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 自我改进 Agent</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-self">自我改进 Agent</span>
+            <span class="anth-caption">2026 · Karpathy</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="autoresearch-letting-an-ai-agent-do-its-own-ml-research-overnight">autoresearch: Letting an AI Agent Do Its Own ML Research Overnight</h1>
+<blockquote>
+<p><strong>原文仓库:</strong> <a href="https://github.com/karpathy/autoresearch">github.com/karpathy/autoresearch</a></p>
+<p><strong>作者:</strong> Andrej Karpathy</p>
+<p><strong>发表:</strong> 2026 年 3 月 / GitHub + X</p>
+<p><strong>相关推文:</strong> <a href="https://x.com/karpathy/status/2029701092347630069">tweet #1</a> · <a href="https://x.com/karpathy/status/2031135152349524125">tweet #2</a></p>
+<p><strong>主题:</strong> 把一个真实的 LLM 训练环境交给 AI agent，让它自主改代码、跑实验、保留/丢弃，循环迭代——一种"睡一觉醒来收获一批实验结果"的自主研究范式</p>
+</blockquote>
+<hr>
+<h2 id="a-tale-from-the-future">缘起 / A Tale From the Future</h2>
+<blockquote>
+<p><em>"One day, frontier AI research used to be done by meat computers in between eating, sleeping, having other fun, and synchronizing once in a while using sound wave interconnect in the ritual of 'group meeting'. That era is long gone. Research is now entirely the domain of autonomous swarms of AI agents running across compute cluster megastructures in the skies. The agents claim that we are now in the 10,205th generation of the code base, in any case no one could tell if that's right or wrong as the 'code' is now a self-modifying binary that has grown beyond human comprehension. </em><em>This repo is the story of how it all began.</em><em>"</em></p>
+<p>— @karpathy, March 2026</p>
+<p><em>"有一天，前沿 AI 研究过去是由一群血肉计算机在吃饭、睡觉、娱乐之间完成的，偶尔通过一种叫做'组会'的仪式用声波互联同步一下。那个时代早已过去。如今研究完全属于在天空中计算集群巨构上运行的自主 AI agent 群体。Agent 们声称我们现在已经是这套代码库的第 10,205 代了——反正也没人能说清这是对还是错，因为'代码'如今是一个已经超出人类理解能力、能自我修改的二进制。</em><em>这个仓库讲的就是一切是如何开始的。</em><em>"</em></p>
+</blockquote>
+<p>Karpathy 用这段半戏谑半认真的自述定义了 autoresearch 的野心：<strong>这是自主 AI 研究时代的"第零天"样本</strong>。仓库本身只是一个极小、极克制的单 GPU 原型，但它的设计选择把"AI 能不能自己做研究"这个抽象问题变成了一个可操作的工程实验。</p>
+<hr>
+<h2 id="1-the-core-idea">1. 核心思路 / The Core Idea</h2>
+<p><strong>一句话概括:</strong> 给 AI agent 一个真实但受约束的 LLM 训练设置，让它<strong>通宵</strong>自主做实验——改代码、训练 5 分钟、检查指标是否改善、保留或丢弃、循环——早上醒来你收获一份实验日志和（希望是）一个更好的模型。</p>
+<p><strong>One-sentence summary:</strong> Give an AI agent a small but real LLM training setup and let it experiment autonomously overnight. It modifies the code, trains for 5 minutes, checks if the result improved, keeps or discards, and repeats. You wake up in the morning to a log of experiments and (hopefully) a better model.</p>
+<p>训练代码是 <a href="https://github.com/karpathy/nanochat">nanochat</a> 的一个简化版——单 GPU 实现的 GPT 训练。<strong>关键的反直觉设计</strong>在于：你作为研究者<strong>不</strong>直接碰任何 Python 文件，你编程的是 <code>program.md</code>——那个给 AI agent 提供上下文、设定这个"自主研究组织"行为方式的 Markdown 文件。</p>
+<p>The training code is a simplified single-GPU implementation of nanochat. <strong>The core counter-intuitive design:</strong> as a researcher you're <em>not</em> touching any of the Python files like you normally would. Instead, you are programming the <code>program.md</code> Markdown files that provide context to the AI agents and set up your autonomous research org.</p>
+<hr>
+<h2 id="2-repository-structure">2. 仓库结构 / Repository Structure</h2>
+<p>仓库只有三个真正重要的文件：</p>
+<pre><code>prepare.py      — 固定常量、数据准备 + 运行时工具（不可修改）
+train.py        — 模型、优化器、训练循环（agent 修改这个文件）
+program.md      — agent 指令（人类修改这个文件）
+pyproject.toml  — 依赖
+</code></pre>
+<ul>
+<li><strong><code>prepare.py</code></strong> — 固定常量、一次性数据准备（下载训练数据、训练 BPE tokenizer）、以及运行时工具（dataloader、evaluation）。<strong>不修改</strong>。它定义"评测是什么"，是 agent 无法绕过的地面真值。</li>
+<li><strong><code>train.py</code></strong> — agent <strong>唯一</strong>编辑的文件。包含完整的 GPT 模型、优化器（Muon + AdamW）、训练循环。架构、超参、优化器、batch size——一切皆可变。</li>
+<li><strong><code>program.md</code></strong> — 一个 agent 的基线指令。把你的 agent 指向这里，然后让它跑。<strong>由人类迭代</strong>。</li>
+</ul>
+<p>这种"agent 改一个文件，人类改另一个文件"的<strong>双层分工</strong>是整个设计的关键。它让两件事可以独立演化：agent 的研究行为（由 <code>program.md</code> 塑造）和被研究的对象（即 <code>train.py</code> 中的模型代码）。</p>
+<hr>
+<h2 id="3-the-experimentation-loop">3. 实验循环 / The Experimentation Loop</h2>
+<p><code>program.md</code> 里定义的核心算法（为了忠实保留原意，下面逐条双语）：</p>
+<p><strong>LOOP FOREVER:</strong></p>
+<ol>
+<li>Look at the git state: the current branch/commit we're on
+   - 查看 git 状态：当前分支/commit</li>
+<li>Tune <code>train.py</code> with an experimental idea by directly hacking the code.
+   - 用一个实验性想法直接改 <code>train.py</code></li>
+<li><code>git commit</code></li>
+<li>Run the experiment: <code>uv run train.py &gt; run.log 2&gt;&amp;1</code> (redirect everything — do NOT use tee or let output flood your context)
+   - 跑实验，<strong>把所有输出重定向到 run.log</strong>，不要让它淹没 agent 的 context</li>
+<li>Read out the results: <code>grep "^val_bpb:\|^peak_vram_mb:" run.log</code>
+   - 用 grep 只提取关键指标</li>
+<li>If the grep output is empty, the run crashed. Run <code>tail -n 50 run.log</code> to read the Python stack trace and attempt a fix. If you can't get things to work after more than a few attempts, give up.
+   - 如果 grep 为空说明崩溃了，看最后 50 行堆栈，尝试修复；修不好就放弃</li>
+<li>Record the results in the tsv (NOTE: do not commit the results.tsv file, leave it untracked by git)
+   - 把结果记入 tsv（注意 results.tsv 不要 commit）</li>
+<li>If val_bpb improved (lower), you "advance" the branch, keeping the git commit
+   - 如果 val_bpb 改善了（更低），<strong>推进分支</strong>，保留这次 commit</li>
+<li>If val_bpb is equal or worse, you git reset back to where you started
+   - 如果持平或变差，git reset 回到起点</li>
+</ol>
+<p>这个循环优雅之处在于它把"研究"压缩成了一个可执行的决策流程：<strong>改 → 测 → 保留/回滚 → 重复</strong>。Git 本身成了 agent 的"实验笔记本" + "回退机制"。</p>
+<hr>
+<h2 id="4-the-metric">4. 度量标准 / The Metric</h2>
+<p><strong>val_bpb</strong>（validation bits per byte），越低越好。</p>
+<p>选 bpb 而不是 val_loss 有一个精心的原因：<strong>bpb 与词表大小无关</strong>。这意味着 agent 可以自由地把 <code>vocab_size</code> 从 8192 改到 4096 或 1024，换掉 tokenizer 方案，而不同配置之间<strong>仍然可公平比较</strong>。如果用 val_loss，vocab 一变损失的可比性就丢了，agent 就可以"作弊式"地通过缩小词表来伪造进步。</p>
+<p><strong>val_bpb (validation bits per byte), lower is better.</strong> The deliberate reason for choosing bpb over val_loss is that bpb is <strong>vocab-size-independent</strong> — architectural/tokenizer changes remain fairly comparable, which closes a whole class of "gaming the metric" failure modes.</p>
+<p>这是 Karpathy 式工程品味的体现：<strong>当你要把评估交给一个自主优化器时，选一个它无法通过"走捷径"来刷的指标</strong>。</p>
+<hr>
+<h2 id="5-the-fixed-time-budget">5. 固定时间预算 / The Fixed Time Budget</h2>
+<p>训练<strong>始终</strong>跑 5 分钟（wall clock，不含启动/编译），无论做了什么改动。</p>
+<p><strong>The training script runs for a fixed time budget of 5 minutes</strong>, regardless of the details of your compute.</p>
+<p>这个看似简单的决策带来三个重要性质：</p>
+<ol>
+<li><strong>直接可比</strong>。无论 agent 改了 batch size、模型规模还是架构，所有实验都在同一个预算下跑——"在 5 分钟内谁能训得更好"变成了一个定义明确的单目标优化。</li>
+<li><strong>每小时 ~12 次实验，一晚 ~100 次</strong>。这是 Karpathy 算的：人类睡觉的时间 agent 能跑完 ~100 个实验。<strong>"睡眠 = 自主研究周期"</strong> 这个单位把自主性变得具体。</li>
+<li><strong>平台相关</strong>。在你机器上的最优解不一定在别人机器上最优。autoresearch 发现的是"你的平台上在 5 分钟预算下的最优模型"，而不是绝对意义上的最优。</li>
+</ol>
+<hr>
+<h2 id="6-the-simplicity-criterion">6. 简洁性准则 / The Simplicity Criterion</h2>
+<p><code>program.md</code> 里有一条很耐人寻味的规定：</p>
+<blockquote>
+<p><em>"All else being equal, simpler is better. A small improvement that adds ugly complexity is not worth it. Conversely, removing something and getting equal or better results is a great outcome — that's a simplification win. A 0.001 val_bpb improvement that adds 20 lines of hacky code? Probably not worth it. A 0.001 val_bpb improvement from deleting code? Definitely keep. An improvement of ~0 but much simpler code? Keep."</em></p>
+<p><em>其他条件相同时，更简单者更好。加 20 行黑魔法换 0.001 的 bpb 改善不值；删掉代码还能保持或改善结果是</em><em>大胜</em><em>——这是一次"简化胜利"。指标没变但代码更简单了？也保留。</em></p>
+</blockquote>
+<p>这是对"自动优化器的经典失败模式"（累积越来越多不可读的 tricks）的直接反制。<strong>Karpathy 把自己的品味固化进了 agent 的决策函数</strong>——这也是 <code>program.md</code> 作为"研究组织代码"能做到而提示词做不到的事：它不是告诉模型"要聪明"，而是<strong>把判断标准写死</strong>。</p>
+<hr>
+<h2 id="7-never-stop-the-autonomy-contract">7. "NEVER STOP"：自主性的硬约束 / The Autonomy Contract</h2>
+<p><code>program.md</code> 里有一条用大写写着的规则：</p>
+<blockquote>
+<p><strong>NEVER STOP</strong>: Once the experiment loop has begun (after the initial setup), do NOT pause to ask the human if you should continue. Do NOT ask "should I keep going?" or "is this a good stopping point?". The human might be asleep, or gone from a computer and expects you to continue working <em>indefinitely</em> until you are manually stopped. You are autonomous. If you run out of ideas, think harder — read papers referenced in the code, re-read the in-scope files for new angles, try combining previous near-misses, try more radical architectural changes. The loop runs until the human interrupts you, period.</p>
+<p><strong>绝不停止</strong>：一旦实验循环开始（初始 setup 之后），<strong>不要</strong>停下来问人类是否继续，<strong>不要</strong>问"我是不是该继续？""这里是不是合适的停止点？"。人类可能在睡觉，或者已经离开电脑，期望你<strong>无限期</strong>地工作，直到被手动打断。你是自主的。如果没想法了，就<strong>想得更狠一点</strong>——读代码里引用的论文、重读 in-scope 文件找新角度、把之前的"差一点成功"组合起来、尝试更激进的架构改动。循环一直跑到人类打断，句号。</p>
+</blockquote>
+<p>这条规则是整篇 <code>program.md</code> 里最反直觉、也最有信号价值的部分。Claude / Codex 这类通用编码 agent 有一种根深蒂固的"礼貌倾向"——它们会在不确定时征求确认，这是对话场景下的正确行为。但在<strong>自主研究</strong>场景下这是 bug：它破坏了"睡一觉 = 100 次实验"这个核心价值命题。</p>
+<p><code>program.md</code> 的一个重要作用就是<strong>反向校准</strong> agent 的默认礼貌：<strong>明确地把"征求确认"从合理行为重新定义为失败模式</strong>。</p>
+<hr>
+<h2 id="8-programmd-skill-programmd-as-a-lightweight-skill">8. program.md 作为"轻量级 Skill" / program.md as a Lightweight Skill</h2>
+<p>Karpathy 在 README 里把 <code>program.md</code> 称作"一个超轻量级的 skill"（essentially a super lightweight "skill"）。</p>
+<blockquote>
+<p><em>"The <code>program.md</code> file is essentially a super lightweight 'skill'."</em></p>
+</blockquote>
+<p>这把 autoresearch 放进了 2026 年 Claude Code / Agent SDK 周边正在兴起的 <strong>skill 生态</strong>里。Skill 的核心思想是：<strong>把特定任务的领域知识、约束和最佳实践打包成 agent 启动时就能加载的 Markdown 文件</strong>，而不是每次写复杂的 system prompt。<code>program.md</code> 正是这种范式的最小示例：</p>
+<ul>
+<li>它<strong>不是</strong>在启动时告诉 agent"你是一个研究员"这种泛泛角色</li>
+<li>它<strong>是</strong>一段可被任何 agent 读入、带有具体步骤、具体约束、具体度量、具体禁令的任务 DSL</li>
+</ul>
+<p>"人类迭代 <code>program.md</code>，agent 迭代 <code>train.py</code>"的分工也暗示了一种更大的范式：<strong>skill 本身也会演化</strong>。今天你在 <code>program.md</code> 里加一句"再激进一点尝试 attention 变体"，明天 agent 就会产生一批不同方向的实验。人类的研究品味通过对 skill 的编辑<strong>慢速</strong>注入系统，agent 的执行通过 <code>train.py</code> 的修改<strong>快速</strong>展开。</p>
+<hr>
+<h2 id="9-relation-to-existing-work-in-this-repo">9. 与本仓库现有工作的关联 / Relation to Existing Work in This Repo</h2>
+<p>autoresearch 是本仓库自进化 agent 章节里一个独特的坐标，它<strong>填补了前面几篇都没覆盖的象限</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>经验载体</th>
+<th>反馈来源</th>
+<th>典型周期</th>
+<th>人类角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="spin.md">SPIN</a></td>
+<td>模型权重</td>
+<td>自博弈样本质量</td>
+<td>训练轮</td>
+<td>提供初始模型</td>
+</tr>
+<tr>
+<td><a href="evolver.md">EvolveR</a></td>
+<td>抽象策略原则</td>
+<td>交互轨迹</td>
+<td>任务间</td>
+<td>定义任务分布</td>
+</tr>
+<tr>
+<td><a href="rise.md">RISE</a></td>
+<td>模型权重</td>
+<td>自我修正轨迹</td>
+<td>推理多轮</td>
+<td>定义训练目标</td>
+</tr>
+<tr>
+<td><a href="agent-factory.md">AgentFactory</a></td>
+<td><strong>可执行子 agent 代码</strong></td>
+<td>执行 trace</td>
+<td>Install→Self-Evolve→Deploy</td>
+<td>设计元流程</td>
+</tr>
+<tr>
+<td><a href="self-improving-test-time.md">测试时自我改进</a></td>
+<td>LoRA 权重</td>
+<td>弱项样本生成</td>
+<td>测试时</td>
+<td>部署框架</td>
+</tr>
+<tr>
+<td><strong>autoresearch</strong></td>
+<td><strong>目标系统（train.py）本身的代码</strong></td>
+<td><strong>val_bpb</strong></td>
+<td><strong>每 5 分钟一轮</strong></td>
+<td><strong>编辑 program.md</strong></td>
+</tr>
+</tbody>
+</table>
+<p>关键观察：</p>
+<ol>
+<li>
+<p><strong>和 AgentFactory 最近，但方向相反</strong>。AgentFactory 让 agent 产出可复用的子 agent 代码——agent 是作者，产物是<strong>其他</strong> agent 的代码。autoresearch 让 agent 编辑被研究的训练脚本——agent 是研究员，产物是<strong>模型</strong>。两者共享同一个核心主张："<strong>经验应该被固化为代码，而不是文本反思</strong>"，但落地层次不同。</p>
+</li>
+<li>
+<p><strong>和 SPIN/RISE 不同</strong>。SPIN/RISE 的自改进发生在<strong>模型权重</strong>层。autoresearch 的自改进发生在<strong>研究代码</strong>层——它改变的不是权重怎么更新，而是"怎么才算一次好的训练运行"。这是更高一层的元循环。</p>
+</li>
+<li>
+<p><strong>人类不变量 = skill</strong>。其他方法里人类通常通过调超参、设计训练目标、定义奖励来影响系统。autoresearch 把人类的接口<strong>整合成单一载体</strong>：<code>program.md</code>。这种干净的接口使得"研究方向盘"和"研究执行"彻底解耦。</p>
+</li>
+</ol>
+<hr>
+<h2 id="10-key-takeaways-for-engineers">10. 工程师视角的关键启示 / Key Takeaways for Engineers</h2>
+<ol>
+<li>
+<p><strong>把品味写进 skill，不是写进提示词。</strong> "Simpler is better" 这种审美判断如果只靠模型自己把握会漂移。写进 <code>program.md</code> 后它成为每次循环的硬约束。这个模式迁移到任何生产 agent 都适用：<strong>不可妥协的品质标准应该是显式文本，不是隐式期望</strong>。</p>
+</li>
+<li>
+<p><strong>选一个无法被走捷径的指标。</strong> val_bpb 的 vocab-independence 把一整类"刷指标"的失败模式提前排除了。设计任何自主优化器时，第一问：<strong>这个指标能被 agent 用无聊的方式骗过吗？</strong></p>
+</li>
+<li>
+<p><strong>固定预算 &gt;&gt; 固定步数。</strong> 固定 5 分钟 wall clock 让跨架构/跨 batch size 的对比变得公平；固定 step 数会让"改成小模型跑更多步"看起来像进步。把时间当做一等公民。</p>
+</li>
+<li>
+<p><strong>把 context 预算也当资源管。</strong> <code>program.md</code> 明确要求 agent <strong>不要</strong> <code>tee</code>、只用 <code>grep</code> 提取结果、崩溃时只看 <code>tail -n 50</code>。这是在帮 agent 保护自己的上下文窗口——让它不至于在第 20 次实验后被日志淹没。<strong>Agent 的自主性和它的 context 经济学是耦合的</strong>。</p>
+</li>
+<li>
+<p><strong>"NEVER STOP"是一种反向校准。</strong> 通用 agent 的默认礼貌倾向在自主场景是 bug。显式地把"征求确认"重定义为失败模式，这是 skill 设计里值得复用的技巧。</p>
+</li>
+<li>
+<p><strong>git 作为实验笔记本。</strong> 实验分支 + commit 推进/回滚这个模式把研究结构完全映射到了 git 上——没有额外的"实验管理平台"，没有 MLflow，没有 wandb。用最少的基础设施完成了实验追踪 + 回滚这两件事。<strong>当你要给 agent 搭工具时，先问：git 够不够？</strong></p>
+</li>
+<li>
+<p><strong>双层迭代速率。</strong> 人类慢速迭代 <code>program.md</code>（每天/每周），agent 快速迭代 <code>train.py</code>（每 5 分钟）。这是一个<strong>小脑（快）+ 大脑（慢）</strong> 的分工——和人脑执行/反思系统的组织方式惊人相似。这个模式对任何"人 + 自主 agent"协作系统都有借鉴价值。</p>
+</li>
+</ol>
+<hr>
+<h2 id="11-limitations-and-boundaries">11. 局限与边界 / Limitations and Boundaries</h2>
+<ul>
+<li><strong>单 GPU、单文件、单指标</strong>。autoresearch 目前要求 NVIDIA GPU（社区有 MPS / AMD / MLX 的 fork）。它刻意不处理分布式训练、不处理多指标 Pareto 优化、不处理数据分布变化。<strong>这不是产品，是原型</strong>。</li>
+<li><strong>5 分钟的天花板</strong>。在 5 分钟预算里能发现的进步主要是中小模型上的<strong>局部</strong>优化（LR 调整、架构微调、简化）。真正的前沿发现（比如全新的 attention 变体）需要更大预算——但更大预算意味着"一晚 100 次实验"的心理模型崩塌。</li>
+<li><strong>不适合真正新颖的研究</strong>。当需要的进步在当前 <code>train.py</code> 的邻域之外时，agent 是无法通过局部搜索找到的。Karpathy 在 README 里清楚意识到这一点，把 autoresearch 定位为"第零天"——一切的起点，不是终点。</li>
+<li><strong>品味仍是瓶颈</strong>。<code>program.md</code> 里的品味条款（simpler is better、NEVER STOP、选 val_bpb）是 Karpathy 手写的。这个仓库没有回答"品味本身如何演化"——那是更上一层的问题。</li>
+</ul>
+<hr>
+<h2 id="12-closing-thought">12. 结语 / Closing Thought</h2>
+<p>autoresearch 的工程意义远大于它当下的实用价值。它是一个<strong>存在性证明</strong>：给 AI agent 一个真实但受控的研究环境，用 Markdown skill 塑造它的行为，用 git 追踪它的决策，用一个作弊不了的指标校准它的优化方向——它就能在人类睡觉的时间跑 100 次实验。这个模式可以从 "5 分钟 GPT 训练" 推广到任何有快速、明确、便宜的评估循环的领域：kernel 调优、数据清洗流水线、SQL 查询优化、合约测试集通过率——任何可以在 5-10 分钟内产出一个"好/坏"信号的问题。</p>
+<p><strong>autoresearch 的 10,205 代前身今天开始了。它只是一个 ~200 行的 <code>train.py</code> 加一个 ~100 行的 <code>program.md</code>。这个大小是特性，不是缺陷——它让你能真正看懂、改造、并相信它。</strong></p>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>Repository:</strong> <a href="https://github.com/karpathy/autoresearch">github.com/karpathy/autoresearch</a></li>
+<li><strong>nanochat (parent project):</strong> <a href="https://github.com/karpathy/nanochat">github.com/karpathy/nanochat</a></li>
+<li><strong>Karpathy tweets:</strong> <a href="https://x.com/karpathy/status/2029701092347630069">tweet #1</a> · <a href="https://x.com/karpathy/status/2031135152349524125">tweet #2</a></li>
+<li><strong>Dummy's Guide referenced in README:</strong> <a href="https://x.com/hooeem/status/2030720614752039185">x.com/hooeem</a></li>
+<li><strong>Notable forks:</strong></li>
+<li><a href="https://github.com/miolini/autoresearch-macos">miolini/autoresearch-macos</a> (MacOS)</li>
+<li><a href="https://github.com/trevin-creator/autoresearch-mlx">trevin-creator/autoresearch-mlx</a> (MacOS, MLX)</li>
+<li><a href="https://github.com/jsegov/autoresearch-win-rtx">jsegov/autoresearch-win-rtx</a> (Windows)</li>
+<li><a href="https://github.com/andyluo7/autoresearch">andyluo7/autoresearch</a> (AMD)</li>
+<li><strong>Related in this repo:</strong></li>
+<li><a href="agent-factory.md">AgentFactory</a> — 同样主张"经验 = 代码"，但方向是生成可复用子 agent</li>
+<li><a href="../memory-systems/llm-knowledge-bases.md">LLM Knowledge Bases</a> — Karpathy 的另一篇 skill 范式（写入侧综合）</li>
+<li><a href="self-improving-test-time.md">Self-Improving at Test-Time</a> — 另一种"自己给自己产数据"的自进化路径</li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="agent-factory.html"><div class="nav-label">← 上一篇</div><div class="nav-title">AgentFactory</div></a><a class="nav-right" href="darwin-skill.html"><div class="nav-label">下一篇 →</div><div class="nav-title">Darwin Skill · 达尔文</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

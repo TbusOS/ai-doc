@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MemGPT — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../zh/">首页</a>
+          <a href="../../zh/inference-optimization.html">推理优化</a>
+          <a href="../../zh/self-improving-agents.html">自我改进 Agent</a>
+          <a href="../../zh/multi-agent-systems.html">多 Agent 系统</a>
+          <a href="../../zh/memory-systems.html">记忆系统</a>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../memory-systems.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 记忆系统</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-memory">记忆系统</span>
+            <span class="anth-caption">2023 · Packer et al. (Berkeley)</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="memgpt-towards-llms-as-operating-systems">MemGPT: Towards LLMs as Operating Systems</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2310.08560">arXiv:2310.08560</a>
+<strong>作者:</strong> Charles Packer et al. (UC Berkeley)
+<strong>发表:</strong> 2023 (now Letta framework)
+<strong>主题:</strong> 将 LLM 作为操作系统，自主管理多层级记忆</p>
+</blockquote>
+<hr>
+<h2 id="abstract">Abstract</h2>
+<p>Large Language Models are fundamentally constrained by their finite context windows. No matter how large the context becomes, there will always be applications that require processing more information than fits in a single pass. MemGPT draws a powerful analogy from operating systems: just as an OS manages a memory hierarchy (registers, cache, RAM, disk) to create the illusion of virtually unlimited memory, an LLM can manage its own context window to create the illusion of unbounded context. The system introduces virtual context management, where the LLM itself serves as both processor and memory manager, autonomously deciding what information to page in and out of its fixed context window. Using an interrupt-based control flow mechanism, MemGPT demonstrates strong performance on two challenging tasks: document analysis that exceeds the context window and multi-session conversational agents. The project has since evolved into the open-source Letta framework.</p>
+<h2 id="_1">摘要</h2>
+<p>大型语言模型从根本上受限于其有限的上下文窗口。无论上下文变得多大，总会有应用需要处理超出单次处理能力的信息量。MemGPT 从操作系统中汲取了一个有力的类比：正如操作系统管理内存层级（寄存器、缓存、内存、磁盘）以创造几乎无限内存的假象，LLM 也可以管理自己的上下文窗口以创造无界上下文的假象。该系统引入了虚拟上下文管理，其中 LLM 本身同时充当处理器和内存管理器，自主决定将哪些信息换入或换出其固定上下文窗口。通过基于中断的控制流机制，MemGPT 在两个具有挑战性的任务上展示了强劲性能：超出上下文窗口的文档分析以及多会话对话智能体。该项目已演化为开源的 Letta 框架。</p>
+<hr>
+<h2 id="1-introduction">1. Introduction / 引言</h2>
+<p>The fixed context window of LLMs is arguably the most significant architectural limitation facing the field today. While context windows have grown dramatically — from thousands to millions of tokens — they remain fundamentally finite. This creates a hard ceiling on what LLMs can accomplish in a single interaction: they cannot read an entire codebase, they cannot remember all of a year-long conversation history, and they cannot process a library of documents simultaneously.</p>
+<p>Previous approaches to this problem have focused on engineering solutions outside the model: retrieval-augmented generation, summarization pipelines, and sliding window techniques. These work but are rigid, requiring careful hand-tuning for each application and offering limited ability to adapt to changing information needs within a conversation.</p>
+<p>MemGPT takes a radically different approach by observing that this problem has already been solved in another domain. Operating systems faced an identical challenge decades ago: physical RAM is finite, yet applications need to behave as if memory is unlimited. The solution — virtual memory with intelligent paging — transformed computing. MemGPT applies the same principle to LLMs.</p>
+<p>LLM 的固定上下文窗口可以说是当前该领域面临的最重大的架构限制。尽管上下文窗口已大幅增长——从数千到数百万个 token——但它们本质上仍然是有限的。这为 LLM 在单次交互中能完成的工作设定了硬性上限：它们无法阅读整个代码库，无法记住长达一年的全部对话历史，也无法同时处理一个文档库。</p>
+<p>先前解决该问题的方法集中在模型之外的工程方案：检索增强生成、摘要管线和滑动窗口技术。这些方法有效，但较为僵化，需要针对每个应用进行仔细的手动调优，且在对话过程中适应不断变化的信息需求的能力有限。</p>
+<p>MemGPT 采取了一种根本不同的方法，它观察到这个问题在另一个领域已经被解决。操作系统在几十年前面临着完全相同的挑战：物理内存是有限的，但应用程序需要表现得好像内存是无限的。其解决方案——带有智能页面调度的虚拟内存——彻底改变了计算领域。MemGPT 将同样的原理应用于 LLM。</p>
+<hr>
+<h2 id="2-virtual-context-management">2. Virtual Context Management / 虚拟上下文管理</h2>
+<p>The core of MemGPT is a two-tier memory hierarchy that mirrors the RAM/disk distinction in traditional operating systems.</p>
+<p><strong>Main Context (RAM)</strong> corresponds to the LLM's active context window. This is the information the model can directly attend to and reason about in any given step. Like physical RAM, it is fast but limited. The main context includes the system prompt, recent conversation turns, and any information that has been explicitly paged in from external storage.</p>
+<p><strong>External Context (Disk)</strong> encompasses everything that does not fit in the main context. This includes the full conversation history, archived memories, large documents, and any other data sources the agent might need. Like disk storage, it is vast but cannot be directly accessed by the processor — information must first be loaded into main context before the LLM can use it.</p>
+<p>The key insight of MemGPT is that the LLM itself serves as the memory manager. Rather than relying on hardcoded rules to determine what should be in context (as RAG systems do), MemGPT gives the LLM a set of memory management functions — load, save, search, and archive — and lets the model decide when and how to use them. The LLM learns to page information in when it needs it and page information out when the context is getting full, just as an OS kernel manages page tables.</p>
+<p>MemGPT 的核心是一个双层记忆层级，映射了传统操作系统中内存与磁盘的区分。</p>
+<p><strong>主上下文（内存）</strong> 对应 LLM 的活跃上下文窗口。这是模型在任何给定步骤中可以直接关注和推理的信息。与物理内存类似，它速度快但容量有限。主上下文包括系统提示、最近的对话轮次以及从外部存储显式换入的任何信息。</p>
+<p><strong>外部上下文（磁盘）</strong> 涵盖主上下文无法容纳的所有内容。包括完整的对话历史、归档记忆、大型文档以及智能体可能需要的任何其他数据源。与磁盘存储类似，它容量巨大但处理器无法直接访问——信息必须首先加载到主上下文中，LLM 才能使用。</p>
+<p>MemGPT 的关键洞察在于 LLM 本身充当内存管理器。与依赖硬编码规则来决定上下文中应包含什么内容（如 RAG 系统所做的）不同，MemGPT 为 LLM 提供了一组内存管理函数——加载、保存、搜索和归档——并让模型自行决定何时以及如何使用它们。LLM 学会在需要时换入信息，在上下文将满时换出信息，就像操作系统内核管理页表一样。</p>
+<hr>
+<h2 id="3-interrupt-based-control-flow">3. Interrupt-Based Control Flow / 基于中断的控制流</h2>
+<p>MemGPT introduces an interrupt mechanism inspired by hardware interrupts in operating systems. In a traditional OS, interrupts allow the system to respond to events asynchronously — a keyboard press, a network packet arriving, or a timer expiring. MemGPT adapts this concept for LLM agent control flow.</p>
+<p>There are several types of interrupts in MemGPT. <strong>User interrupts</strong> occur when the user sends a new message, pausing whatever the agent was doing and directing attention to the user's input. <strong>System interrupts</strong> are triggered by internal events, such as the context window approaching its capacity limit, prompting the agent to perform memory management operations. <strong>Timer interrupts</strong> can be configured to trigger periodic memory maintenance, such as summarizing and archiving old conversation segments.</p>
+<p>The interrupt mechanism is critical because it allows MemGPT to perform multi-step memory operations transparently. When analyzing a large document, for example, the agent might process one section, generate intermediate notes (saving them to external context), page out the processed section, page in the next section, and repeat — all without the user being aware of the underlying memory management. The user simply asks a question about the document and receives an answer, regardless of whether the document fits in the context window.</p>
+<p>MemGPT 引入了一种受操作系统硬件中断启发的中断机制。在传统操作系统中，中断允许系统异步响应事件——键盘按键、网络数据包到达或定时器到期。MemGPT 将这一概念适配到 LLM 智能体的控制流中。</p>
+<p>MemGPT 中有几种类型的中断。<strong>用户中断</strong>发生在用户发送新消息时，暂停智能体正在进行的操作并将注意力引导至用户输入。<strong>系统中断</strong>由内部事件触发，例如上下文窗口接近容量限制时，促使智能体执行内存管理操作。<strong>定时器中断</strong>可配置为触发周期性的记忆维护，如对旧对话片段进行摘要和归档。</p>
+<p>中断机制至关重要，因为它使 MemGPT 能够透明地执行多步记忆操作。例如，在分析大型文档时，智能体可能处理一个章节、生成中间笔记（保存到外部上下文）、换出已处理的章节、换入下一章节并重复——所有这些操作对用户而言都是透明的。用户只需就文档提出问题并获得答案，无论文档是否能放入上下文窗口。</p>
+<hr>
+<h2 id="4-applications">4. Applications / 应用场景</h2>
+<p>MemGPT demonstrates its capabilities through two primary applications that highlight different aspects of the virtual context management system.</p>
+<p><strong>Document Analysis Beyond Context Window.</strong> Traditional LLMs cannot analyze documents that exceed their context window in a single pass. MemGPT solves this by treating the document as external storage and intelligently paging relevant sections into the main context as needed. When a user asks a question about a long document, MemGPT searches its external context for relevant passages, loads them into the main context, generates a response, and archives the passages back to external storage. This allows MemGPT to answer questions about documents of arbitrary length with the same quality as if the entire document fit in context.</p>
+<p><strong>Multi-Session Conversational Chat.</strong> In extended conversations spanning multiple sessions, traditional LLMs lose all context from previous sessions. MemGPT maintains a persistent external memory that stores conversation history, user preferences, and important facts across sessions. At the start of each new session, MemGPT can page in relevant memories from past conversations, creating the experience of a continuous relationship rather than disconnected interactions. The agent autonomously decides which past memories are relevant to the current conversation, loading them as needed.</p>
+<p>MemGPT 通过两个主要应用展示了其能力，突出了虚拟上下文管理系统的不同方面。</p>
+<p><strong>超出上下文窗口的文档分析。</strong> 传统 LLM 无法在单次处理中分析超出其上下文窗口的文档。MemGPT 通过将文档视为外部存储，并根据需要智能地将相关章节换入主上下文来解决这一问题。当用户就长文档提问时，MemGPT 在其外部上下文中搜索相关段落，将其加载到主上下文中，生成回应，然后将段落归档回外部存储。这使 MemGPT 能够以与整个文档放入上下文相同的质量来回答任意长度文档的问题。</p>
+<p><strong>多会话对话聊天。</strong> 在跨越多个会话的扩展对话中，传统 LLM 会丢失先前会话的所有上下文。MemGPT 维护一个持久的外部记忆，跨会话存储对话历史、用户偏好和重要事实。在每个新会话开始时，MemGPT 可以从过去的对话中换入相关记忆，创造出持续关系而非断开的交互体验。智能体自主决定哪些过往记忆与当前对话相关，按需加载它们。</p>
+<hr>
+<h2 id="5-key-insight-llm-as-self-manager-llm">5. Key Insight: LLM as Self-Manager / 核心洞察：LLM 作为自我管理者</h2>
+<p>The most profound contribution of MemGPT is the demonstration that LLMs can effectively manage their own memory without hardcoded rules. This is a departure from prior work that relied on fixed heuristics for context management (such as always keeping the most recent N turns, or always retrieving the top-K most similar passages).</p>
+<p>In MemGPT, the LLM develops its own memory management strategies through the function-calling interface. It learns when context is getting crowded and proactively archives less relevant information. It recognizes when it needs additional context and searches for it. It maintains running summaries of past interactions that are far more useful than raw conversation logs.</p>
+<p>This self-management capability emerges naturally from the LLM's language understanding abilities. The model can assess the relevance of information, recognize when it is missing context, and generate appropriate search queries — all skills that are already present in capable LLMs. MemGPT simply provides the tools and framework to channel these abilities toward memory management.</p>
+<p>The practical implication is significant: MemGPT systems can adapt to new domains without engineering new memory management rules. The same architecture works for document analysis, conversational agents, coding assistants, and research tools, because the LLM adapts its memory strategy to the task at hand.</p>
+<p>MemGPT 最深远的贡献在于证明了 LLM 能够在没有硬编码规则的情况下有效管理自己的记忆。这与先前依赖固定启发式规则进行上下文管理的工作（如始终保留最近 N 轮对话，或始终检索最相似的 top-K 段落）形成了鲜明对比。</p>
+<p>在 MemGPT 中，LLM 通过函数调用接口发展出自己的记忆管理策略。它学会了在上下文变得拥挤时主动归档不太相关的信息。它能识别出何时需要额外的上下文并进行搜索。它维护着比原始对话日志有用得多的过往交互摘要。</p>
+<p>这种自我管理能力自然地从 LLM 的语言理解能力中涌现。模型能够评估信息的相关性、识别何时缺少上下文，并生成适当的搜索查询——所有这些技能在强大的 LLM 中已经具备。MemGPT 只是提供了工具和框架，将这些能力引导至记忆管理。</p>
+<p>其实际意义重大：MemGPT 系统无需为新领域设计新的记忆管理规则即可适应。同一架构可用于文档分析、对话智能体、编码助手和研究工具，因为 LLM 会根据手头任务调整其记忆策略。</p>
+<hr>
+<h2 id="6-evolution-to-letta-letta">6. Evolution to Letta / 演化为 Letta</h2>
+<p>MemGPT has since evolved into Letta, an open-source framework that makes the virtual context management paradigm accessible to developers building LLM applications. Letta provides production-ready implementations of the memory hierarchy, interrupt system, and function-calling interface described in the original paper.</p>
+<p>The transition from research prototype to open-source framework reflects the practical value of the MemGPT approach. Developers can use Letta to build applications that maintain persistent memory across sessions, process documents of arbitrary length, and manage complex multi-step workflows — all without having to implement memory management logic from scratch.</p>
+<p>Letta also introduces additional features beyond the original paper, including support for multiple concurrent agents with shared memory spaces, more sophisticated memory indexing strategies, and integration with popular LLM providers and tool ecosystems. The framework continues to be actively developed, with a growing community contributing improvements and extensions.</p>
+<p>MemGPT 已演化为 Letta，一个开源框架，使虚拟上下文管理范式可被构建 LLM 应用的开发者所使用。Letta 提供了原始论文中描述的记忆层级、中断系统和函数调用接口的生产就绪实现。</p>
+<p>从研究原型到开源框架的转变反映了 MemGPT 方法的实际价值。开发者可以使用 Letta 构建跨会话维持持久记忆、处理任意长度文档和管理复杂多步工作流的应用——所有这些都无需从头实现记忆管理逻辑。</p>
+<p>Letta 还引入了超越原始论文的附加功能，包括支持具有共享记忆空间的多个并发智能体、更精密的记忆索引策略，以及与流行 LLM 提供商和工具生态系统的集成。该框架持续活跃开发中，不断壮大的社区贡献着改进和扩展。</p>
+<hr>
+<h2 id="7-comparison-with-traditional-approaches">7. Comparison with Traditional Approaches / 与传统方法的对比</h2>
+<p>To fully appreciate MemGPT's contribution, it is useful to compare it with the traditional approaches it aims to supersede.</p>
+<p><strong>Sliding Window</strong> methods simply truncate the conversation history to fit within the context window, keeping only the most recent N turns. This approach is computationally cheap but loses all information beyond the window boundary. A user who mentioned an important fact 20 turns ago will find the AI has completely forgotten it. Sliding windows have no mechanism for selectively preserving important information.</p>
+<p><strong>Summarization Pipelines</strong> periodically condense older conversation segments into summaries, which are then prepended to the context. This preserves more information than sliding windows but is lossy — the summarization process inevitably discards details that might later prove relevant. Furthermore, summarization pipelines use fixed schedules and heuristics, with no ability to adapt to the conversation's needs.</p>
+<p><strong>Standard RAG</strong> systems maintain an external knowledge base and retrieve relevant passages when needed. While more flexible than the above approaches, standard RAG relies on the retrieval mechanism to determine what is relevant, which often requires careful prompt engineering and index tuning. The retrieval is also typically triggered by explicit queries rather than being proactively managed.</p>
+<p>MemGPT subsumes all of these approaches by giving the LLM the freedom to implement any of them — or combinations thereof — as the situation demands. The LLM might use a summarization strategy for old conversations, a RAG-like search for specific facts, and a sliding window approach for the most recent turns, all within the same interaction. This flexibility is what makes MemGPT fundamentally more powerful than any fixed strategy.</p>
+<p>为了充分理解 MemGPT 的贡献，将其与它旨在超越的传统方法进行对比是有价值的。</p>
+<p><strong>滑动窗口</strong>方法简单地截断对话历史以适应上下文窗口，仅保留最近的 N 轮对话。这种方法计算成本低，但会丢失窗口边界之外的所有信息。一个在 20 轮之前提到过重要事实的用户会发现 AI 已经完全忘记了它。滑动窗口没有选择性保留重要信息的机制。</p>
+<p><strong>摘要管线</strong>定期将较旧的对话片段浓缩为摘要，然后将其添加到上下文开头。这比滑动窗口保留了更多信息，但是有损的——摘要过程不可避免地会丢弃可能在后来被证明相关的细节。此外，摘要管线使用固定的调度和启发式规则，无法适应对话的需求。</p>
+<p><strong>标准 RAG</strong> 系统维护一个外部知识库，并在需要时检索相关段落。虽然比上述方法更灵活，但标准 RAG 依赖检索机制来确定什么是相关的，这通常需要仔细的提示工程和索引调优。检索也通常由显式查询触发，而非被主动管理。</p>
+<p>MemGPT 通过赋予 LLM 根据情况自由实施上述任何方法——或其组合——的能力，将所有这些方法统一起来。LLM 可能对旧对话使用摘要策略，对特定事实使用类 RAG 搜索，对最近的轮次使用滑动窗口方法，所有这些都在同一次交互中完成。这种灵活性正是 MemGPT 比任何固定策略从根本上更强大的原因。</p>
+<hr>
+<h2 id="8-limitations-and-open-challenges">8. Limitations and Open Challenges / 局限性与开放挑战</h2>
+<p>Despite its elegance, MemGPT faces several important limitations that represent open research challenges.</p>
+<p><strong>Latency Overhead.</strong> Each memory management operation requires an additional LLM inference step. When the agent decides to search external memory, load information, or archive data, these are function calls that each consume time and compute. In latency-sensitive applications, the overhead of frequent memory operations can degrade user experience. Balancing memory management thoroughness with response speed remains an open challenge.</p>
+<p><strong>Memory Management Quality.</strong> While the LLM-as-memory-manager approach is flexible, it is not infallible. The model may make suboptimal paging decisions, especially in complex scenarios where the relevance of information is not immediately obvious. It may archive important information prematurely or fail to retrieve relevant memories. The quality of memory management is bounded by the LLM's reasoning capabilities, which can be inconsistent.</p>
+<p><strong>Scalability.</strong> As the external memory store grows over months or years of interaction, search and retrieval become increasingly challenging. The current approach relies on vector similarity search, which scales reasonably well but may not capture all the nuanced relationships between memories that a more sophisticated indexing scheme could.</p>
+<p><strong>Cost.</strong> The additional inference calls required for memory management translate directly into higher API costs. Each conversation turn may require multiple internal function calls before generating a user-visible response, multiplying the per-interaction cost. For consumer-facing applications, this cost overhead can be significant.</p>
+<p>尽管设计优雅，MemGPT 面临着几个重要的局限性，它们代表了开放的研究挑战。</p>
+<p><strong>延迟开销。</strong> 每次记忆管理操作都需要额外的 LLM 推理步骤。当智能体决定搜索外部记忆、加载信息或归档数据时，这些都是消耗时间和计算资源的函数调用。在对延迟敏感的应用中，频繁记忆操作的开销可能降低用户体验。在记忆管理的彻底性与响应速度之间取得平衡仍然是一个开放挑战。</p>
+<p><strong>记忆管理质量。</strong> 虽然 LLM 作为记忆管理器的方法灵活，但并非万无一失。模型可能做出次优的页面调度决策，特别是在信息相关性不立即明显的复杂场景中。它可能过早归档重要信息或未能检索到相关记忆。记忆管理的质量受限于 LLM 的推理能力，而这些能力可能不够稳定。</p>
+<p><strong>可扩展性。</strong> 随着外部记忆存储在数月或数年的交互中增长，搜索和检索变得越来越具挑战性。当前方法依赖向量相似性搜索，其扩展性较好，但可能无法捕捉更精密索引方案所能捕捉的记忆间所有微妙关系。</p>
+<p><strong>成本。</strong> 记忆管理所需的额外推理调用直接转化为更高的 API 成本。每轮对话在生成用户可见的响应之前可能需要多次内部函数调用，使每次交互的成本成倍增加。对于面向消费者的应用，这种成本开销可能是显著的。</p>
+          </article>
+
+          <div class="article-nav"><a href="evo-memory.html"><div class="nav-label">← 上一篇</div><div class="nav-title">Evo-Memory</div></a><a class="nav-right" href="long-term-memory-omne.html"><div class="nav-label">下一篇 →</div><div class="nav-title">LTM &amp; OMNE</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

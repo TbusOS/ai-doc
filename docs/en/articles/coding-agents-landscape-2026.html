@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Coding Agents &amp; Agent Factory Landscape 2026 — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../en/">Home</a>
+          <a href="../../en/inference-optimization.html">Inference Optimization</a>
+          <a href="../../en/self-improving-agents.html">Self-Improving Agents</a>
+          <a href="../../en/multi-agent-systems.html">Multi-Agent Systems</a>
+          <a href="../../en/memory-systems.html">Memory Systems</a>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../multi-agent-systems.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Multi-Agent Systems</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-multi">Multi-Agent Systems</span>
+            <span class="anth-caption">2026 · Landscape article</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="multi-agent-coding-systems-agent-factory-landscape-2026">Multi-Agent Coding Systems &amp; Agent Factory Landscape (2026)</h1>
+<blockquote>
+<p><strong>主题:</strong> 2026 年编程领域多 Agent 团队与 Agent 工厂研究生态综述</p>
+<p><strong>Type:</strong> Landscape article / 生态综述（非单篇论文翻译）</p>
+<p><strong>Last updated:</strong> 2026-04</p>
+<p><strong>Scope:</strong> Papers, open-source frameworks, benchmarks, and design paradigms for LLM-based multi-agent systems in software engineering and for "agent factory" (agents-that-design-agents) research.</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">Why This Matters / 为什么这个方向重要</h2>
+<p>In 2024 the dominant design pattern was a <strong>single agent with a loop</strong> — one LLM, a few tools, a ReAct-style scratchpad. By 2026 two paradigms have clearly pulled ahead: (1) <strong>multi-agent teams</strong> where specialized roles collaborate on software engineering, and (2) <strong>agent factories</strong> where a meta-process automatically designs, optimizes, or even writes the agents themselves. Both paradigms attack the same bottleneck — <em>a single agent running in a single loop cannot keep up with the structure of real software work</em>.</p>
+<p>2024 年占主导的设计模式是<strong>单 agent + 循环</strong>——一个 LLM、几个工具、一条 ReAct 式的暂存区。到了 2026 年，两种范式明显领先：（1）<strong>多 Agent 团队</strong>——由专业化角色在软件工程任务上协作；（2）<strong>Agent 工厂</strong>——由一个元过程自动设计、优化、甚至亲自编写这些 agent。两种范式攻击的是同一个瓶颈——<strong>单 agent 在单循环里运行，跟不上真实软件工作的结构</strong>。</p>
+<p>This landscape article covers the papers, open-source projects, benchmarks, and design paradigms that matter if you are building such a system today. It is intended as a reading guide, not a replacement for reading the primary sources.</p>
+<p>本文覆盖了今天如果你要构建这类系统、值得阅读的论文、开源项目、基准和设计范式。它是一份<strong>阅读导览</strong>，不是对一手资料的替代。</p>
+<hr>
+<h2 id="1-the-two-paradigms">1. The Two Paradigms / 两种范式</h2>
+<h3 id="11-multi-agent-teams-for-software-engineering-agent">1.1 Multi-Agent Teams for Software Engineering / 软件工程的多 Agent 团队</h3>
+<p>The first paradigm treats agent design as a <em>team composition</em> problem. The designer decides what roles to create (product manager, architect, coder, tester, reviewer), how they talk to each other, and what artifacts they pass between each other. The representative early works are <strong>MetaGPT</strong> (encoding SOPs into agent protocols) and <strong>ChatDev</strong> (a conversational software company based on the waterfall model). The 2026 evolution of this line, visible in papers like <strong>Agyn</strong> and <strong>MAS-Orchestra</strong>, is to treat orchestration itself as a learned component — optimized via RL rather than hand-designed.</p>
+<p>第一种范式把 agent 设计视为一个<strong>团队组成</strong>问题。设计者决定要创建哪些角色（产品经理、架构师、程序员、测试、评审）、它们之间如何对话、以及在角色之间传递什么产物。早期代表作是 <strong>MetaGPT</strong>（把 SOP 编码进 agent 协议）和 <strong>ChatDev</strong>（基于瀑布模型的对话式软件公司）。这条线 2026 年的演化——从 <strong>Agyn</strong> 和 <strong>MAS-Orchestra</strong> 等论文可以看出——是把编排本身视为一个<strong>可学习的组件</strong>，用 RL 来优化而不是人工设计。</p>
+<h3 id="12-agent-factories-agents-that-design-agents-agent-agent-agent">1.2 Agent Factories: Agents That Design Agents / Agent 工厂：设计 Agent 的 Agent</h3>
+<p>The second paradigm treats the <em>agent system</em> itself as a first-class object that can be searched, optimized, and reused. Instead of asking "what should this agent do," it asks "what agent should we build, and how do we improve it automatically." Representative works include <strong>AFlow</strong> (ICLR 2025 Oral), which uses MCTS to search over code-represented workflows; <strong>ADAS</strong>, where a meta-agent literally writes new agent code; and the 2026 frontier work <strong>AgentFactory</strong>, which crystallizes successful solutions into reusable Python subagents. This paradigm is younger but evolving fast, and it is where the most mathematically interesting work is happening.</p>
+<p>第二种范式把 <strong>agent 系统</strong>本身视为一个可搜索、可优化、可复用的一等对象。它问的不是"这个 agent 应该做什么"，而是"我们应该构建什么样的 agent，以及如何自动地改进它"。代表作包括 <strong>AFlow</strong>（ICLR 2025 Oral），它用 MCTS 在"代码表示的 workflow 空间"中搜索；<strong>ADAS</strong>，其中一个 meta-agent 字面意义上地<strong>编写</strong>新的 agent 代码；以及 2026 年的前沿工作 <strong>AgentFactory</strong>，它把成功的解决方案固化为可复用的 Python 子 agent。这条线更年轻但演进很快，也是数学上最有意思的工作所在的地方。</p>
+<h3 id="13-where-they-meet">1.3 Where They Meet / 两者的交汇</h3>
+<p>The two paradigms are not mutually exclusive. A mature production system in 2026 typically has a hand-designed team composition at the top (because humans still understand software workflows better than LLMs) and an automated optimization layer at the bottom (because tuning individual prompts and tools by hand is no longer cost-effective). <strong>OpenHands</strong> is the clearest example of this synthesis — its Software Agent SDK (MLSys 2026) provides the team scaffold, while the community runs workflow optimization on top of it.</p>
+<p>两种范式并不互斥。2026 年一个成熟的生产系统通常在顶层使用<strong>人工设计的团队组成</strong>（因为人类对软件工作流的理解仍然比 LLM 好），在底层使用<strong>自动优化层</strong>（因为手工调单个提示词和工具已不再划算）。<strong>OpenHands</strong> 是这种融合最清晰的例子——它的 Software Agent SDK（MLSys 2026）提供团队骨架，社区在其上运行 workflow 优化。</p>
+<hr>
+<h2 id="2-essential-papers">2. Essential Papers / 核心论文</h2>
+<h3 id="21-agent-factory-line-agent">2.1 Agent Factory Line / Agent 工厂线</h3>
+<table>
+<thead>
+<tr>
+<th>Paper / 论文</th>
+<th>arXiv</th>
+<th>Year</th>
+<th>Core Contribution / 核心贡献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AgentFactory</strong></td>
+<td><a href="https://arxiv.org/abs/2603.18000">2603.18000</a></td>
+<td>2026-03</td>
+<td>Preserves successful solutions as executable Python subagents; Install→Self-Evolve→Deploy lifecycle. 把成功解保存为可执行 Python 子 agent，三阶段生命周期。</td>
+</tr>
+<tr>
+<td><strong>AFlow</strong></td>
+<td><a href="https://arxiv.org/abs/2410.10762">2410.10762</a></td>
+<td>ICLR 2025 Oral</td>
+<td>MCTS search over code-represented workflow space; 80.3% average across 6 benchmarks. 在代码表示的 workflow 空间上做 MCTS 搜索。</td>
+</tr>
+<tr>
+<td><strong>A2Flow</strong></td>
+<td><a href="https://arxiv.org/html/2511.20693">2511.20693</a></td>
+<td>2025-11</td>
+<td>Automatic extraction of abstract operators — no hand-designed operator library. 自动抽取抽象算子，不需要手工算子库。</td>
+</tr>
+<tr>
+<td><strong>ADAS</strong></td>
+<td><a href="https://arxiv.org/abs/2408.08435">2408.08435</a></td>
+<td>2024</td>
+<td>Meta-agent writes new agent code in a general programming language. Meta-agent 用通用编程语言编写新 agent 代码。</td>
+</tr>
+<tr>
+<td><strong>DebFlow</strong></td>
+<td><a href="https://arxiv.org/html/2503.23781">2503.23781</a></td>
+<td>2025</td>
+<td>Agent creation via multi-agent debate. 通过多 agent 辩论创建 agent。</td>
+</tr>
+<tr>
+<td><strong>AgentEvolver</strong></td>
+<td><a href="https://arxiv.org/abs/2511.10395">2511.10395</a></td>
+<td>2025-11</td>
+<td>Efficiency-focused self-evolving agent system. 侧重效率的自演化 agent 系统。</td>
+</tr>
+<tr>
+<td><strong>Agent0</strong></td>
+<td><a href="https://arxiv.org/html/2511.16043v1">2511.16043</a></td>
+<td>2025-11</td>
+<td>Self-evolving from zero data via tool-integrated reasoning. 通过工具集成推理，从零数据自演化。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-multi-agent-software-engineering-line-agent">2.2 Multi-Agent Software Engineering Line / 多 Agent 软件工程线</h3>
+<table>
+<thead>
+<tr>
+<th>Paper / 论文</th>
+<th>arXiv</th>
+<th>Year</th>
+<th>Core Contribution / 核心贡献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OpenHands Software Agent SDK</strong></td>
+<td><a href="https://arxiv.org/html/2511.03690v1">2511.03690</a></td>
+<td>MLSys 2026</td>
+<td>Production-grade composable SDK; 72% on SWE-bench Verified with Claude Sonnet 4.5. 生产级可组合 SDK，配 Sonnet 4.5 在 SWE-bench Verified 达 72%。</td>
+</tr>
+<tr>
+<td><strong>SWE-agent</strong></td>
+<td><a href="https://arxiv.org/abs/2405.15793">2405.15793</a></td>
+<td>NeurIPS 2024</td>
+<td>Agent-Computer Interface (ACI) — tools redesigned for LLM ergonomics. 为 LLM 的人机工效重新设计的工具接口。</td>
+</tr>
+<tr>
+<td><strong>MetaGPT</strong></td>
+<td><a href="https://arxiv.org/abs/2308.00352">2308.00352</a></td>
+<td>ICLR 2024 Oral</td>
+<td>Encodes Standard Operating Procedures into agent protocols. 把 SOP 编码进 agent 协议。</td>
+</tr>
+<tr>
+<td><strong>Agyn</strong></td>
+<td><a href="http://arxiv.org/abs/2602.01465v2">2602.01465</a></td>
+<td>2026</td>
+<td>Team-based autonomous SE: coordination/research/implementation/review roles. 团队式自治软件工程：协调/调研/实现/评审四角色。</td>
+</tr>
+<tr>
+<td><strong>SEMAG</strong></td>
+<td><a href="https://arxiv.org/html/2603.15707">2603.15707</a></td>
+<td>2026</td>
+<td>Self-evolutionary multi-agent code gen; adaptive to task difficulty. 自演化多 agent 代码生成，对任务难度自适应。</td>
+</tr>
+<tr>
+<td><strong>MAS-Orchestra</strong></td>
+<td><a href="http://arxiv.org/abs/2601.14652v2">2601.14652</a></td>
+<td>2026</td>
+<td>Multi-agent orchestration as RL problem. 把多 agent 编排建模为 RL 问题。</td>
+</tr>
+<tr>
+<td><strong>AgentCoder</strong></td>
+<td><a href="https://arxiv.org/abs/2312.13010">2312.13010</a></td>
+<td>2023</td>
+<td>Programmer / Test Designer / Test Executor 3-role iteration. 程序员/测试设计师/测试执行器三角色迭代。</td>
+</tr>
+<tr>
+<td><strong>SolAgent</strong></td>
+<td><a href="https://arxiv.org/abs/2601.23009">2601.23009</a></td>
+<td>2026-01</td>
+<td>Solidity-specific multi-agent — 64.4% Pass@1 vs ~25% baseline. Solidity 智能合约专用多 agent。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-surveys">2.3 Surveys / 综述</h3>
+<table>
+<thead>
+<tr>
+<th>Survey / 综述</th>
+<th>arXiv</th>
+<th>Why Read / 为什么读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A Comprehensive Survey of Self-Evolving AI Agents</strong></td>
+<td><a href="https://arxiv.org/abs/2508.07407">2508.07407</a></td>
+<td>The unified framework — System Inputs / Agent System / Environment / Optimisers — is the best mental model I've seen for this area. 统一框架是这个领域最好的心智模型。</td>
+</tr>
+<tr>
+<td><strong>Self-Evolving Agents: What, When, How, Where</strong></td>
+<td><a href="https://arxiv.org/abs/2507.21046">2507.21046</a></td>
+<td>Taxonomy across agent components (model/memory/tools/architecture) and stages. 按组件和阶段的分类学。</td>
+</tr>
+<tr>
+<td><strong>Code Generation with LLM-based Agents</strong></td>
+<td><a href="https://arxiv.org/html/2508.00083v1">2508.00083</a></td>
+<td>Directly targeting the coding agent subfield. 直接针对代码 agent 这个子领域。</td>
+</tr>
+<tr>
+<td><strong>LLM-Based Agentic Systems for SE</strong></td>
+<td><a href="https://arxiv.org/abs/2601.09822v2">2601.09822</a></td>
+<td>Full software lifecycle coverage. 覆盖完整软件生命周期。</td>
+</tr>
+<tr>
+<td><strong>LLM Agent: Methodology, Applications, Challenges</strong></td>
+<td><a href="https://arxiv.org/abs/2503.21460">2503.21460</a></td>
+<td>General-purpose methodology survey. 通用方法论综述。</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-open-source-projects-worth-your-time">3. Open-Source Projects Worth Your Time / 值得投入时间的开源项目</h2>
+<h3 id="31-coding-agent-runtimes-agent">3.1 Coding Agent Runtimes / 编程 Agent 运行时</h3>
+<table>
+<thead>
+<tr>
+<th>Project / 项目</th>
+<th>Positioning / 定位</th>
+<th>SWE-bench V. / 基准</th>
+<th>Status / 状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="https://github.com/All-Hands-AI/OpenHands">OpenHands</a></strong></td>
+<td>Most complete open coding agent platform. 最完整的开源编程 agent 平台。</td>
+<td>72% (with Sonnet 4.5)</td>
+<td>Very active / 极活跃</td>
+</tr>
+<tr>
+<td><strong><a href="https://github.com/SWE-agent/SWE-agent">SWE-agent</a></strong></td>
+<td>Reference implementation of ACI design. ACI 设计的参考实现。</td>
+<td>Foundational</td>
+<td>Active / 活跃</td>
+</tr>
+<tr>
+<td><strong><a href="https://github.com/Aider-AI/aider">Aider</a></strong></td>
+<td>Strong repo-map + git integration — good component inspiration for multi-agent systems. repo-map + git 集成，多 agent 系统的组件灵感来源。</td>
+<td>—</td>
+<td>Very active / 极活跃</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-multi-agent-orchestration-sdks-agent-sdk">3.2 Multi-Agent Orchestration SDKs / 多 Agent 编排 SDK</h3>
+<p>The four production-grade frameworks that have "won" the 2026 market:</p>
+<p>2026 年市场上胜出的四个生产级框架：</p>
+<ul>
+<li><strong><a href="https://docs.langchain.com">LangGraph</a></strong> (v1.0 GA, Oct 2025) — The production-maturity leader. Built-in checkpointing, time-travel, LangSmith observability. Best when you need durable, inspectable workflows. 生产成熟度第一，自带 checkpoint 和时间旅行。</li>
+<li><strong><a href="https://code.claude.com/docs/en/agent-sdk/overview">Claude Agent SDK</a></strong> — Renamed from Claude Code SDK. Deepest MCP integration, in-process server, lifecycle hooks. Best if you are already in the Anthropic ecosystem. MCP 集成最深，Anthropic 生态首选。</li>
+<li><strong><a href="https://openai.com">OpenAI Agents SDK</a></strong> — Replaces the experimental Swarm. Simplest API, works with 100+ non-OpenAI models. Best for quick prototyping. 取代 Swarm 的正式 SDK，API 最简洁。</li>
+<li><strong><a href="https://github.com/crewAIInc/crewAI">CrewAI</a></strong> — 48k+ stars. role/task/crew abstraction with the largest community. Best for role-based team prototyping. 社区最大的多 agent 编排框架，role/task/crew 抽象清晰。</li>
+</ul>
+<h3 id="33-agent-factory-self-evolving-projects-agent">3.3 Agent Factory / Self-Evolving Projects / Agent 工厂与自演化项目</h3>
+<ul>
+<li><strong><a href="https://github.com/zzatpku/AgentFactory">AgentFactory</a></strong> — Reference implementation of the arxiv 2603.18000 paper. Small (~44 stars) but the paradigm is important. 论文 2603.18000 的官方实现，虽小但范式重要。</li>
+<li><strong><a href="https://github.com/EvoAgentX/EvoAgentX">EvoAgentX</a></strong> — A framework for building a <em>self-evolving ecosystem</em> of agents. Actively maintained. 自演化 agent 生态的框架，活跃维护。</li>
+<li><strong><a href="https://github.com/FoundationAgents/AFlow">AFlow</a></strong> — Official AFlow implementation. Good starting point for workflow-search experiments. AFlow 官方实现，workflow 搜索实验的起点。</li>
+</ul>
+<h3 id="34-curated-reading-lists">3.4 Curated Reading Lists / 精选阅读列表</h3>
+<ul>
+<li><strong><a href="https://github.com/VoltAgent/awesome-ai-agent-papers">VoltAgent/awesome-ai-agent-papers</a></strong> — Curated 2026 agent papers, updated frequently. 2026 年 agent 论文精选，更新频繁。</li>
+<li><strong><a href="https://github.com/EvoAgentX/Awesome-Self-Evolving-Agents">EvoAgentX/Awesome-Self-Evolving-Agents</a></strong> — Companion list to the self-evolving agents survey. 自演化 agent 综述的配套列表。</li>
+<li><strong><a href="https://github.com/codefuse-ai/Awesome-Code-LLM">codefuse-ai/Awesome-Code-LLM</a></strong> — Comprehensive code-LLM ecosystem list (TMLR). 完整的 code-LLM 生态列表。</li>
+</ul>
+<hr>
+<h2 id="4-benchmarks-what-the-2026-leaderboards-say-2026">4. Benchmarks: What the 2026 Leaderboards Say / 2026 年基准现状</h2>
+<p>As of April 2026, SWE-bench Verified (500 human-filtered real GitHub issues) is the de facto standard for coding agents. The current top of the leaderboard:</p>
+<p>截至 2026 年 4 月，SWE-bench Verified（500 个经过人工筛选的真实 GitHub issue）是编程 agent 的事实标准。当前榜单头部：</p>
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>System</th>
+<th>Score</th>
+<th>Open?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Claude Opus 4.5</td>
+<td>80.9%</td>
+<td>Closed</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Claude Opus 4.6</td>
+<td>80.8%</td>
+<td>Closed</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Gemini 3.1 Pro</td>
+<td>80.6%</td>
+<td>Closed</td>
+</tr>
+<tr>
+<td>4</td>
+<td>MiniMax M2.5</td>
+<td>80.2%</td>
+<td>Closed</td>
+</tr>
+<tr>
+<td>5</td>
+<td>GPT-5.2</td>
+<td>80.0%</td>
+<td>Closed</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Sonar Foundation Agent</td>
+<td>79.2%</td>
+<td>Closed</td>
+</tr>
+<tr>
+<td>—</td>
+<td><strong>OpenHands + Sonnet 4.5</strong></td>
+<td><strong>72%</strong></td>
+<td><strong>Open</strong> ⭐</td>
+</tr>
+</tbody>
+</table>
+<p>On the harder <strong>SWE-bench Pro</strong>, GPT-5.3-Codex leads at 56.8%, with GPT-5.2-Codex at 56.4%. On Scale AI's SEAL standardized leaderboard, Claude Opus 4.5 leads at 45.9% — the large gap between raw leaderboards and standardized scaffolds illustrates how much of "agent performance" is really <em>harness</em> performance.</p>
+<p>在更难的 <strong>SWE-bench Pro</strong> 上，GPT-5.3-Codex 以 56.8% 领先，GPT-5.2-Codex 为 56.4%。在 Scale AI 的 SEAL 标准化榜单上，Claude Opus 4.5 以 45.9% 领先——原始榜单与标准化 scaffold 之间的巨大差距说明："agent 性能"很大一部分其实是 <strong>harness 性能</strong>。</p>
+<p><strong>Key takeaway.</strong> The open-source frontier (OpenHands at 72%) trails the closed-source frontier by about 8 percentage points. That gap is smaller than it was a year ago, and it is mostly explained by model quality, not by agent design.</p>
+<p><strong>关键启示。</strong> 开源前沿（OpenHands 72%）落后闭源前沿约 8 个百分点。这个差距比一年前小了，而且主要可以用<strong>模型质量</strong>解释，而不是 agent 设计。</p>
+<hr>
+<h2 id="5-recommended-learning-paths">5. Recommended Learning Paths / 推荐学习路径</h2>
+<h3 id="51-if-you-are-building-a-multi-agent-coding-team-agent">5.1 If You Are Building a Multi-Agent Coding Team / 如果你在构建多 Agent 编码团队</h3>
+<ol>
+<li><strong>Stand up OpenHands</strong> as your base runtime. Don't reinvent the runtime — its Software Agent SDK (arxiv 2511.03690) already solved sandboxing, file ops, and browser integration. 用 OpenHands 作为底座运行时。</li>
+<li><strong>Read the SWE-agent paper</strong> to internalize the Agent-Computer Interface (ACI) concept. This is the single highest-leverage design idea in the field. 读 SWE-agent 论文吃透 ACI 概念。</li>
+<li><strong>Study MetaGPT and Agyn</strong> for role composition patterns. Don't copy them wholesale — copy the decomposition discipline. 学 MetaGPT 和 Agyn 的角色组成模式。</li>
+<li><strong>Pick one orchestration SDK</strong> (LangGraph for durability, Claude Agent SDK for MCP, CrewAI for speed of prototyping). 选一个编排 SDK。</li>
+</ol>
+<h3 id="52-if-you-are-building-an-agent-factory-agent">5.2 If You Are Building an Agent Factory / 如果你在构建 Agent 工厂</h3>
+<ol>
+<li><strong>Read the Comprehensive Survey of Self-Evolving AI Agents (2508.07407)</strong> first. The 4-component framework (System Inputs / Agent System / Environment / Optimisers) is the right mental model. 先读综述 2508.07407。</li>
+<li><strong>Run AFlow</strong> on a small domain to feel what workflow search actually looks like. AFlow 的 MCTS 很直观。</li>
+<li><strong>Read the AgentFactory paper and run its code.</strong> The "experience is code, not text" bet is the most important recent shift. 读 AgentFactory 论文并跑通代码。</li>
+<li><strong>Watch AgentEvolver, Agent0, A2Flow.</strong> These are the 2025-11+ frontier. 跟踪 2025-11 之后的前沿。</li>
+</ol>
+<h3 id="53-if-you-only-have-3-hours-3">5.3 If You Only Have 3 Hours / 如果只有 3 小时</h3>
+<p>Read, in order: (a) the abstract and §3 of <strong>AgentFactory</strong>, (b) the ACI section of <strong>SWE-agent</strong>, (c) the "unified framework" section of the <strong>self-evolving agents survey (2508.07407)</strong>. These three will tell you more than any single 50-page textbook.</p>
+<p>按顺序读：（a）<strong>AgentFactory</strong> 的摘要和第 3 节；（b）<strong>SWE-agent</strong> 讨论 ACI 的章节；（c）<strong>自演化 agent 综述 2508.07407</strong> 的统一框架章节。这三段比任何单本 50 页教材都更有价值。</p>
+<hr>
+<h2 id="6-key-insights">6. Key Insights / 关键洞察</h2>
+<ol>
+<li><strong>The unit of accumulated experience is shifting from text to code.</strong> This is the single most important trend of 2025-2026. Text reflections are ambiguous, don't compose, and compete for attention; code is precise, composable, and portable. AgentFactory is the cleanest articulation of this shift, but the same principle shows up in ADAS, DebFlow, AFlow, and OpenHands's SDK.</li>
+<li>
+<p><strong>累积经验的单位正从文本转向代码。</strong> 这是 2025-2026 最重要的趋势。文本反思模糊、不可组合、争夺注意力；代码精确、可组合、可移植。AgentFactory 是最清晰的表达，但相同原则也出现在 ADAS、DebFlow、AFlow 和 OpenHands SDK 中。</p>
+</li>
+<li>
+<p><strong>Harness quality dominates model quality at the frontier.</strong> The gap between OpenHands (72%) and the closed-source frontier (80%+) is small and shrinking. Most of the lift in the last 18 months came from ACI design, workspace management, and tool ergonomics — not from bigger models.</p>
+</li>
+<li>
+<p><strong>在前沿位置，harness 质量主导模型质量。</strong> OpenHands（72%）与闭源前沿（80%+）之间的差距很小而且在缩小。过去 18 个月的大部分提升来自 ACI 设计、工作区管理和工具人机工效——不是更大的模型。</p>
+</li>
+<li>
+<p><strong>Orchestration is becoming a learned component.</strong> Papers like MAS-Orchestra and AFlow show that orchestration no longer needs to be hand-written. You can search, optimize, or RL-train it. Teams still designing their orchestration by hand in 2026 are leaving value on the table.</p>
+</li>
+<li>
+<p><strong>编排正在成为一个可学习的组件。</strong> MAS-Orchestra 和 AFlow 这样的论文表明编排不再需要手写。你可以搜索它、优化它、或用 RL 训练它。2026 年还在手工设计编排的团队是在浪费价值。</p>
+</li>
+<li>
+<p><strong>The compounding curve is real but lagged.</strong> AgentFactory's experimental result — comparable cost on Batch 1, 57% savings on Batch 2 — captures a general truth: self-evolving systems pay an upfront cost and recoup it later. This means they are the right choice for long-lived, structured task streams, and the wrong choice for one-off tasks.</p>
+</li>
+<li>
+<p><strong>复利曲线是真实的，但有滞后。</strong> AgentFactory 的实验结果——Batch 1 成本相当，Batch 2 节省 57%——反映了一个普遍的真理：自演化系统前期付出成本，后期收回。这意味着它们适合长周期、结构化的任务流，不适合一次性任务。</p>
+</li>
+<li>
+<p><strong>Open-source has caught up enough to be the starting point.</strong> In 2024 you might reasonably have started from a closed product and reverse-engineered it. In 2026, starting from OpenHands or Claude Agent SDK and customizing is strictly better — you get the runtime, the benchmarks, and the update cadence.</p>
+</li>
+<li><strong>开源已经追上到足以作为起点。</strong> 2024 年你可能合理地从闭源产品开始并逆向。2026 年，从 OpenHands 或 Claude Agent SDK 开始并定制是严格更优的——你同时拿到运行时、基准和更新节奏。</li>
+</ol>
+<hr>
+<h2 id="references">References / 参考资料</h2>
+<p>All papers and repositories cited in this article are linked inline above. For continuous tracking of new work in this space, the three best feeds are:</p>
+<p>本文引用的所有论文和仓库均在正文中以内联链接提供。持续跟踪这个领域新工作的三个最佳订阅源是：</p>
+<ul>
+<li><a href="https://github.com/VoltAgent/awesome-ai-agent-papers">VoltAgent/awesome-ai-agent-papers</a> — Agent 论文持续更新</li>
+<li><a href="https://github.com/EvoAgentX/Awesome-Self-Evolving-Agents">EvoAgentX/Awesome-Self-Evolving-Agents</a> — 自演化 agent 专题</li>
+<li><a href="http://www.swebench.com/">SWE-bench Leaderboard</a> — 编程 agent 基准实况</li>
+</ul>
+          </article>
+
+          <div class="article-nav"><span></span><a class="nav-right" href="nuwa-skill.html"><div class="nav-label">Next →</div><div class="nav-title">Nuwa Skill · 女娲</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

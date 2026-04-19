@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Doc — Bilingual AI Paper Knowledge Base</title>
+    <link rel="stylesheet" href="../assets/fonts.css">
+    <link rel="stylesheet" href="../assets/anthropic.css">
+    <link rel="stylesheet" href="../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../en/">Home</a>
+          <a href="../en/inference-optimization.html">Inference Optimization</a>
+          <a href="../en/self-improving-agents.html">Self-Improving Agents</a>
+          <a href="../en/multi-agent-systems.html">Multi-Agent Systems</a>
+          <a href="../en/memory-systems.html">Memory Systems</a>
+          <a href="../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../en/" class="active">EN</a>
+          <a href="../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-hero" style="padding-block: var(--space-9);">
+        <div class="anth-container">
+          <span class="anth-badge">An open, curated knowledge base</span>
+          <h1 style="margin-top:var(--space-4); max-width:820px; margin-left:auto; margin-right:auto;">AI research, translated and organized.</h1>
+          <p style="font-size:20px; line-height:1.55; color:var(--anth-text-secondary); max-width:680px; margin:var(--space-5) auto var(--space-6);">Chinese paragraph-by-paragraph translations of high-quality AI papers and engineering articles, plus a curated open-source model directory for real project selection.</p>
+          <p>
+            <a class="anth-button" href="#topics">Browse topics</a>
+            <a class="anth-button anth-button--ghost" href="open-source-models.html" style="margin-left:var(--space-3);">Open the directory</a>
+          </p>
+        </div>
+      </section>
+
+      <section class="anth-section">
+        <div class="anth-container anth-container--wide">
+          <div class="diagram-frame">
+  <svg viewBox="0 0 1100 420" role="img" aria-label="Knowledge Architecture">
+    <!-- Column headers -->
+    <text x="140" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">INPUTS</text>
+    <text x="550" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">KNOWLEDGE STREAMS</text>
+    <text x="960" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">OUTPUTS</text>
+
+    <!-- Input: Papers -->
+    <rect x="50" y="70" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
+    <text x="140" y="105" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">Papers</text>
+
+    <rect x="50" y="150" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
+    <text x="140" y="185" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">Engineering Blogs</text>
+
+    <rect x="50" y="230" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
+    <text x="140" y="265" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">OSS Repos</text>
+
+    <!-- 5 Streams -->
+    <rect x="440" y="55" width="220" height="52" rx="12" fill="#6a9bcc" opacity="0.88"/>
+    <text x="550" y="86" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">Inference Optimization</text>
+
+    <rect x="440" y="117" width="220" height="52" rx="12" fill="#d97757" opacity="0.9"/>
+    <text x="550" y="148" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">Self-Improving Agents</text>
+
+    <rect x="440" y="179" width="220" height="52" rx="12" fill="#788c5d" opacity="0.9"/>
+    <text x="550" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">Multi-Agent Systems</text>
+
+    <rect x="440" y="241" width="220" height="52" rx="12" fill="#141413"/>
+    <text x="550" y="272" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#faf9f5">Memory Systems</text>
+
+    <rect x="440" y="303" width="220" height="52" rx="12" fill="#b0aea5"/>
+    <text x="550" y="334" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">Translations & Analysis</text>
+
+    <!-- Output -->
+    <rect x="870" y="180" width="180" height="80" rx="14" fill="#d97757"/>
+    <text x="960" y="212" text-anchor="middle" font-family="Poppins, sans-serif" font-size="15" font-weight="600" fill="#ffffff">Model Directory</text>
+    <text x="960" y="232" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#ffffff" opacity="0.88">Project-ready selection</text>
+
+    <!-- Connector lines -->
+    <path d="M 230 100 Q 335 100 440 100" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+    <path d="M 230 180 Q 335 180 440 180" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+    <path d="M 230 260 Q 335 260 440 260" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+
+    <path d="M 660 82 Q 760 82 860 200" stroke="#6a9bcc" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M 660 144 Q 760 144 860 205" stroke="#d97757" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M 660 206 Q 760 206 860 220" stroke="#788c5d" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M 660 268 Q 760 268 860 235" stroke="#141413" stroke-width="1.5" fill="none" opacity="0.5"/>
+    <path d="M 660 330 Q 760 330 860 245" stroke="#b0aea5" stroke-width="1.5" fill="none" opacity="0.7"/>
+  </svg>
+  <p class="diagram-caption">Five research streams feed the open-source model directory</p>
+</div>
+        </div>
+      </section>
+
+      <section class="anth-section anth-section--subtle" id="topics">
+        <div class="anth-container anth-container--wide">
+          <div style="text-align:center; max-width:640px; margin:0 auto;">
+            <h2>Browse by topic</h2>
+            <p style="color:var(--anth-text-secondary); margin-top:var(--space-3);">Five research streams. Each one carefully selected.</p>
+          </div>
+          <div class="topic-grid">
+            <a class="topic-card" href="inference-optimization.html">
+              <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
+                <span class="anth-badge badge-inference">Inference Optimization</span>
+                <span class="topic-count">4 papers</span>
+              </div>
+              <h3>Inference Optimization</h3>
+              <p class="topic-desc">Parameter offloading, sparsity, quantization, MoE caching — the engineering that makes large models fit where they otherwise wouldn&#x27;t.</p>
+              <p style="margin:0;"><span class="anth-link">Explore</span></p>
+            </a>
+<a class="topic-card" href="self-improving-agents.html">
+              <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
+                <span class="anth-badge badge-self">Self-Improving Agents</span>
+                <span class="topic-count">9 papers</span>
+              </div>
+              <h3>Self-Improving Agents</h3>
+              <p class="topic-desc">From self-play and test-time adaptation to executable subagents and autoresearch ratchets — how agents compound capability over time.</p>
+              <p style="margin:0;"><span class="anth-link">Explore</span></p>
+            </a>
+<a class="topic-card" href="multi-agent-systems.html">
+              <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
+                <span class="anth-badge badge-multi">Multi-Agent Systems</span>
+                <span class="topic-count">2 papers</span>
+              </div>
+              <h3>Multi-Agent Systems</h3>
+              <p class="topic-desc">Landscape surveys and concrete case studies of agent-factory architectures, swarm research pipelines, and coordination patterns.</p>
+              <p style="margin:0;"><span class="anth-link">Explore</span></p>
+            </a>
+<a class="topic-card" href="memory-systems.html">
+              <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
+                <span class="anth-badge badge-memory">Memory Systems</span>
+                <span class="topic-count">5 papers</span>
+              </div>
+              <h3>Memory Systems</h3>
+              <p class="topic-desc">From Ebbinghaus-inspired forgetting curves to LLM-maintained wikis — how agents remember, forget, and compound knowledge over time.</p>
+              <p style="margin:0;"><span class="anth-link">Explore</span></p>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="anth-section">
+        <div class="anth-container">
+          <div style="text-align:center; max-width:640px; margin:0 auto;">
+            <h2>Open-source model directory</h2>
+            <p style="color:var(--anth-text-secondary); margin-top:var(--space-3);">Pick the right model for your domain in 60 seconds.</p>
+            <p style="margin-top:var(--space-5);"><a class="anth-button" href="open-source-models.html">Open the directory</a></p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

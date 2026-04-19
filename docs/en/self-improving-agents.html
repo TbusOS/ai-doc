@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Self-Improving Agents — AI Doc</title>
+    <link rel="stylesheet" href="../assets/fonts.css">
+    <link rel="stylesheet" href="../assets/anthropic.css">
+    <link rel="stylesheet" href="../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../en/">Home</a>
+          <a href="../en/inference-optimization.html">Inference Optimization</a>
+          <a href="../en/self-improving-agents.html">Self-Improving Agents</a>
+          <a href="../en/multi-agent-systems.html">Multi-Agent Systems</a>
+          <a href="../en/memory-systems.html">Memory Systems</a>
+          <a href="../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../en/" class="active">EN</a>
+          <a href="../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-hero" style="padding-block: var(--space-9);">
+        <div class="anth-container">
+          <span class="anth-badge badge-self">Self-Improving Agents</span>
+          <h1 style="margin-top:var(--space-4); max-width:780px; margin-left:auto; margin-right:auto;">Self-Improving Agents</h1>
+          <p style="font-size:20px; line-height:1.55; color:var(--anth-text-secondary); max-width:640px; margin:var(--space-5) auto var(--space-4);">Agents that rewrite their own code, data, or skills</p>
+          <p style="font-size:16px; line-height:1.6; color:var(--anth-text-secondary); max-width:640px; margin:0 auto;">From self-play and test-time adaptation to executable subagents and autoresearch ratchets — how agents compound capability over time.</p>
+        </div>
+      </section>
+
+      <section class="anth-section">
+        <div class="anth-container anth-container--wide">
+          <div class="paper-list">
+            <a class="paper-row" href="articles/cherry-llm.html">
+              <span class="paper-year">2024</span>
+              <div>
+                <div class="paper-meta">Li et al.</div>
+                <h3>Cherry LLM</h3>
+                <p>Self-guided data selection via IFD metric, 5% data outperforms full dataset.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/spin.html">
+              <span class="paper-year">2024</span>
+              <div>
+                <div class="paper-meta">Chen et al.</div>
+                <h3>SPIN</h3>
+                <p>Self-play fine-tuning, model vs previous self, no extra annotations needed.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/evolver.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">(see paper)</div>
+                <h3>EvolveR</h3>
+                <p>Experience-driven self-evolution, distill trajectories into abstract strategic principles.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/rise.html">
+              <span class="paper-year">2024</span>
+              <div>
+                <div class="paper-meta">(see paper)</div>
+                <h3>RISE</h3>
+                <p>Recursive introspection, multi-turn self-correction, +23.9% on GSM8K.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/self-improving-test-time.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">Acikgoz et al.</div>
+                <h3>Self-Improving at Test-Time</h3>
+                <p>Detect weak spots → auto-generate data → LoRA at test time, +5.48% with 68× fewer samples.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/metacognitive-learning.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">Liu &amp; van der Schaar</div>
+                <h3>Metacognitive Learning</h3>
+                <p>Framework: agents need self-assessment, learning planning, and evaluation to truly self-improve.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/agent-factory.html">
+              <span class="paper-year">2026</span>
+              <div>
+                <div class="paper-meta">Zhang et al.</div>
+                <h3>AgentFactory</h3>
+                <p>Preserves successful solutions as executable Python subagents, not text. Install→Self-Evolve→Deploy lifecycle, ~57% orchestration cost reduction.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/autoresearch.html">
+              <span class="paper-year">2026</span>
+              <div>
+                <div class="paper-meta">Karpathy</div>
+                <h3>autoresearch</h3>
+                <p>Autonomous overnight ML research — agent edits train.py, runs 5-min experiments, keeps/reverts on val_bpb. program.md as lightweight skill.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/darwin-skill.html">
+              <span class="paper-year">2026</span>
+              <div>
+                <div class="paper-meta">Huashu</div>
+                <h3>Darwin Skill · 达尔文</h3>
+                <p>Autoresearch ratchet applied to SKILL.md optimization — 8-dim rubric (structure + effectiveness), independent sub-agent scoring, git-revert on regression.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nuwa Skill · 女娲 — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../en/">Home</a>
+          <a href="../../en/inference-optimization.html">Inference Optimization</a>
+          <a href="../../en/self-improving-agents.html">Self-Improving Agents</a>
+          <a href="../../en/multi-agent-systems.html">Multi-Agent Systems</a>
+          <a href="../../en/memory-systems.html">Memory Systems</a>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../multi-agent-systems.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Multi-Agent Systems</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-multi">Multi-Agent Systems</span>
+            <span class="anth-caption">2026 · Huashu</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="skill-nuwa-skill-distilling-cognitive-operating-systems-via-a-6-agent-research-swarm">女娲.skill (Nuwa Skill): Distilling Cognitive Operating Systems via a 6-Agent Research Swarm</h1>
+<blockquote>
+<p><strong>原文仓库:</strong> <a href="https://github.com/alchaincyf/nuwa-skill">github.com/alchaincyf/nuwa-skill</a></p>
+<p><strong>作者:</strong> 花叔 (Huashu / alchaincyf)</p>
+<p><strong>发表:</strong> 2026 / GitHub + skills.sh 生态</p>
+<p><strong>主题:</strong> 用 6 个并行 agent 从公开素材中提取某个人物的<strong>认知操作系统</strong>（心智模型 + 决策启发式 + 表达 DNA + 反模式 + 诚实边界），蒸馏成可直接调用的 SKILL.md。不是角色扮演，是<strong>认知框架提取</strong></p>
+</blockquote>
+<hr>
+<h2 id="the-core-claim">核心命题 / The Core Claim</h2>
+<blockquote>
+<p><strong>"你想蒸馏的下一个员工，何必是同事。"</strong>
+<em>"The next person you want to distill doesn't have to be a colleague."</em></p>
+</blockquote>
+<p><a href="https://github.com/titanwings/colleague-skill">colleague-skill</a> 2026 年初在 GitHub 爆火（几天破 5000 星），它证明了一件事：<strong>蒸馏一个人的思维方式是可行的</strong>。女娲的追问是：既然蒸馏人是可行的，<strong>为什么只蒸馏身边的同事</strong>？去蒸馏乔布斯、马斯克、芒格、费曼、Naval、塔勒布——这些人恰好在公开信息中留下了大量可被蒸馏的材料。</p>
+<p><strong>女娲不是复制人，是提取认知操作系统。</strong></p>
+<hr>
+<h2 id="1-effect-examples">1. 效果示例 / Effect Examples</h2>
+<p>在进入机制讨论之前，先看输出。以下都是女娲蒸馏出的 Skill 产生的实际对话片段（非角色扮演话术，而是用提取的心智模型回答新问题）：</p>
+<pre><code>用户      ❯ 我同时想做自媒体、写书、做独立开发，精力完全不够
+
+Naval     ❯ 你列了三个欲望。每个欲望都是你跟不快乐签的一份合同。
+            不是精力不够，是合同太多。
+
+            问你自己：哪一个做起来你会忘记时间？
+            那个就是你的特定知识所在。
+
+            不是三选一。是先一，再一，再一。
+            串行复利，不是并行内耗。
+</code></pre>
+<pre><code>用户      ❯ 我们的 SaaS 产品获客成本太高了
+
+马斯克    ❯ 先别想怎么降。先算物理极限。
+            获客的最小必要动作是什么？用户从知道你到付费，
+            信息传递的理论最短路径是什么？
+
+            现在你的实际路径是理论路径的几倍？
+            如果超过 3 倍，中间一定有可以砍掉的步骤。
+            不是优化漏斗，是质疑漏斗本身该不该存在。
+</code></pre>
+<pre><code>用户      ❯ OpenAI 和 Anthropic 谁的方向是对的？
+
+乔布斯    ❯ 你问错了。这不是一场关于方向的竞赛。
+            这是一场关于品味的竞赛。
+
+            OpenAI 像 1985 年的微软。什么都做，什么都要赢。
+            这种策略能赢市场份额。Bill Gates 就是这么赢的。
+            问题是——当你什么都做的时候，你不可能每件事都做到
+            insanely great。
+
+            Anthropic 更像早期的 Apple。聚焦。
+            Focus means saying no to a hundred good ideas.
+
+            但两家公司都犯了一个我绝对不会犯的错误——
+            他们不控制硬件。
+            最终赢的可能是同时控制芯片、模型和用户界面的人。
+</code></pre>
+<p><strong>关键观察：这不是在复读名人语录</strong>。乔布斯用的是"聚焦即说不"和"端到端控制"心智模型，Naval 用的是"欲望即合同"，马斯克用的是"渐近极限法"——它们是在<strong>用这个人的认知框架分析一个他从没直接回答过的问题</strong>。</p>
+<hr>
+<h2 id="2-what-gets-extracted">2. 女娲提取什么 / What Gets Extracted</h2>
+<p>蒸馏各领域最强的人，需要提取<strong>比日常工作习惯更深</strong>的东西。女娲提取五层：</p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>怎么说话</strong></td>
+<td>表达 DNA——语气、节奏、用词偏好</td>
+</tr>
+<tr>
+<td><strong>怎么想</strong></td>
+<td>心智模型、认知框架</td>
+</tr>
+<tr>
+<td><strong>怎么判断</strong></td>
+<td>决策启发式</td>
+</tr>
+<tr>
+<td><strong>什么不做</strong></td>
+<td>反模式、价值观底线</td>
+</tr>
+<tr>
+<td><strong>知道局限</strong></td>
+<td>诚实边界</td>
+</tr>
+</tbody>
+</table>
+<p>工作习惯可以靠流程文档传递，但让<strong>芒格和马斯克面对同一个问题做出不同判断</strong>的，是认知框架。女娲提取的是<strong>认知操作系统</strong>，不是行为脚本。</p>
+<h3 id="skill">诚实边界：一个不告诉你局限的 Skill 不值得信任</h3>
+<p>每个生成的 Skill 都明确标注做不到什么：</p>
+<ul>
+<li>蒸馏不了直觉——框架能提取，灵感不能</li>
+<li>捕捉不了突变——截止到调研时间的快照</li>
+<li>公开表达 ≠ 真实想法——只能基于公开信息</li>
+</ul>
+<p><strong>这条约束本身就是女娲品味的一部分</strong>。一个声称能"完美复制乔布斯"的系统必然在吹牛；一个主动告诉你"我提取了 6 个心智模型但对他未公开的领域无能为力"的系统反而更可信。</p>
+<hr>
+<h2 id="3-6-agent-research-swarm-the-6-agent-research-swarm">3. 6-Agent Research Swarm：并行信息采集 / The 6-Agent Research Swarm</h2>
+<p>这是女娲整个流水线里<strong>最重要的工程决策</strong>。蒸馏一个人需要跨多个信息源、多种材料类型做大量调研——如果串行做，一个人物要好几小时；如果用 agent swarm 并行分工，整体时间被压缩到一个 agent 单独跑的时间。</p>
+<h3 id="6-agent">6 个并行 Agent 的任务分配</h3>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>搜索目标</th>
+<th>提取重点</th>
+<th>输出文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 著作</strong></td>
+<td>书、长文、论文、newsletter</td>
+<td><strong>反复出现≥3次的核心论点</strong>（真信念）、自创术语、推荐书单</td>
+<td><code>01-writings.md</code></td>
+</tr>
+<tr>
+<td><strong>2 对话</strong></td>
+<td>播客、长视频、AMA、深度采访</td>
+<td>被追问时的回答方式、即兴类比、<strong>改变立场的瞬间</strong>、拒绝回答的问题</td>
+<td><code>02-conversations.md</code></td>
+</tr>
+<tr>
+<td><strong>3 表达</strong></td>
+<td>Twitter/X、微博、即刻、短文</td>
+<td>高频用词句式、争议立场、幽默方式、公开辩论</td>
+<td><code>03-expression-dna.md</code></td>
+</tr>
+<tr>
+<td><strong>4 他者</strong></td>
+<td>他人分析、书评、批评、传记</td>
+<td>外部观察到的模式、批评与争议、与同行对比</td>
+<td><code>04-external-views.md</code></td>
+</tr>
+<tr>
+<td><strong>5 决策</strong></td>
+<td>重大决策、转折点、争议行为</td>
+<td>决策背景与逻辑、事后反思、<strong>言行一致/不一致案例</strong></td>
+<td><code>05-decisions.md</code></td>
+</tr>
+<tr>
+<td><strong>6 时间线</strong></td>
+<td>出生/出道到现在的完整时间线</td>
+<td>关键里程碑、思想转折点、<strong>最近 12 个月动态</strong>（防过时）</td>
+<td><code>06-timeline.md</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="6">6 个维度背后的认识论假设</h3>
+<p>这 6 个维度不是随便凑的，每一个都对应一种<strong>不同的信息失真方式</strong>，多维度交叉是为了<strong>抵消每一种失真</strong>：</p>
+<ul>
+<li><strong>Agent 1（著作）</strong> 捕捉"系统性思考"，但过于整齐——作者会把想法打磨过</li>
+<li><strong>Agent 2（对话）</strong> 捕捉"即兴思维"，但会掺杂社交礼貌和妥协</li>
+<li><strong>Agent 3（表达）</strong> 捕捉"实时反应"，但碎片化，可能被断章取义</li>
+<li><strong>Agent 4（他者）</strong> 提供"外部视角"，但会有批评者偏见</li>
+<li><strong>Agent 5（决策）</strong> 捕捉"真实行为"——最硬的信号，但材料稀缺</li>
+<li><strong>Agent 6（时间线）</strong> 提供"演化轨迹"，防止把某一时期的想法当成永恒</li>
+</ul>
+<p><strong>把 6 种失真源同时激活并</strong>用后续的三重验证交叉比对，能逼近一个更接近真实的画像。</p>
+<h3 id="agent">Agent 硬性要求（工程层面）</h3>
+<ul>
+<li>调研结果必须写入 <code>references/research/0X-xxx.md</code>——<strong>不存文件的调研等于没做</strong></li>
+<li>注明信息来源和可信度（一手 &gt; 二手 &gt; 推测）</li>
+<li>区分"<strong>他说过的</strong>" vs "别人说他的" vs "<strong>我推断的</strong>"</li>
+<li>发现矛盾时<strong>保留矛盾，不要和稀泥</strong>——矛盾本身是信号</li>
+</ul>
+<p>最后一条"保留矛盾"是反直觉但极重要的。<strong>LLM 的默认倾向是把冲突信息融合成一个平滑的叙述</strong>，这会丢失"这个人思想在某个时期发生了变化"或"他对某类问题有内在张力"这种最宝贵的信号。女娲明确禁止这种平滑。</p>
+<hr>
+<h2 id="4-triple-verification-for-mental-models">4. 三重验证：一个观点凭什么被收录 / Triple Verification for Mental Models</h2>
+<p>6 个 agent 收集到的素材会产生 15-30 个候选观点。但不是所有高频出现的观点都应该被固化为"心智模型"。女娲用<strong>三重验证</strong>筛选：</p>
+<p>一个候选观点要通过，必须满足：</p>
+<table>
+<thead>
+<tr>
+<th>标准</th>
+<th>含义</th>
+<th>反例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>跨域复现</strong></td>
+<td>在 ≥2 个不同领域/话题中出现过</td>
+<td>只在讨论创业时说过的不算（可能是情境话术）</td>
+</tr>
+<tr>
+<td><strong>生成力</strong></td>
+<td>能用这个框架推断此人对<strong>新问题</strong>的立场</td>
+<td>纯描述性总结不算（没有预测力）</td>
+</tr>
+<tr>
+<td><strong>排他性</strong></td>
+<td><strong>不是所有聪明人都会这么想</strong></td>
+<td>"要努力工作"不算（缺乏独特性）</td>
+</tr>
+</tbody>
+</table>
+<p>三重通过 → 心智模型；仅 1-2 重 → 降级为决策启发式；0 重 → 丢弃。</p>
+<p><strong>排他性这条尤其值得强调</strong>。它直接防止了最常见的失败模式：把一堆漂亮但通用的金句拼成一个"xxx 的 Skill"。女娲要求的是<strong>能将这个人与其他聪明人区分开的东西</strong>——这才是认知框架的真正价值。</p>
+<hr>
+<h2 id="5-skill-end-to-end-pipeline">5. 完整流程：从输入名字到可运行 Skill / End-to-End Pipeline</h2>
+<h3 id="phase-0">Phase 0: 入口分流</h3>
+<ul>
+<li><strong>直接路径</strong>：用户给明确人名/主题 → Phase 0A</li>
+<li><strong>诊断路径</strong>：用户只有模糊需求（"我想提升决策质量"）→ Phase 0B 反向推荐候选</li>
+</ul>
+<p>Phase 0B 的存在很有意思——它承认一个事实：<strong>用户常常不知道自己需要蒸馏谁</strong>。女娲内置了一张"需求维度 → 思维框架方向"的映射表（决策与判断 → 多元思维模型/逆向思考；批判思维 → 证伪思维/演化视角；风险与不确定性 → 反脆弱/凸性策略……），可以从需求反推最适合的候选。</p>
+<h3 id="phase-05-skill">Phase 0.5: 创建 Skill 目录</h3>
+<p><strong>在调研之前立刻执行</strong>。核心设计原则：</p>
+<blockquote>
+<p><em>所有调研文件必须存在 skill 目录内部（<code>references/research/</code>），绝对不要存到外部目录。Skill 必须是自包含的——复制整个 skill 目录就能独立使用。这是为开源分发设计的核心原则。</em></p>
+</blockquote>
+<p>这是 2026 年 skills.sh 生态里的标准实践：<strong>Skill 必须是可移植的原子单元</strong>。</p>
+<h3 id="phase-1-6-agent">Phase 1: 6-Agent 并行采集</h3>
+<p>三种模式：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>触发条件</th>
+<th>策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>纯网络搜索</strong>（默认）</td>
+<td>用户未提供素材</td>
+<td>6 agent 全网搜索</td>
+</tr>
+<tr>
+<td><strong>本地语料优先</strong></td>
+<td>用户提供 PDF / transcript / 字幕</td>
+<td>先读本地，网络搜索变补充</td>
+</tr>
+<tr>
+<td><strong>纯本地语料</strong></td>
+<td>非公众人物 / 用户明确指定</td>
+<td>只分析本地素材</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本地语料优先模式</strong>很实用——作者指出用户手上的<strong>一手素材（完整书籍、长访谈原文）通常比网络搜索到的二手转述质量高得多</strong>，所以在权重表中本地一手素材排在最高。</p>
+<h3 id="phase-15-review">Phase 1.5: 调研 Review 检查点（关键工程决策）</h3>
+<p><strong>所有 Agent 完成后暂停，展示调研质量摘要</strong>：</p>
+<pre><code>┌──────────────────┬──────────┬──────────────────────────┐
+│ Agent            │ 来源数量  │ 关键发现                  │
+├──────────────────┼──────────┼──────────────────────────┤
+│ 1 著作           │ 8 篇     │ 核心论点: 反脆弱、...     │
+│ 2 对话           │ 5 段     │ 立场变化: 2020 年后...    │
+│ 3 表达           │ 120 条   │ 高频词: &quot;skin in the...&quot; │
+│ 4 他者           │ 6 篇     │ 主要批评: ...             │
+│ 5 决策           │ 4 个     │ 关键决策: ...             │
+│ 6 时间线         │ 完整      │ 最新: 2026 年 3 月...    │
+├──────────────────┼──────────┼──────────────────────────┤
+│ 矛盾点           │ 2 处     │ Agent1 说 X, Agent4 说 Y │
+│ 信息不足维度      │ 无       │                          │
+└──────────────────┴──────────┴──────────────────────────┘
+</code></pre>
+<p>女娲作者点出了这个检查点的真正意义：</p>
+<blockquote>
+<p><em>调研质量决定了最终 Skill 的上限。垃圾进垃圾出，在这里拦截比在 Phase 4 返工成本低得多。</em></p>
+</blockquote>
+<p>这是一个<strong>深刻的流水线设计洞察</strong>：越早的阶段发现问题，修复成本越低。Phase 1.5 检查点虽然打断了全自主流程，但防止了"跑完所有 Phase 后发现基础调研就是错的"这种代价最高的失败模式。</p>
+<h3 id="phase-2-synthesis">Phase 2: 框架提炼（Synthesis）</h3>
+<ul>
+<li><strong>2.1</strong> 扫描 15-30 个候选 → 三重验证筛选 → <strong>排他性排序取 top 3-7 个心智模型</strong></li>
+<li><strong>2.2</strong> 决策启发式 5-10 条（"如果 X，则 Y"的快速规则）</li>
+<li><strong>2.3</strong> 表达 DNA（句式、词汇、节奏感、幽默方式、确定性表达、引用习惯 6 个维度）</li>
+<li><strong>2.4</strong> 价值观与反模式 + <strong>内在矛盾与张力</strong></li>
+<li><strong>2.5</strong> 智识谱系（此人受谁影响 → 影响了谁）</li>
+<li><strong>2.6</strong> 诚实边界</li>
+</ul>
+<p><strong>三个宁少勿多原则：</strong> 3 个深刻的模型远好于 10 个浅薄的原则；不做的事比做的事更揭示品味；矛盾保留比消除更诚实。</p>
+<h3 id="phase-25">Phase 2.5: 提炼确认检查点</h3>
+<p>又一个<strong>"人在回路"的 checkpoint</strong>——提炼是整个流程中<strong>主观判断最重</strong>的环节，确认后再构建，<strong>避免写完 400 行 SKILL.md 才发现方向不对</strong>。</p>
+<h3 id="phase-3-skill">Phase 3: Skill 构建</h3>
+<p>按 <code>references/skill-template.md</code> 填入提炼结果，最关键的一块是自动生成 <strong>Agentic Protocol</strong>（回答工作流）：</p>
+<blockquote>
+<p><em>让人物不只是"说得像"，还"做得像"。没有这个段落，人物 Skill 遇到需要事实的问题时会凭训练语料编造，而不是像真人一样先做功课再发言。这是人物 Skill 从"鹦鹉学舌"升级为"可靠思维顾问"的关键。</em></p>
+</blockquote>
+<p>Agentic Protocol 根据<strong>此人的心智模型</strong>自动推导研究维度：</p>
+<table>
+<thead>
+<tr>
+<th>人物</th>
+<th>核心心智模型</th>
+<th>→ 推导出的研究维度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>芒格</td>
+<td>多元思维模型、逆向思考、激励机制</td>
+<td>看护城河、看管理层激励、看最大风险（逆向）、看历史类比</td>
+</tr>
+<tr>
+<td>费曼</td>
+<td>第一性原理、对权威的怀疑</td>
+<td>看基本物理/数学约束、看官方说法的逻辑漏洞、看实验数据</td>
+</tr>
+<tr>
+<td>塔勒布</td>
+<td>反脆弱、尾部风险、知识的僭妄</td>
+<td>看极端情况、看谁承担尾部风险、看专家预测的历史记录</td>
+</tr>
+</tbody>
+</table>
+<p><strong>研究维度必须来自心智模型，不能是通用的"搜索相关信息"</strong> —— 这让每个 Skill 在<strong>执行层面</strong>都带上了这个人的认知偏向，而不仅是<strong>表达层面</strong>。</p>
+<h3 id="phase-4-3">Phase 4: 质量验证（3 项测试）</h3>
+<p>用<strong>独立子 agent</strong>执行（避免自评偏差）：</p>
+<ul>
+<li><strong>已知测试（Sanity Check）</strong>：选 3 个此人公开表态过的问题让 Skill 回答 → 方向一致则通过</li>
+<li><strong>边缘测试（Edge Case）</strong>：选 1 个此人没讨论过的问题 → 应该表现出<strong>适度不确定</strong>而非斩钉截铁</li>
+<li><strong>风格测试（Voice Check）</strong>：写 100 字分析 → 是否有此人的表达特征，不是通用 AI 味鸡汤，不是原话拼凑</li>
+</ul>
+<p>通过标准是一张 6 项检查表：心智模型数量（3-7）、每个模型的局限性、表达 DNA 辨识度、诚实边界条数（≥3）、内在张力（≥2）、一手来源占比（&gt;50%）。</p>
+<p><strong>迭代上限</strong>：Phase 2→4 最多循环 2 次。如果 2 轮后仍有不通过项，<strong>在诚实边界中标注薄弱维度，交付当前最优版本而非无限打磨</strong>。这是对"不要让完美变成交付的敌人"的工程化落实。</p>
+<h3 id="phase-5-agent">Phase 5: 双 Agent 精炼（标准后置工序）</h3>
+<p>Phase 4 验证通过后<strong>自动启动</strong>双 Agent 并行精炼：</p>
+<ul>
+<li><strong>Agent A（auto-skill-optimizer 视角，即 <a href="../self-improving-agents/darwin-skill.md">Darwin</a>）</strong> — 8 维度结构评估 + 3 个干跑测试 → 输出最弱 2 个维度的改进建议</li>
+<li><strong>Agent B（skill-creator 视角）</strong> — 评审激活触发条件、角色扮演规则的可操作性</li>
+</ul>
+<p><strong>主 Agent 综合两份报告，应用不冲突的改进</strong>。这里的设计值得注意：<strong>女娲本身就内置了达尔文的评估体系</strong>——这也是女娲生成的 Skill 质量高的原因之一。Phase 5 是一次"<strong>出厂前的镀层</strong>"。</p>
+<hr>
+<h2 id="6-source-priorities-blacklist">6. 信息源优先级与黑名单 / Source Priorities &amp; Blacklist</h2>
+<p>女娲对信息源有<strong>极其具体的优先级和黑名单规则</strong>，这比很多"深度研究"系统更接地气：</p>
+<h3 id="_1">信息源优先级</h3>
+<table>
+<thead>
+<tr>
+<th>来源类型</th>
+<th>揭示什么</th>
+<th>权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>用户提供的一手素材</strong></td>
+<td>完整原文，未经二手过滤</td>
+<td><strong>最高+</strong></td>
+</tr>
+<tr>
+<td>本人著作</td>
+<td>系统性思考</td>
+<td>最高</td>
+</tr>
+<tr>
+<td>长对话/访谈</td>
+<td>即兴思维过程</td>
+<td>最高</td>
+</tr>
+<tr>
+<td><strong>实际决策记录</strong></td>
+<td><strong>真实行为 vs 声称</strong></td>
+<td><strong>最高</strong></td>
+</tr>
+<tr>
+<td>社交媒体</td>
+<td>表达风格、即时反应</td>
+<td>中等</td>
+</tr>
+<tr>
+<td>他人评价</td>
+<td>外部视角、盲点</td>
+<td>中等</td>
+</tr>
+<tr>
+<td>二手转述</td>
+<td>参考但需验证</td>
+<td>低</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_2">信息源黑名单（<strong>永远排除</strong>）</h3>
+<ul>
+<li><strong>知乎</strong>：洗稿严重、信息失真率高</li>
+<li><strong>微信公众号</strong>：封闭生态、无法验证、大量二手转述</li>
+<li><strong>百度百科 / 百度知道</strong>：信息陈旧且不可靠</li>
+</ul>
+<p>这是一个<strong>基于真实中文信息生态品质差异</strong>的工程决策，不是意识形态偏好。中文渠道只接受权威媒体：36 氪、晚点 LatePost、财新、第一财经、虎嗅、少数派、机器之心等；人物访谈类用 B 站原始视频（非搬运号）和小宇宙播客。</p>
+<p><strong>这类"写死的黑名单"是任何做中文领域 AI 系统都需要补的一课</strong>——不加黑名单，agent 会被搜索引擎 SEO 的噪声生态污染。</p>
+<hr>
+<h2 id="7-13-1-the-distilled-catalog">7. 已蒸馏的 13 个人物 + 1 个主题 / The Distilled Catalog</h2>
+<p>截至仓库 2026 年 3 月状态：</p>
+<table>
+<thead>
+<tr>
+<th>人物</th>
+<th>领域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Paul Graham</td>
+<td>创业/写作/产品/人生哲学</td>
+</tr>
+<tr>
+<td>张一鸣</td>
+<td>产品/组织/全球化/人才</td>
+</tr>
+<tr>
+<td>Karpathy</td>
+<td>AI/工程/教育/开源</td>
+</tr>
+<tr>
+<td>Ilya Sutskever</td>
+<td>AI 安全/scaling/研究品味</td>
+</tr>
+<tr>
+<td>MrBeast</td>
+<td>内容创造/YouTube 方法论</td>
+</tr>
+<tr>
+<td>特朗普</td>
+<td>谈判/权力/传播/行为预判</td>
+</tr>
+<tr>
+<td>乔布斯</td>
+<td>产品/设计/战略</td>
+</tr>
+<tr>
+<td>马斯克</td>
+<td>工程/成本/第一性原理</td>
+</tr>
+<tr>
+<td>芒格</td>
+<td>投资/多元思维/逆向思考</td>
+</tr>
+<tr>
+<td>费曼</td>
+<td>学习/教学/科学思维</td>
+</tr>
+<tr>
+<td>Naval Ravikant</td>
+<td>财富/杠杆/人生哲学</td>
+</tr>
+<tr>
+<td>塔勒布</td>
+<td>风险/反脆弱/不确定性</td>
+</tr>
+<tr>
+<td>张雪峰</td>
+<td>教育/职业规划/阶层流动</td>
+</tr>
+</tbody>
+</table>
+<p>每个都是<strong>独立仓库 + 一键 npx 安装</strong>，且都包含完整的 6 维度调研原始数据。<strong>调研过程全透明</strong>——你可以看到信息怎么被收集、筛选、变成心智模型。</p>
+<hr>
+<h2 id="8-relation-to-existing-work-in-this-repo">8. 与本仓库现有工作的关联 / Relation to Existing Work in This Repo</h2>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>核心产物</th>
+<th>与女娲的差异</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></strong></td>
+<td>可执行 Python 子 agent</td>
+<td>AgentFactory 解决"重复任务的复利复用"；女娲解决"<strong>复制专家的认知框架</strong>"——两者的"经验单位"不同（代码 vs Skill）</td>
+</tr>
+<tr>
+<td><strong><a href="../self-improving-agents/autoresearch.md">autoresearch</a></strong></td>
+<td>单一 GPT 训练脚本</td>
+<td>autoresearch 优化<strong>同一个</strong> 代码资产；女娲<strong>批量生成新的</strong> Skill 资产</td>
+</tr>
+<tr>
+<td><strong><a href="../self-improving-agents/darwin-skill.md">darwin-skill</a></strong></td>
+<td>优化过的 SKILL.md</td>
+<td>同作者。女娲造 skill，达尔文让 skill 进化。Phase 5 就内嵌了达尔文</td>
+</tr>
+<tr>
+<td><strong><a href="../memory-systems/llm-knowledge-bases.md">LLM Knowledge Bases</a></strong></td>
+<td>个人 Wiki</td>
+<td>Karpathy 的个人 Wiki 把<strong>自己的</strong>知识蒸馏成 Markdown；女娲把<strong>别人的</strong>思维蒸馏成 Skill。两者都是"写入侧综合"范式</td>
+</tr>
+<tr>
+<td><strong><a href="coding-agents-landscape-2026.md">Coding Agents Landscape 2026</a></strong></td>
+<td>综述</td>
+<td>女娲是该综述所描述的"skill-centric 多 agent 系统"的具体例证</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="9-key-takeaways">9. 工程师视角的关键启示 / Key Takeaways</h2>
+<ol>
+<li><strong>Agent swarm 的正确用法是分工，不是投票。</strong> 女娲的 6 个 agent 不是做同一件事 6 次投票，而是 6 个互不重叠的专业视角。这是 2026 年 agent swarm 设计最有效的模式：<strong>维度分工 &gt; 结果集成</strong>。</li>
+<li><strong>每一维信息源对应一种失真模式。</strong> 著作太整齐、对话有社交妥协、社交媒体太碎片、他者评价有偏见——承认每种信息源的局限，用多维度交叉来抵消各自偏差。<strong>单源永远不够</strong>。</li>
+<li><strong>"保留矛盾，不要和稀泥"是最反直觉但最重要的规则。</strong> LLM 默认会平滑冲突信息，但冲突本身往往是最有信号的部分（立场变化、内在张力）。在系统提示里显式禁止平滑。</li>
+<li><strong>三重验证 = 跨域复现 + 生成力 + 排他性。</strong> 这套筛选逻辑可以移植到任何"从大量候选观点中挑选出真正独特的认知框架"的场景：读书笔记系统、访谈分析、竞品调研、学术综述。</li>
+<li><strong>检查点位置 = 信息质量变化最大的位置。</strong> Phase 1.5（调研质量检查）和 Phase 2.5（提炼质量检查）的位置不是随机的——它们卡在流程中信息最<strong>脆弱且可追溯</strong>的节点，失败成本最低。设计任何多阶段 agent 流水线时，问自己："下一阶段开始后，上一阶段的错误是否还能被发现和修复？"</li>
+<li><strong>Skill 必须自包含。</strong> 所有调研文件存在 skill 目录内部，不存外部。复制整个目录就能独立运行——这是开源分发的原子性要求。</li>
+<li><strong>黑名单比白名单重要。</strong> 知乎/微信公众号/百度百科等信源在中文领域会系统性地污染输出，显式排除比"信任模型自己判断"更稳健。</li>
+<li><strong>从心智模型推导执行协议。</strong> Agentic Protocol 根据心智模型自动生成研究维度——这让"思考方式"和"搜索方式"强绑定，让 Skill 在执行层面也带上被蒸馏者的认知偏向。这是对"Skill 不是提示词包装"这一主张最有力的工程化证明。</li>
+</ol>
+<hr>
+<h2 id="10-honest-limitations">10. 局限与诚实边界 / Honest Limitations</h2>
+<p>女娲自己也受制于它所揭示的限制：</p>
+<ul>
+<li><strong>蒸馏不了直觉</strong> — 框架能提取，灵感不能</li>
+<li><strong>公开信息 ≠ 真实想法</strong> — 只能基于公开材料，私人判断和情境化决策仍然不可企及</li>
+<li><strong>冷门人物效果有限</strong> — 可用来源 &lt; 10 条时，心智模型减至 2-3 个，诚实边界加大篇幅</li>
+<li><strong>时效性</strong> — 截止到调研时间的快照，活人需要定期"更新模式"（只跑 Agent 2/5/6 的增量调研）</li>
+<li><strong>过于中心化作者品味</strong> — 三重验证、黑名单、优先级都来自花叔的判断。换一个领域专家来做可能会做出不同的权衡</li>
+</ul>
+<p>最后一点<strong>恰好证明了女娲核心主张的正确性</strong>——品味本身是可蒸馏的，但它必然带着蒸馏者的印记。</p>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>仓库:</strong> <a href="https://github.com/alchaincyf/nuwa-skill">github.com/alchaincyf/nuwa-skill</a></li>
+<li><strong>作者:</strong> 花叔（Twitter: <a href="https://x.com/AlchainHust">@AlchainHust</a>）</li>
+<li><strong>安装:</strong> <code>npx skills add alchaincyf/nuwa-skill</code></li>
+<li><strong>姊妹项目:</strong> <a href="../self-improving-agents/darwin-skill.md">达尔文.skill (darwin-skill)</a>（同作者，女娲造 skill，达尔文让 skill 进化）</li>
+<li><strong>先行工作:</strong> <a href="https://github.com/titanwings/colleague-skill">colleague-skill</a> — 蒸馏同事的可行性证明</li>
+<li><strong>生态:</strong> <a href="https://skills.sh">skills.sh</a> — 2026 年跨 agent 工具的 Skill 标准</li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="../self-improving-agents/agent-factory.md">AgentFactory</a> — "经验 = 代码"的相邻范式</li>
+<li><a href="../self-improving-agents/autoresearch.md">autoresearch</a> — Karpathy 的 skill 化自主研究原型（同被女娲 Phase 5 引用）</li>
+<li><a href="../memory-systems/llm-knowledge-bases.md">LLM Knowledge Bases</a> — Karpathy 的个人 Wiki 范式</li>
+<li><a href="coding-agents-landscape-2026.md">Coding Agents Landscape 2026</a> — 更广的生态综述</li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="coding-agents-landscape-2026.html"><div class="nav-label">← Previous</div><div class="nav-title">Coding Agents &amp; Agent Factory Landscape 2026</div></a><span></span></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

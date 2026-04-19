@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Darwin Skill · 达尔文 — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../en/">Home</a>
+          <a href="../../en/inference-optimization.html">Inference Optimization</a>
+          <a href="../../en/self-improving-agents.html">Self-Improving Agents</a>
+          <a href="../../en/multi-agent-systems.html">Multi-Agent Systems</a>
+          <a href="../../en/memory-systems.html">Memory Systems</a>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../self-improving-agents.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Self-Improving Agents</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-self">Self-Improving Agents</span>
+            <span class="anth-caption">2026 · Huashu</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="skill-darwin-skill-training-your-skills-like-you-train-your-models">达尔文.skill (Darwin Skill): Training Your Skills Like You Train Your Models</h1>
+<blockquote>
+<p><strong>原文仓库:</strong> <a href="https://github.com/alchaincyf/darwin-skill">github.com/alchaincyf/darwin-skill</a></p>
+<p><strong>作者:</strong> 花叔 (Huashu / alchaincyf)</p>
+<p><strong>发表:</strong> 2026 / GitHub + skills.sh 生态</p>
+<p><strong>灵感来源:</strong> <a href="autoresearch.md">Karpathy autoresearch</a>（本仓库已收录）</p>
+<p><strong>主题:</strong> 把 autoresearch 的自主实验循环从"训练模型"搬到"优化 Skill"——一个只能向前转的棘轮，用双重评估（结构 + 实测）+ git revert 保证分数单调上升</p>
+</blockquote>
+<hr>
+<h2 id="the-core-claim">核心命题 / The Core Claim</h2>
+<blockquote>
+<p><strong>"像训练模型一样优化你的 Agent Skills。"</strong>
+<em>"Train your Skills like you train your models."</em></p>
+</blockquote>
+<p>Claude Code、Codex、Trae、CodeBuddy 等 2026 年主流编码 agent 都支持 <code>SKILL.md</code> 格式。当你只有 10 个 Skill 时手动维护没问题；<strong>当你有 60+ 个 Skill 时，你需要一个系统</strong>。</p>
+<p>传统的 Skill 审查是<strong>纯结构性的</strong>——检查格式、步骤编号、路径是否可达。但一个<strong>格式完美的 Skill 跑出来的效果可能很差</strong>。达尔文.skill 的主张：同时评估<strong>结构质量</strong>和<strong>实际效果</strong>，只保留真正有改进的修改。</p>
+<hr>
+<h2 id="1-autoresearch-darwin">1. 从 autoresearch 到 Darwin：一次精确的范式迁移</h2>
+<p>达尔文.skill 是 Karpathy autoresearch 思想的<strong>直接同构映射</strong>。花叔在 README 里给出了清晰的对应关系：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">autoresearch</th>
+<th style="text-align: left;">达尔文.skill</th>
+<th style="text-align: left;">映射原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>program.md</code></td>
+<td style="text-align: left;">Darwin 的 SKILL.md</td>
+<td style="text-align: left;">定义评估标准和约束规则</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>train.py</code></td>
+<td style="text-align: left;">每个待优化的 SKILL.md</td>
+<td style="text-align: left;">被优化的单一可编辑资产</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>val_bpb</code></td>
+<td style="text-align: left;">8 维加权总分（满分 100）</td>
+<td style="text-align: left;">可量化的优化目标</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>git ratchet</code>（keep/reset）</td>
+<td style="text-align: left;"><code>keep</code> / <code>revert</code> 机制</td>
+<td style="text-align: left;">只保留有改进的 commit</td>
+</tr>
+<tr>
+<td style="text-align: left;">test set</td>
+<td style="text-align: left;"><code>test-prompts.json</code></td>
+<td style="text-align: left;">验证改进是否真的有效</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>全自主运行</strong></td>
+<td style="text-align: left;"><strong>人在回路</strong></td>
+<td style="text-align: left;">Skill 的好坏比 loss 更微妙，需要人的判断</td>
+</tr>
+</tbody>
+</table>
+<p>注意最后一行：这<strong>不是</strong>全自主循环。autoresearch 在 program.md 里明确写着"NEVER STOP"——人类睡觉时 agent 独立跑 100 次实验。Darwin 则刻意插入"人在回路"检查点。为什么？因为：</p>
+<ul>
+<li><strong>训练 loss 是一个连续、客观、与任务解耦的标量</strong>——机器可以完全信任它</li>
+<li><strong>Skill 质量是一个离散、带品味、依赖具体场景的判断</strong>——机器只能给出信号，最终决策必须人类给</li>
+</ul>
+<p>这是一次有意识的范式偏移：<strong>保留 autoresearch 的棘轮结构，但把最顶层的终止判断还给人类</strong>。</p>
+<hr>
+<h2 id="2-five-core-principles">2. 五条核心原则 / Five Core Principles</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">#</th>
+<th style="text-align: left;">原则</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">01</td>
+<td style="text-align: left;"><strong>单一可编辑资产</strong></td>
+<td style="text-align: left;">每次只改一个 SKILL.md，变量可控，改进可归因</td>
+</tr>
+<tr>
+<td style="text-align: left;">02</td>
+<td style="text-align: left;"><strong>双重评估</strong></td>
+<td style="text-align: left;">结构评分（静态分析）+ 效果验证（跑测试看输出）</td>
+</tr>
+<tr>
+<td style="text-align: left;">03</td>
+<td style="text-align: left;"><strong>棘轮机制</strong></td>
+<td style="text-align: left;">只保留改进，自动回滚退步，分数只升不降</td>
+</tr>
+<tr>
+<td style="text-align: left;">04</td>
+<td style="text-align: left;"><strong>独立评分</strong></td>
+<td style="text-align: left;">评分用子 agent，避免"自己改自己评"的偏差</td>
+</tr>
+<tr>
+<td style="text-align: left;">05</td>
+<td style="text-align: left;"><strong>人在回路</strong></td>
+<td style="text-align: left;">每个 Skill 优化完后暂停，用户确认再继续下一个</td>
+</tr>
+</tbody>
+</table>
+<p>原则 04 <strong>独立评分</strong>是这个系统里最容易被低估的工程细节——它防止了一整类失败模式：如果让同一个 agent 既改 SKILL.md 又评分，它会<strong>系统性地给自己打高分</strong>（本质上是一种 model-driven reward hacking）。Darwin 要求 spawn 一个<strong>没看过改动过程的新子 agent</strong>去评分，评分独立性是棘轮正确性的前提。</p>
+<hr>
+<h2 id="3-8-rubric-the-8-dimension-rubric">3. 8 维度评估 Rubric / The 8-Dimension Rubric</h2>
+<p>总分 100。<strong>结构维度 60 分</strong>靠静态分析，<strong>效果维度 40 分</strong>必须实测。</p>
+<h3 id="60">结构维度（60 分）</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>维度</th>
+<th>权重</th>
+<th>评分标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Frontmatter 质量</td>
+<td>8</td>
+<td>name 规范、description 包含做什么+何时用+触发词、≤1024 字符</td>
+</tr>
+<tr>
+<td>2</td>
+<td>工作流清晰度</td>
+<td>15</td>
+<td>步骤明确可执行、有序号、每步有明确输入/输出</td>
+</tr>
+<tr>
+<td>3</td>
+<td>边界条件覆盖</td>
+<td>10</td>
+<td>处理异常情况、有 fallback 路径、错误恢复</td>
+</tr>
+<tr>
+<td>4</td>
+<td>检查点设计</td>
+<td>7</td>
+<td>关键决策前有用户确认、防止自主失控</td>
+</tr>
+<tr>
+<td>5</td>
+<td>指令具体性</td>
+<td>15</td>
+<td>不模糊、有具体参数/格式/示例、可直接执行</td>
+</tr>
+<tr>
+<td>6</td>
+<td>资源整合度</td>
+<td>5</td>
+<td>references / scripts / assets 引用正确、路径可达</td>
+</tr>
+</tbody>
+</table>
+<h3 id="40">效果维度（40 分）</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>维度</th>
+<th>权重</th>
+<th>评分标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7</td>
+<td>整体架构</td>
+<td>15</td>
+<td>结构层次清晰、不冗余不遗漏</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>实测表现</strong></td>
+<td><strong>25</strong></td>
+<td><strong>用测试 prompt 跑一遍，输出质量是否符合 skill 宣称的能力</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>维度 8 权重 25 是整个 rubric 里最大的一项</strong>——Skill 写得再漂亮，跑出来效果不好就是零。这是 Darwin 对"纯结构审查"的最大反驳。</p>
+<h3 id="_1">实测表现怎么打分</h3>
+<ol>
+<li>为每个 skill 设计 2-3 个<strong>典型用户 prompt</strong>（happy path，不是边缘 case）</li>
+<li>用子 agent 各执行一遍：<strong>一个带 skill 跑，一个不带 skill 跑（baseline）</strong></li>
+<li>对比：
+   - 输出是否完成了用户意图？
+   - 相比 baseline，质量提升明显吗？
+   - 有没有 skill 引入的负面影响（过度冗余、跑偏、格式奇怪）？</li>
+</ol>
+<p>如果无法跑子 agent（时间/资源限制），可以退化为<strong>"干跑验证"</strong>（dry_run）——读完 skill 后模拟一个典型 prompt 的执行思路，判断流程是否合理。但要在 <code>results.tsv</code> 中明确标注 <code>dry_run</code>。<strong>哪怕是模拟推演，也比完全不看效果好</strong>。</p>
+<hr>
+<h2 id="4-5-the-optimization-lifecycle">4. 优化循环：5 个阶段 / The Optimization Lifecycle</h2>
+<p>系统在每个阶段内自主运行，但<strong>在阶段之间暂停等待人类确认</strong>。</p>
+<h3 id="phase-0">Phase 0: 初始化</h3>
+<p>创建 <code>auto-optimize/YYYYMMDD-HHMM</code> 分支，初始化 <code>results.tsv</code>。</p>
+<h3 id="phase-05-prompt">Phase 0.5: 测试 Prompt 设计</h3>
+<p>为每个 skill 设计 2-3 个测试 prompt，<strong>展示给用户确认后再进入评估</strong>。</p>
+<blockquote>
+<p><em>测试 prompt 的质量决定了优化方向是否正确。</em></p>
+</blockquote>
+<p>这是一个<strong>精巧的优先级排序</strong>：测试集定义得糟糕会让整个棘轮朝错误方向转，所以测试集定义必须先人类确认。这也是 Darwin 与 autoresearch 的一个重要不同——autoresearch 用 <code>val_bpb</code> 这种通用指标，Darwin 需要 per-skill 定制测试集。</p>
+<h3 id="phase-1-baseline">Phase 1: 基线评估（Baseline）</h3>
+<ul>
+<li>主 agent 对维度 1-7 打分</li>
+<li><strong>spawn 独立子 agent</strong> 对每个测试 prompt 做 with_skill / baseline 对比，打维度 8 分</li>
+<li>汇总加权总分，记录到 <code>results.tsv</code></li>
+<li>展示评分卡（按分数从低到高排序）</li>
+<li><strong>暂停等用户确认</strong></li>
+</ul>
+<h3 id="phase-2">Phase 2: 优化循环（核心逻辑）</h3>
+<p>用户确认后，按基线分从低到高排序，<strong>先优化最弱的</strong>。</p>
+<pre><code>for each skill:
+  round = 0
+  while round &lt; MAX_ROUNDS (默认 3):
+    1. 找出得分最低的维度
+    2. 针对该维度生成 1 个具体改进方案
+    3. 编辑 SKILL.md → git commit
+    4. 子 agent 独立重新评分（关键！不能自己评自己）
+    5. if 新总分 &gt; 旧总分: keep，更新基线
+       else: git revert HEAD（不用 reset --hard），记录 revert 到 tsv，break
+    6. 日志
+
+  # 每个 skill 完成后的人类检查点
+  展示 diff + 分数变化 + 测试 prompt 输出对比
+  等用户确认 OK 再继续下一个 skill
+</code></pre>
+<p>两个关键细节：</p>
+<ol>
+<li><strong>每轮只改一个维度</strong> — 避免多个变更导致无法归因（这是对 autoresearch "single file, one change at a time" 的进一步细化）</li>
+<li><strong>用 <code>git revert</code> 而非 <code>git reset --hard</code></strong> — 保留失败尝试的历史，而不是擦除它。这让后续的 <code>results.tsv</code> 成为一份有信号价值的实验日志</li>
+</ol>
+<h3 id="phase-25">Phase 2.5: 探索性重写（可选）</h3>
+<p>当 hill-climbing 连续在 2 个 skill 上 round 1 就 break（涨不动），系统会<strong>提议</strong>一次探索性重写：</p>
+<pre><code>1. 选一个瓶颈 skill
+2. git stash 保存当前最优版本
+3. 从头重写 SKILL.md（不是微调，是重组结构）
+4. 重新评估
+5. if 重写版 &gt; stash 版: 采用；else: git stash pop 恢复
+</code></pre>
+<p>这是对<strong>局部最优陷阱</strong>的工程回应——hill-climbing 永远会卡在局部最优里，只有"先拆后建"才可能跳出。但因为重写成本高且不确定，<strong>必须征得用户同意才执行</strong>。</p>
+<h3 id="phase-3">Phase 3: 汇总报告</h3>
+<p>打印优化 skills 数、总实验数、保留/回滚次数、全量分数变化对比表。</p>
+<hr>
+<h2 id="5-the-ratchet">5. 棘轮机制：为什么分数只能上升 / The Ratchet</h2>
+<p><img alt="棘轮示意" src="https://raw.githubusercontent.com/alchaincyf/darwin-skill/master/assets/chart-ratchet.png"></p>
+<p>每一轮要么改进 Skill（保留 commit），要么干净地回滚（revert commit）。<strong>有效基线始终锁定在历史最高分</strong>，后续改进从最高分继续——不会随时间积累局部退化。</p>
+<p>这个机制的深层价值不在于"分数会上升"，而在于<strong>"分数不会下降"</strong>。一个没有棘轮的优化系统在足够多轮之后会漂移；有棘轮之后，最坏情况也是"保持不变"。<strong>把系统的最坏情况锁死，比追求平均情况更重要</strong>——这是花叔直接从 autoresearch 学到的工程品味。</p>
+<hr>
+<h2 id="6-hard-constraints">6. 约束规则 / Hard Constraints</h2>
+<ol>
+<li><strong>不改变 skill 的核心功能和用途</strong> — 只优化"怎么写"和"怎么执行"，不改"做什么"</li>
+<li><strong>不引入新依赖</strong> — 不添加原本没有的 scripts / references 文件</li>
+<li><strong>每轮只改一个维度</strong> — 避免归因混乱</li>
+<li><strong>文件大小 ≤ 原始的 150%</strong> — 防止"优化 = 堆砌"的退化</li>
+<li><strong>用 git revert 而非 reset --hard</strong> — 保留实验历史</li>
+<li><strong>评分独立性</strong> — 效果维度必须用子 agent 或至少干跑验证，不能在同一上下文里"改完直接评"</li>
+</ol>
+<p>约束 4（大小上限）是一个容易被忽视但很关键的护栏：<strong>没有这个约束，模型的默认优化方向是"越写越多"</strong>——因为 rubric 鼓励"具体性"和"边界条件覆盖"，最简单的提分方式是塞更多文本进去。强制上限迫使模型做真正的重组而不是累加。</p>
+<hr>
+<h2 id="7-autoresearch-subtle-differences-from-autoresearch">7. 与 autoresearch 的深层差异 / Subtle Differences From autoresearch</h2>
+<p>表面看 Darwin 只是把 autoresearch 的 schema 映射到了 Skill 优化场景，但实际有几处<strong>非平凡的差异</strong>，理解这些差异才能理解什么能从 autoresearch 借鉴、什么不能：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>autoresearch</th>
+<th>Darwin</th>
+<th>为什么不同</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目标</td>
+<td>单一标量 val_bpb</td>
+<td>8 维加权总分</td>
+<td>Skill 质量是多维度现象，强行压成单标量会丢信息</td>
+</tr>
+<tr>
+<td>评估主体</td>
+<td>训练脚本本身</td>
+<td><strong>独立子 agent</strong></td>
+<td>防止"自己评自己"的 reward hacking</td>
+</tr>
+<tr>
+<td>循环边界</td>
+<td>"NEVER STOP"全自主</td>
+<td>阶段间人在回路</td>
+<td>品味判断无法完全机器化</td>
+</tr>
+<tr>
+<td>测试集</td>
+<td>固定的 validation split</td>
+<td><strong>每 skill 定制的 test-prompts.json</strong></td>
+<td>通用数据集无法定义 skill-specific 质量</td>
+</tr>
+<tr>
+<td>回滚机制</td>
+<td><code>git reset</code> 擦除</td>
+<td><strong><code>git revert</code></strong> 保留失败</td>
+<td>Darwin 把失败实验也当作产出</td>
+</tr>
+<tr>
+<td>探索策略</td>
+<td>连续 hill-climbing</td>
+<td>hill-climbing + 周期性"探索性重写"</td>
+<td>显式处理局部最优</td>
+</tr>
+</tbody>
+</table>
+<p>这些差异不是疏忽，而是<strong>清醒的场景适配</strong>。autoresearch 在"训练 GPT"这个收敛的、有明确标量指标的场景下可以全自主；Darwin 在"优化 Skill"这个发散的、多维的、品味敏感的场景下必须保留人类判断。</p>
+<p><strong>最深的启示：autoresearch 不是一个模板，是一个参数化的抽象。要用好它，你得精准地识别你的场景哪些参数和 autoresearch 一样，哪些必须改</strong>。</p>
+<hr>
+<h2 id="8-relation-to-this-repo">8. 与本仓库的关联 / Relation to This Repo</h2>
+<p>达尔文.skill 在本仓库的自进化 agent 坐标系里和 autoresearch 是一对"同根异花"：</p>
+<ul>
+<li><strong><a href="autoresearch.md">autoresearch</a></strong> 是骨架：棘轮 + 单一资产 + 可量化指标 + git-as-notebook</li>
+<li><strong>达尔文.skill</strong> 是<strong>骨架的第一个成功移植</strong> —— 证明这套机制可以从 LLM 训练迁移到任何有明确评估循环的元任务</li>
+</ul>
+<p>它也和 <strong><a href="agent-factory.md">AgentFactory</a></strong> 有共同底色：两者都主张"<strong>可优化的 agent 资产应该是代码/Markdown 这种可执行、可 diff、可回滚的形式</strong>"，而不是散文式的反思。AgentFactory 把<strong>子 agent</strong> 作为该资产，Darwin 把 <strong>Skill 本身</strong>作为该资产。</p>
+<p><strong>可以组合：</strong> Darwin 可以被用来优化 AgentFactory 生成的子 agent——把 AgentFactory 的产物作为 Darwin 的输入，形成一个两级系统（一级生成 + 一级优化）。这会是 2026 年自进化 agent 生态里一个自然的方向。</p>
+<hr>
+<h2 id="9-key-takeaways">9. 工程师视角的关键启示 / Key Takeaways</h2>
+<ol>
+<li><strong>棘轮是元模式，不是具体实现。</strong> autoresearch 的棘轮 = Darwin 的棘轮 = 任何"有评估 + 有版本控制 + 只保留改进"的系统。这个模式可以移植到 prompt 优化、Dockerfile 精简、CI 流水线缩时、配置文件重构等任意领域。</li>
+<li><strong>评估独立性是棘轮的第二条腿。</strong> 没有它，棘轮会因 reward hacking 失效。Darwin 用 spawn 子 agent 的方式保证评分独立性——这是任何自主优化系统都要处理的问题。</li>
+<li><strong>单标量 vs 多维度是一个真实的权衡。</strong> Darwin 选多维度是因为品味难以被压进单标量；autoresearch 选单标量是因为训练场景允许。选错会让你的系统要么丢信息，要么不可比较。</li>
+<li><strong>"人在回路"不是退让，是清醒。</strong> 当判断标准本身依赖品味时，强行去掉人类只会产生一个漂亮但跑偏的系统。Darwin 显式地把"人在回路"写进了流程，而不是作为异常情况处理。</li>
+<li><strong>测试集是输入不是产出。</strong> Phase 0.5 把测试 prompt 设计提前到评估之前并要求用户确认——这是对"先定义成功再去优化"这条基本工程纪律的具体落实。</li>
+<li><strong>文件大小约束防退化。</strong> rubric 鼓励"更具体"很容易被解读成"更长"。显式的大小上限强迫模型做真正的重组。这个护栏的设计思路可以推广到任何"容易通过膨胀来刷指标"的系统。</li>
+<li><strong>用 git revert 不用 reset --hard。</strong> 保留失败实验的历史，把 results.tsv 变成有价值的诊断日志。这是从 autoresearch 继承的最具体也最被低估的工程决策。</li>
+</ol>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>仓库:</strong> <a href="https://github.com/alchaincyf/darwin-skill">github.com/alchaincyf/darwin-skill</a></li>
+<li><strong>作者:</strong> 花叔（Twitter: <a href="https://x.com/AlchainHust">@AlchainHust</a>）</li>
+<li><strong>安装:</strong> <code>npx skills add alchaincyf/darwin-skill</code></li>
+<li><strong>直接灵感:</strong> <a href="https://github.com/karpathy/autoresearch">Karpathy autoresearch</a> (<a href="autoresearch.md">本仓库解读</a>)</li>
+<li><strong>姊妹项目:</strong> <a href="../multi-agent-systems/nuwa-skill.md">女娲.skill (nuwa-skill)</a>（同作者，女娲造 skill，达尔文让 skill 进化）</li>
+<li><strong>生态:</strong> <a href="https://skills.sh">skills.sh</a> — 2026 年跨 agent 工具的 Skill 标准</li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="autoresearch.md">autoresearch</a> — 本项目的直接灵感</li>
+<li><a href="agent-factory.md">AgentFactory</a> — 经验=可执行代码的另一条路径</li>
+<li><a href="metacognitive-learning.md">Metacognitive Learning</a> — 自我评估作为自改进的前提</li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="autoresearch.html"><div class="nav-label">← Previous</div><div class="nav-title">autoresearch</div></a><span></span></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Evo-Memory — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../zh/">首页</a>
+          <a href="../../zh/inference-optimization.html">推理优化</a>
+          <a href="../../zh/self-improving-agents.html">自我改进 Agent</a>
+          <a href="../../zh/multi-agent-systems.html">多 Agent 系统</a>
+          <a href="../../zh/memory-systems.html">记忆系统</a>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../memory-systems.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 记忆系统</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-memory">记忆系统</span>
+            <span class="anth-caption">2025 · Google DeepMind</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="evo-memory-benchmarking-llm-agent-test-time-learning-with-self-evolving-memory">Evo-Memory: Benchmarking LLM Agent Test-time Learning with Self-Evolving Memory</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2511.20857">arXiv:2511.20857</a>
+<strong>作者:</strong> Google DeepMind
+<strong>发表:</strong> 2025
+<strong>主题:</strong> 自进化记忆基准，Search → Synthesize → Evolve 循环</p>
+</blockquote>
+<hr>
+<h2 id="abstract">Abstract</h2>
+<p>As LLM agents are increasingly deployed in sequential decision-making tasks, the ability to learn from past experience at test time — without retraining — becomes critical. Evo-Memory introduces a comprehensive benchmark for evaluating self-evolving memory systems in LLM agents. The benchmark measures how well agents can accumulate, organize, and leverage experiential knowledge across sequences of related tasks. The core evaluation framework centers on a Search-Synthesis-Evolve cycle, where agents retrieve relevant past experiences, synthesize them into actionable knowledge, and evolve their memory structures over time. The paper evaluates over 10 memory architectures across multiple LLM backends including Gemini and Claude, with standout results including 92% success on BabyAI environments and a strong correlation (r=0.717) between task similarity and memory transfer effectiveness.</p>
+<h2 id="_1">摘要</h2>
+<p>随着 LLM 智能体越来越多地被部署于序列化决策任务中，在测试时无需重新训练即可从过往经验中学习的能力变得至关重要。Evo-Memory 引入了一个全面的基准，用于评估 LLM 智能体中的自进化记忆系统。该基准衡量智能体在相关任务序列中积累、组织和利用经验知识的能力。核心评估框架围绕 Search-Synthesis-Evolve（搜索-综合-进化）循环展开，智能体检索相关的过往经验，将其综合为可操作的知识，并随时间演化其记忆结构。论文在包括 Gemini 和 Claude 在内的多个 LLM 后端上评估了超过 10 种记忆架构，取得了突出成果，包括在 BabyAI 环境中达到 92% 的成功率，以及任务相似度与记忆迁移有效性之间的强相关性（r=0.717）。</p>
+<hr>
+<h2 id="1-introduction">1. Introduction / 引言</h2>
+<p>Human intelligence is characterized by the ability to learn continuously from experience. When we encounter a new problem, we do not start from scratch — we draw upon a vast repository of accumulated knowledge, recognizing patterns, applying proven strategies, and avoiding past mistakes. Current LLM agents, despite their impressive capabilities, largely lack this capacity for experiential learning at test time.</p>
+<p>Evo-Memory addresses this gap by providing a systematic framework for evaluating how well LLM agents can build and utilize self-evolving memory systems. Unlike static knowledge bases or fixed retrieval-augmented generation (RAG) systems, self-evolving memory actively transforms and reorganizes itself based on new experiences. The benchmark is designed to answer a fundamental question: can LLM agents genuinely improve their performance over time by learning from their own successes and failures?</p>
+<p>人类智能的一个显著特征是能够持续从经验中学习。当我们遇到新问题时，我们不会从零开始——我们会借助积累的大量知识库，识别模式、应用经过验证的策略并避免过去的错误。当前的 LLM 智能体尽管能力令人印象深刻，但在测试时基本缺乏这种经验学习能力。</p>
+<p>Evo-Memory 通过提供一个系统性框架来评估 LLM 智能体构建和利用自进化记忆系统的能力，从而填补了这一空白。与静态知识库或固定的检索增强生成（RAG）系统不同，自进化记忆会根据新经验主动转化和重组自身。该基准旨在回答一个根本性问题：LLM 智能体能否通过从自身的成功和失败中学习，真正随时间提升其表现？</p>
+<hr>
+<h2 id="2-the-search-synthesis-evolve-cycle-">2. The Search-Synthesis-Evolve Cycle / 搜索-综合-进化循环</h2>
+<p>The core framework of Evo-Memory is built around a three-phase cycle that models how intelligent agents should interact with their memory systems.</p>
+<p><strong>Search Phase.</strong> When faced with a new task, the agent first searches its memory for relevant past experiences. This is not a simple keyword lookup but rather a semantic search that considers the structural similarity between the current task and stored experiences. The search mechanism must balance breadth (finding diverse relevant experiences) with precision (avoiding irrelevant noise).</p>
+<p><strong>Synthesis Phase.</strong> Retrieved experiences are then synthesized into a coherent action plan. The agent must identify common patterns across past successes, recognize which strategies failed and why, and adapt known solutions to the specific requirements of the current task. This phase requires genuine reasoning about the transferability of past knowledge.</p>
+<p><strong>Evolve Phase.</strong> After the task is completed (whether successfully or not), the agent updates its memory with the new experience. Critically, this is not just appending a new entry — the agent must reorganize existing memories, update confidence scores for different strategies, and potentially abstract specific experiences into general principles. This evolution ensures that the memory system becomes more useful over time rather than simply growing larger.</p>
+<p>Evo-Memory 的核心框架围绕一个三阶段循环构建，该循环模拟了智能体应如何与其记忆系统交互。</p>
+<p><strong>搜索阶段。</strong> 面对新任务时，智能体首先在记忆中搜索相关的过往经验。这不是简单的关键词查找，而是一种语义搜索，考虑当前任务与存储经验之间的结构相似性。搜索机制必须在广度（找到多样化的相关经验）和精确度（避免无关噪声）之间取得平衡。</p>
+<p><strong>综合阶段。</strong> 检索到的经验随后被综合为一个连贯的行动计划。智能体必须识别过去成功案例中的共同模式，认识到哪些策略失败了以及失败的原因，并将已知解决方案适配到当前任务的具体需求。这一阶段需要对过往知识的可迁移性进行真正的推理。</p>
+<p><strong>进化阶段。</strong> 任务完成后（无论成功与否），智能体用新经验更新其记忆。关键的是，这不仅仅是追加一条新记录——智能体必须重组现有记忆、更新不同策略的置信度分数，并可能将具体经验抽象为一般性原则。这种进化确保记忆系统随时间变得更加有用，而不仅仅是体积增大。</p>
+<hr>
+<h2 id="3-memory-architectures-evaluated">3. Memory Architectures Evaluated / 评估的记忆架构</h2>
+<p>Evo-Memory evaluates over 10 distinct memory architectures, spanning a wide range of design philosophies.</p>
+<p><strong>ExpRAG (Experience RAG)</strong> represents the simplest approach: one-shot experience reuse through retrieval. When a new task arrives, ExpRAG retrieves the single most similar past experience and uses it as a template for the current task. Despite its simplicity, ExpRAG provides a strong baseline, particularly for tasks that closely resemble past experiences. Its main limitation is the inability to combine insights from multiple experiences.</p>
+<p><strong>ReMem (Reflective Memory)</strong> implements a more sophisticated pipeline: action-think-memory refine. After completing a task, the agent first records its actions, then reflects on what worked and what did not, and finally refines its stored memory entries based on these reflections. This three-stage refinement process produces higher-quality memories that capture not just what happened but why certain approaches succeeded or failed.</p>
+<p>Other architectures evaluated include hierarchical memory systems that organize experiences at multiple levels of abstraction, graph-based memories that capture relationships between different experiences, and hybrid systems that combine multiple approaches.</p>
+<p>Evo-Memory 评估了超过 10 种不同的记忆架构，涵盖了广泛的设计理念。</p>
+<p><strong>ExpRAG（经验 RAG）</strong> 代表最简单的方法：通过检索实现一次性经验复用。当新任务到来时，ExpRAG 检索最相似的单条过往经验，并将其作为当前任务的模板。尽管简单，ExpRAG 提供了一个强基线，尤其适用于与过往经验高度相似的任务。其主要局限在于无法整合多条经验中的洞察。</p>
+<p><strong>ReMem（反思记忆）</strong> 实现了一个更精密的管线：行动-思考-记忆精炼。完成任务后，智能体首先记录其行动，然后反思哪些有效哪些无效，最后根据这些反思精炼存储的记忆条目。这一三阶段精炼过程产生了更高质量的记忆，不仅捕捉发生了什么，还记录了某些方法成功或失败的原因。</p>
+<p>其他被评估的架构包括：在多个抽象层次上组织经验的层级记忆系统、捕捉不同经验间关系的图记忆，以及结合多种方法的混合系统。</p>
+<hr>
+<h2 id="4-experimental-results">4. Experimental Results / 实验结果</h2>
+<p>The benchmark experiments reveal several important findings about the nature of self-evolving memory in LLM agents.</p>
+<p><strong>BabyAI Performance.</strong> On the BabyAI grid-world environment, the best memory-augmented agents achieved 92% task success rate, a dramatic improvement over memoryless baselines. BabyAI provides an ideal testbed because it offers a large number of structurally similar but distinct tasks, allowing the benchmark to measure genuine learning transfer.</p>
+<p><strong>Task Similarity Correlation.</strong> One of the most striking findings is the strong correlation (r=0.717) between task similarity and memory effectiveness. When sequential tasks share structural features, memory transfer is highly effective. As task similarity decreases, the benefit of memory diminishes but does not disappear entirely, suggesting that agents can extract some generalizable knowledge even from loosely related experiences.</p>
+<p><strong>Cumulative Learning.</strong> A key observation is that cumulative accuracy improves as task sequences progress. Early in a sequence, agents perform at near-baseline levels. As they accumulate more experiences, performance steadily increases, with the rate of improvement depending on both the memory architecture and the underlying LLM's reasoning capabilities.</p>
+<p><strong>Cross-Model Comparison.</strong> Both Gemini and Claude backends showed significant improvement with memory augmentation, though the magnitude of gains varied. More capable base models benefited more from memory systems, suggesting that effective memory utilization requires strong underlying reasoning abilities.</p>
+<p>基准实验揭示了关于 LLM 智能体自进化记忆本质的几项重要发现。</p>
+<p><strong>BabyAI 性能。</strong> 在 BabyAI 网格世界环境中，最佳记忆增强智能体达到了 92% 的任务成功率，相比无记忆基线有了显著提升。BabyAI 提供了理想的测试平台，因为它提供大量结构相似但各不相同的任务，使基准能够衡量真正的学习迁移效果。</p>
+<p><strong>任务相似度相关性。</strong> 最引人注目的发现之一是任务相似度与记忆有效性之间的强相关性（r=0.717）。当序列任务共享结构特征时，记忆迁移高度有效。随着任务相似度降低，记忆的收益减少但不会完全消失，这表明智能体即使从松散相关的经验中也能提取一些可泛化的知识。</p>
+<p><strong>累积学习。</strong> 一个关键观察是累积准确率随任务序列的推进而提高。在序列早期，智能体的表现接近基线水平。随着积累更多经验，性能稳步提升，提升速率取决于记忆架构和底层 LLM 的推理能力。</p>
+<p><strong>跨模型对比。</strong> Gemini 和 Claude 后端在记忆增强下都表现出显著改善，但增益幅度有所不同。更强大的基础模型从记忆系统中获益更多，这表明有效的记忆利用需要强大的底层推理能力。</p>
+<hr>
+<h2 id="5-analysis-and-insights">5. Analysis and Insights / 分析与洞察</h2>
+<p>The Evo-Memory benchmark reveals that self-evolving memory is not a monolithic capability but rather a spectrum of interrelated skills. Effective memory systems must excel at multiple sub-tasks: identifying what is worth remembering, organizing stored knowledge for efficient retrieval, recognizing when past experience is applicable to new situations, and continuously refining memory quality.</p>
+<p>The benchmark also highlights the tension between memory specificity and generality. Highly specific memories are more directly useful when the agent encounters a nearly identical task, but they transfer poorly to novel situations. Conversely, highly abstract memories transfer more broadly but provide less actionable guidance. The most successful architectures found ways to maintain memories at multiple levels of abstraction simultaneously.</p>
+<p>An important practical insight is that memory quality matters more than memory quantity. Systems that accumulated large numbers of unprocessed experiences were often outperformed by systems with smaller but more carefully curated memory stores. This suggests that the "evolve" phase of the cycle — where raw experiences are refined into higher-quality knowledge — is the most critical component for long-term performance.</p>
+<p>Evo-Memory 基准揭示了自进化记忆不是一种单一能力，而是一系列相互关联的技能谱系。有效的记忆系统必须在多个子任务上表现出色：识别什么值得记住、组织存储知识以实现高效检索、识别过往经验何时适用于新情境，以及持续精炼记忆质量。</p>
+<p>该基准还突出了记忆特异性与通用性之间的张力。高度特定的记忆在智能体遇到几乎相同的任务时更直接有用，但对新情境的迁移性较差。反之，高度抽象的记忆迁移范围更广，但提供的可操作指导较少。最成功的架构找到了同时在多个抽象层次维护记忆的方法。</p>
+<p>一个重要的实践洞察是记忆质量比记忆数量更重要。积累大量未处理经验的系统往往不如拥有较小但经过更仔细筛选的记忆存储的系统。这表明循环中的"进化"阶段——将原始经验精炼为更高质量知识的阶段——是长期性能最关键的组件。</p>
+<hr>
+<h2 id="6-significance">6. Significance / 研究意义</h2>
+<p>Evo-Memory makes a foundational contribution to the field by establishing the first comprehensive benchmark specifically designed for self-evolving memory in LLM agents. Prior work evaluated memory systems in isolation or on narrow tasks; Evo-Memory provides a unified framework that enables fair comparison across architectures.</p>
+<p>The benchmark's findings have direct implications for the design of next-generation LLM agents. The strong task similarity correlation suggests that memory systems should include explicit mechanisms for measuring and leveraging structural similarity. The importance of the evolve phase highlights the need for sophisticated memory refinement procedures. And the cumulative learning curves provide concrete evidence that test-time learning is not only possible but can yield substantial performance gains.</p>
+<p>Perhaps most importantly, Evo-Memory demonstrates that the gap between LLM agents with and without memory systems is significant and consistent across multiple domains, making a compelling case that self-evolving memory should be considered a standard component of LLM agent architectures.</p>
+<p>Evo-Memory 通过建立第一个专门针对 LLM 智能体自进化记忆设计的综合基准，为该领域做出了基础性贡献。先前的工作在孤立环境或狭窄任务上评估记忆系统；Evo-Memory 提供了一个统一框架，使跨架构的公平比较成为可能。</p>
+<p>该基准的发现对下一代 LLM 智能体的设计具有直接启示。强任务相似度相关性表明记忆系统应包含显式的结构相似度测量和利用机制。进化阶段的重要性突显了对精密记忆精炼程序的需求。累积学习曲线提供了具体证据，表明测试时学习不仅是可能的，而且能够产生实质性的性能提升。</p>
+<p>最重要的是，Evo-Memory 证明了有记忆系统和无记忆系统的 LLM 智能体之间的差距在多个领域中是显著且一致的，有力地表明自进化记忆应被视为 LLM 智能体架构的标准组件。</p>
+<hr>
+<h2 id="7-benchmark-design-and-methodology">7. Benchmark Design and Methodology / 基准设计与方法论</h2>
+<p>The Evo-Memory benchmark is carefully designed to isolate and measure the specific capabilities required for effective self-evolving memory. The benchmark consists of multiple task domains, each providing sequences of related tasks that enable cumulative learning measurement.</p>
+<p>Task sequences are constructed with controlled levels of similarity. Some sequences feature highly similar tasks where direct experience transfer should be straightforward. Others include gradually diverging tasks that test the agent's ability to abstract general principles from specific experiences. A third category features tasks with hidden structural similarities that are not immediately apparent, testing the agent's depth of understanding.</p>
+<p>Each task in a sequence is scored independently, allowing the benchmark to plot learning curves that show how performance evolves as the agent accumulates more experience. The benchmark also records detailed logs of memory operations — what was stored, what was retrieved, and how memories were modified — enabling fine-grained analysis of memory system behavior.</p>
+<p>To ensure fair comparison, all memory architectures are evaluated under identical conditions: same task sequences, same base LLM, same computational budget. The benchmark also includes ablation studies that systematically disable individual memory components to measure their marginal contribution to overall performance.</p>
+<p>Evo-Memory 基准经过精心设计，以隔离和衡量有效自进化记忆所需的特定能力。该基准由多个任务领域组成，每个领域提供一系列相关任务，以实现累积学习的测量。</p>
+<p>任务序列以受控的相似度水平构建。一些序列包含高度相似的任务，其中直接经验迁移应该是直截了当的。另一些序列包含逐渐分化的任务，测试智能体从具体经验中抽象出一般原则的能力。第三类任务具有不易立即察觉的隐含结构相似性，测试智能体理解的深度。</p>
+<p>序列中的每个任务都独立评分，使基准能够绘制学习曲线，展示随着智能体积累更多经验，性能如何演变。基准还记录了记忆操作的详细日志——存储了什么、检索了什么以及记忆如何被修改——使得对记忆系统行为的细粒度分析成为可能。</p>
+<p>为确保公平比较，所有记忆架构都在相同条件下评估：相同的任务序列、相同的基础 LLM、相同的计算预算。基准还包括消融研究，系统性地禁用各个记忆组件以衡量其对整体性能的边际贡献。</p>
+<hr>
+<h2 id="8-practical-implications-for-agent-design">8. Practical Implications for Agent Design / 对智能体设计的实践启示</h2>
+<p>The findings from Evo-Memory have several practical implications for developers building LLM agents with memory capabilities.</p>
+<p>First, the strong correlation between task similarity and memory effectiveness suggests that memory systems should invest heavily in similarity detection. Agents that can accurately assess how similar a new task is to past experiences can make better decisions about which memories to retrieve and how much to rely on them. This argues for embedding sophisticated task representation models within the memory search component.</p>
+<p>Second, the superiority of reflective memory architectures like ReMem over simpler approaches like ExpRAG indicates that raw experience storage is insufficient. Agents must actively process and refine their experiences to extract maximum value. This processing should happen both immediately after task completion (while details are fresh) and periodically during idle time (for deeper reflection and cross-experience synthesis).</p>
+<p>Third, the cumulative learning curves suggest that memory-augmented agents should be deployed with a "warm-up" expectation. Initial performance may not differ significantly from memoryless baselines, but substantial improvements emerge after the agent has accumulated a critical mass of experiences. System designers should account for this learning trajectory when setting performance expectations and evaluation criteria.</p>
+<p>Finally, the cross-model comparison results indicate that memory system design and base model capability interact in important ways. A sophisticated memory architecture paired with a weak base model may underperform a simpler memory system paired with a strong base model. This suggests that memory system design should be tailored to the capabilities of the underlying LLM.</p>
+<p>Evo-Memory 的发现对构建具有记忆能力的 LLM 智能体的开发者具有多项实践启示。</p>
+<p>首先，任务相似度与记忆有效性之间的强相关性表明，记忆系统应大力投资于相似度检测。能够准确评估新任务与过往经验相似程度的智能体可以更好地决定检索哪些记忆以及在多大程度上依赖它们。这支持在记忆搜索组件中嵌入精密的任务表示模型。</p>
+<p>其次，ReMem 等反思记忆架构相对于 ExpRAG 等简单方法的优势表明，原始经验存储是不够的。智能体必须主动处理和精炼其经验以提取最大价值。这种处理应在任务完成后立即进行（趁细节还新鲜时），也应在空闲时间定期进行（用于更深层的反思和跨经验综合）。</p>
+<p>第三，累积学习曲线表明，配备记忆的智能体在部署时应有"预热"预期。初始性能可能与无记忆基线没有显著差异，但在智能体积累了关键数量的经验后，实质性的改善会开始显现。系统设计者在设定性能期望和评估标准时应考虑这一学习轨迹。</p>
+<p>最后，跨模型比较结果表明，记忆系统设计与基础模型能力之间存在重要的交互作用。精密的记忆架构搭配弱基础模型可能不如简单的记忆系统搭配强基础模型。这表明记忆系统设计应根据底层 LLM 的能力进行调整。</p>
+          </article>
+
+          <div class="article-nav"><a href="memorybank.html"><div class="nav-label">← 上一篇</div><div class="nav-title">MemoryBank</div></a><a class="nav-right" href="memgpt.html"><div class="nav-label">下一篇 →</div><div class="nav-title">MemGPT</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

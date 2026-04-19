@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fast Inference of MoE with Offloading — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+          <a href="../../zh/">首页</a>
+          <a href="../../zh/inference-optimization.html">推理优化</a>
+          <a href="../../zh/self-improving-agents.html">自我改进 Agent</a>
+          <a href="../../zh/multi-agent-systems.html">多 Agent 系统</a>
+          <a href="../../zh/memory-systems.html">记忆系统</a>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../inference-optimization.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 推理优化</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-inference">推理优化</span>
+            <span class="anth-caption">2023 · Eliseev &amp; Mazur</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="fast-inference-of-mixture-of-experts-language-models-with-offloading">Fast Inference of Mixture-of-Experts Language Models with Offloading</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2312.17238">arXiv:2312.17238</a></p>
+<p><strong>作者:</strong> Artyom Eliseev, Denis Mazur</p>
+<p><strong>发表:</strong> 2023</p>
+<p><strong>主题:</strong> MoE 模型权重 offload 到 SSD/CPU，在消费级硬件上运行大型 MoE 模型</p>
+</blockquote>
+<hr>
+<h2 id="abstract">Abstract</h2>
+<p>Mixture-of-Experts (MoE) language models have recently become an effective architecture for scaling model capacity while maintaining tractable training and inference costs. As these models grow, running them on consumer hardware becomes increasingly challenging due to their sheer size. In this work, we study the problem of running large MoE language models on hardware where only a fraction of experts can fit into accelerator memory. We observe that sparse MoE models activate only a subset of layers per input, enabling faster generation than dense alternatives. However, their larger footprint makes them challenging for devices with limited GPU memory. We propose a novel strategy that accelerates offloading by taking advantage of innate properties of MoE LLMs, enabling deployment of Mixtral-8x7B with mixed quantization on desktop computers and free-tier Google Colab instances.</p>
+<h2 id="_1">摘要</h2>
+<p>混合专家 (MoE) 语言模型最近已成为一种有效的架构，能够在保持可控的训练和推理成本的同时扩展模型容量。随着这些模型的增长，由于其庞大的规模，在消费级硬件上运行它们变得越来越具有挑战性。在这项工作中，我们研究了在仅有部分专家能够放入加速器内存的硬件上运行大型 MoE 语言模型的问题。我们观察到稀疏 MoE 模型每次输入仅激活一部分层，使得生成速度比密集模型更快。然而，其更大的内存占用使其在 GPU 内存有限的设备上具有挑战性。我们提出了一种新策略，利用 MoE LLM 的固有特性来加速 offloading，实现在桌面计算机和免费 Google Colab 实例上部署混合量化的 Mixtral-8x7B。</p>
+<hr>
+<h2 id="1-introduction">1. Introduction / 引言</h2>
+<p>Large Mixture-of-Experts models like Mixtral-8x7B represent a significant advancement in language model scaling. By activating only 2 out of 8 experts per token, these models achieve strong performance while keeping per-token computation costs manageable. However, the total parameter count (46.7B for Mixtral-8x7B) means the full model requires substantial memory, far exceeding what consumer GPUs typically offer (12-16GB VRAM).</p>
+<p>大型混合专家模型如 Mixtral-8x7B 代表了语言模型扩展的重大进步。通过每个 token 仅激活 8 个专家中的 2 个，这些模型在保持可控的单 token 计算成本的同时实现了强大的性能。然而，总参数量（Mixtral-8x7B 为 46.7B）意味着完整模型需要大量内存，远超消费级 GPU 通常提供的容量（12-16GB 显存）。</p>
+<hr>
+<h2 id="2-key-technical-contributions">2. Key Technical Contributions / 核心技术贡献</h2>
+<h3 id="21-expert-locality-observation">2.1 Expert Locality Observation / 专家局部性观察</h3>
+<p><img alt="Figure 1: Expert loading pattern in Mixtral-8x7B-Instruct" src="images/fast-inference-moe/x1.png"></p>
+<p><em>图 1：Mixtral-8x7B-Instruct 中的专家加载模式。蓝色单元格表示某个专家在编码某个 token 时被激活；蓝色越深表示门控权重越高。灰色小方块表示在 k=2 的 LRU 缓存中哪些专家被缓存。</em></p>
+<p>The researchers discovered that MoE models exhibit reusable experts across adjacent tokens. Some experts activate in sequences of 2-4 tokens, creating opportunities for caching rather than constant reloading from host RAM or SSD.</p>
+<p>研究者发现 MoE 模型在相邻 token 之间展现出可复用的专家。某些专家在连续 2-4 个 token 中被激活，这为缓存而非从主机 RAM 或 SSD 持续重新加载创造了机会。</p>
+<h3 id="22-lru-caching-strategy-lru">2.2 LRU Caching Strategy / LRU 缓存策略</h3>
+<p>An LRU (Least Recently Used) cache keeps k cached experts per layer in GPU memory:</p>
+<ul>
+<li><strong>k=2</strong>: suitable for 12GB GPUs</li>
+<li><strong>k=4</strong>: suitable for 16GB GPUs</li>
+</ul>
+<p>This significantly reduces GPU-RAM communication overhead by keeping frequently accessed experts readily available.</p>
+<p>LRU（最近最少使用）缓存在 GPU 内存中为每层保留 k 个缓存的专家：</p>
+<ul>
+<li><strong>k=2</strong>: 适用于 12GB GPU</li>
+<li><strong>k=4</strong>: 适用于 16GB GPU</li>
+</ul>
+<p>这通过保持频繁访问的专家随时可用，显著减少了 GPU-RAM 通信开销。</p>
+<p><img alt="Figure 2: LRU cache hit ratio and speculative loading recall" src="images/fast-inference-moe/x2.png"></p>
+<p><em>图 2：左图为不同缓存大小 k 的 LRU 缓存命中率；右图为预加载不同数量专家时的推测性加载召回率（实线=提前 1 层，虚线=提前 2 层，点线=提前 10 层）</em></p>
+<h3 id="23-speculative-expert-loading">2.3 Speculative Expert Loading / 推测性专家加载</h3>
+<p>Since traditional pre-fetching cannot work with MoE (experts are selected just-in-time by the gating function), the authors developed speculative loading: applying the next layer's gating function to the current layer's hidden states to predict likely experts ahead of time, enabling pre-loading before they are actually needed.</p>
+<p>由于传统预取技术无法应用于 MoE（专家由门控函数即时选择），作者开发了推测性加载：将下一层的门控函数应用于当前层的隐藏状态，提前预测可能需要的专家，从而在实际需要之前进行预加载。</p>
+<h3 id="24-quantization-scheme">2.4 Quantization Scheme / 量化方案</h3>
+<p>The system uses differentiated quantization:</p>
+<ul>
+<li><strong>Attention layers</strong>: 4-bit quantization (always active, kept in GPU memory)</li>
+<li><strong>Expert layers</strong>: 2-3 bit quantization using Half Quadratic Quantization (HQQ) algorithm</li>
+</ul>
+<p>This mixed approach minimizes the memory footprint while preserving model quality for the most critical components.</p>
+<p>系统使用差异化量化：</p>
+<ul>
+<li><strong>注意力层</strong>: 4-bit 量化（始终活跃，保留在 GPU 内存中）</li>
+<li><strong>专家层</strong>: 使用半二次量化 (HQQ) 算法的 2-3 bit 量化</li>
+</ul>
+<p>这种混合方法在为最关键组件保留模型质量的同时，最大限度地减少了内存占用。</p>
+<h3 id="25-system-implementation">2.5 System Implementation / 系统实现</h3>
+<ul>
+<li>Splits experts between host RAM and GPU memory (在主机 RAM 和 GPU 内存之间分配专家)</li>
+<li>Allocates contiguous memory buffers for faster transfers (分配连续内存缓冲区以加速传输)</li>
+<li>Uses 4 temporary buffers for asynchronous copying (使用 4 个临时缓冲区进行异步复制)</li>
+</ul>
+<hr>
+<h2 id="3-experiments">3. Experiments / 实验</h2>
+<p><img alt="Figure 3: System architecture and benchmark results" src="images/fast-inference-moe/x3.png"></p>
+<p><em>图 3：系统架构与基准测试结果</em></p>
+<h3 id="31-results">3.1 Results / 实验结果</h3>
+<table>
+<thead>
+<tr>
+<th>Hardware</th>
+<th>Speed (tokens/s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T4 GPU (Google Colab)</td>
+<td>~2.0</td>
+</tr>
+<tr>
+<td>RTX 3060</td>
+<td>~2.3</td>
+</tr>
+<tr>
+<td>RTX 3080 Mobile</td>
+<td>~2.7</td>
+</tr>
+<tr>
+<td>A100 (reference)</td>
+<td>~3.0</td>
+</tr>
+</tbody>
+</table>
+<p>LRU caching combined with speculative loading outperformed naive offloading by approximately <strong>2x</strong> across all configurations.</p>
+<p>LRU 缓存结合推测性加载在所有配置中比朴素 offloading 提速约 <strong>2 倍</strong>。</p>
+<hr>
+<h2 id="4-conclusion">4. Conclusion / 结论</h2>
+<p>This work demonstrates that large MoE language models can be made accessible on consumer hardware through intelligent offloading strategies. The key insight is that the inherent sparsity and expert locality patterns of MoE models can be exploited for efficient caching and speculative loading. By combining LRU caching, speculative expert prediction, and mixed quantization, the system achieves practical generation speeds for Mixtral-8x7B on hardware as modest as a free-tier Google Colab instance.</p>
+<p>本文证明了通过智能 offloading 策略，大型 MoE 语言模型可以在消费级硬件上运行。核心洞察是 MoE 模型固有的稀疏性和专家局部性模式可以被利用来实现高效缓存和推测性加载。通过结合 LRU 缓存、推测性专家预测和混合量化，该系统在低至免费 Google Colab 实例的硬件上实现了 Mixtral-8x7B 的实用生成速度。</p>
+          </article>
+
+          <div class="article-nav"><a href="llm-in-a-flash.html"><div class="nav-label">← 上一篇</div><div class="nav-title">LLM in a Flash</div></a><a class="nav-right" href="flashmoe.html"><div class="nav-label">下一篇 →</div><div class="nav-title">FlashMoE</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>
