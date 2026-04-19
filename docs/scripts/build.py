@@ -270,6 +270,15 @@ CATEGORIES: list[Category] = [
                 "6-agent parallel research swarm distills a public figure's cognitive OS (mental models + decision heuristics + expression DNA) into a reusable SKILL.md.",
                 "6 个并行 agent 蒸馏人物认知操作系统（心智模型+决策启发式+表达 DNA）为可运行 SKILL.md。",
             ),
+            Paper(
+                "harness-design-long-running-apps",
+                "agent-patterns/harness-design-long-running-apps.md",
+                "Harness Design for Long-Running Apps",
+                "Prithvi Rajasekaran (Anthropic Labs)",
+                "2026",
+                "GAN-inspired Generator/Evaluator/Planner architecture for 6-hour autonomous coding. Functional DAW/game engine production — Solo 20min/$9 broken vs Full 6h/$200 working.",
+                "受 GAN 启发的 Generator/Evaluator/Planner 三 agent 架构，跑 6 小时自主编码。Solo 20 分钟 $9 做不出来的东西，Full harness 6 小时 $200 完整可用。",
+            ),
         ],
     ),
     Category(
@@ -309,6 +318,16 @@ CATEGORIES: list[Category] = [
                 "2021",
                 "Low-rank adaptation — trains ~10,000× fewer parameters, no inference overhead, matches full fine-tune quality. The PEFT default.",
                 "低秩适配微调：可训练参数减少万倍、推理无额外开销、效果持平全量微调。PEFT 事实标准。",
+            ),
+            Paper(
+                "gan",
+                "training-techniques/gan.md",
+                "Generative Adversarial Networks",
+                "Goodfellow et al.",
+                "2014",
+                "The adversarial training paradigm — Generator vs Discriminator. 70,000+ citations. Its 'independent evaluator' idea now powers RLHF, self-play, and 2026 agent harnesses.",
+                "对抗训练开山之作——Generator vs Discriminator。被引 7 万+。"
+                "\"独立评判\"思想在 RLHF、自博弈、2026 agent harness 里持续复活。",
             ),
         ],
     ),

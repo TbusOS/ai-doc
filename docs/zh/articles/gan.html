@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Generative Adversarial Networks — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../zh/">首页</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">6 篇</span></span></a>
+          <a href="../../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">4 篇</span></span></a>
+          <a href="../../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI 思维范式</span><br><span class="sub">2 篇</span></span></a>
+          <a href="../../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../training-techniques.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 训练技术</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-training">训练技术</span>
+            <span class="anth-caption">2014 · Goodfellow et al.</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="generative-adversarial-networks-gan">Generative Adversarial Networks (GAN)</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/1406.2661">arXiv:1406.2661</a> / <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets">NeurIPS 2014</a></p>
+<p><strong>作者:</strong> Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio</p>
+<p><strong>发表:</strong> NeurIPS 2014</p>
+<p><strong>主题:</strong> 深度学习 10 年最重要的几篇论文之一。用<strong>两个神经网络对抗训练</strong>的方式做生成建模——Generator 生成假样本、Discriminator 区分真假，互相逼迫进化。从 2014 年的模糊 MNIST 到今天的 FLUX.2 高清图像、从 StyleGAN 到 Diffusion 再到 Anthropic 2026 年的 agent harness——GAN 的"对抗+独立评判"思想一直在被重新发现和应用。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>在 GAN 之前，生成建模主要用：
+- <strong>Variational Autoencoders (VAE)</strong>——容易训练但输出模糊
+- <strong>Boltzmann Machines</strong>——采样困难、慢
+- <strong>Pixel-by-pixel autoregressive</strong>——可行但慢</p>
+<p><strong>所有方法都需要显式建模概率密度</strong>——这在高维空间（比如 224×224 图像）极其难。</p>
+<p>Goodfellow 2014 年的洞察：<strong>根本不需要显式建模概率密度</strong>。让两个网络对抗：</p>
+<ul>
+<li><strong>Generator</strong> 学习把随机噪声映射为"看起来像真数据"的样本</li>
+<li><strong>Discriminator</strong> 学习区分"真数据"和"Generator 生成的假数据"</li>
+</ul>
+<p>两者交替优化，Nash 均衡时 Generator 生成的分布<strong>完美逼近</strong>真实数据分布——<strong>用对抗代替密度估计</strong>。</p>
+<p>这个想法影响了：
+- <strong>2014-2020 年整个生成模型浪潮</strong>（StyleGAN、BigGAN、CycleGAN、Pix2Pix 等）
+- <strong>Self-play RL</strong>（AlphaZero、<a href="../self-improving-agents/spin.md">SPIN</a>——模型 vs 上一版自己）
+- <strong>RLHF / DPO</strong>——本质都是"用一个判别者评价生成者"
+- <strong><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a></strong> (2026) ——generator agent + evaluator agent 就是 GAN 的 agent 层投射</p>
+<p><strong>GAN 的思想活了 12 年，从像素生成走到 agent 架构——是深度学习最深刻的 meta-pattern 之一</strong>。</p>
+<hr>
+<h2 id="1-the-core-idea">1. 核心思想 / The Core Idea</h2>
+<h3 id="11">1.1 博弈论建模</h3>
+<p>Goodfellow 把生成建模表述为 <strong>minimax game</strong>：</p>
+<p>$$
+\min_G \max_D V(D, G) = \mathbb{E}<em _text_data="\text{data">{x \sim p</em> [\log(1 - D(G(z)))]
+$$}}(x)} [\log D(x)] + \mathbb{E}_{z \sim p_z(z)</p>
+<p>用人话说：</p>
+<ul>
+<li><strong>Discriminator D 想最大化</strong> V：正确分辨真数据（输出接近 1）和 Generator 假数据（输出接近 0）</li>
+<li><strong>Generator G 想最小化</strong> V：骗过 D，让它把 G 的输出也判成"真"</li>
+</ul>
+<p>两者在同一个函数 V 上反方向拉扯——这就是 <strong>adversarial</strong>。</p>
+<h3 id="12-goodfellow">1.2 形象化的类比（Goodfellow 在论文里举的例子）</h3>
+<blockquote>
+<p><em>"The generator can be thought of as analogous to a team of counterfeiters, trying to produce fake currency and use it without detection, while the discriminative model is analogous to the police, trying to detect the counterfeit currency. Competition in this game drives both teams to improve their methods until the counterfeits are indistinguishable from the genuine articles."</em></p>
+<p><em>Generator 类比一队造假币的人，试图生产假钱不被发现；Discriminator 类比警察，试图识破假币。两队在博弈中都被逼着提升自己的方法，直到假币与真币无法区分。</em></p>
+</blockquote>
+<hr>
+<h2 id="2-training-algorithm">2. 训练流程 / Training Algorithm</h2>
+<p>GAN 训练是交替的：</p>
+<pre><code>for each iteration:
+    # 1. Discriminator 更新
+    for k steps:  (原论文 k=1)
+        采样 m 个真实样本 x~p_data
+        采样 m 个噪声 z~p_z
+        让 D 分辨真假，按 ∇_D V 的梯度上升
+
+    # 2. Generator 更新
+    采样 m 个噪声 z~p_z
+    让 G 骗过 D，按 ∇_G V 的梯度下降
+</code></pre>
+<h3 id="21-loss-trick">2.1 实战中的 loss trick</h3>
+<p>原始 minimax 公式里 Generator 的 loss 是 $\log(1 - D(G(z)))$，在训练早期 D(G(z)) 很小（容易识破），这个 loss <strong>梯度接近 0</strong>——Generator 学不动。</p>
+<p><strong>实用替代：</strong> Generator 改用 $-\log D(G(z))$（最大化 D 认为是真的概率）。提供<strong>更强的梯度信号</strong>、训练稳定得多。</p>
+<p>这是 GAN 论文里<strong>最常被复用</strong>的 trick——今天所有 GAN 变种都在用。</p>
+<hr>
+<h2 id="3-theoretical-contributions">3. 理论贡献 / Theoretical Contributions</h2>
+<h3 id="31-discriminator">3.1 最优 Discriminator 有闭式解</h3>
+<p>给定 G 固定，最优 D 为：</p>
+<p>$$
+D^*(x) = \frac{p_{\text{data}}(x)}{p_{\text{data}}(x) + p_g(x)}
+$$</p>
+<h3 id="32-global-optimum-jensen-shannon-divergence">3.2 Global optimum = Jensen-Shannon Divergence</h3>
+<p>把 D<em> 代回 minimax，可以推出 Generator 在优化</em><em>Jensen-Shannon divergence</em>*（JS-divergence）——一种对称的分布距离。</p>
+<p>Global minimum 在 $p_g = p_{\text{data}}$ 时取得，此时 V = -log 4。</p>
+<p><strong>这证明了：Nash 均衡点的 Generator 恰好学到数据分布</strong>。GAN 不只是启发式，是有理论保证的。</p>
+<hr>
+<h2 id="4-gan-the-ripples-gan-created">4. GAN 的深远影响 / The Ripples GAN Created</h2>
+<h3 id="41-2014-2020">4.1 生成建模革命（2014-2020）</h3>
+<table>
+<thead>
+<tr>
+<th>年份</th>
+<th>模型</th>
+<th>突破</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2014</td>
+<td>GAN</td>
+<td>对抗训练原理</td>
+</tr>
+<tr>
+<td>2015</td>
+<td>DCGAN</td>
+<td>卷积 GAN，MNIST → 室内场景</td>
+</tr>
+<tr>
+<td>2016</td>
+<td>Pix2Pix</td>
+<td>配对图像翻译（草图→真图）</td>
+</tr>
+<tr>
+<td>2017</td>
+<td>CycleGAN</td>
+<td>无配对风格迁移</td>
+</tr>
+<tr>
+<td>2018</td>
+<td>BigGAN</td>
+<td>大规模 ImageNet 生成</td>
+</tr>
+<tr>
+<td>2018</td>
+<td>StyleGAN</td>
+<td>可控的高质量人脸生成</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>StyleGAN2</td>
+<td>事实上的人脸 SOTA</td>
+</tr>
+</tbody>
+</table>
+<p>这 6 年<strong>主导了生成模型工程</strong> —— 直到 2020 年之后 <strong>Diffusion models</strong> 接管了主流。</p>
+<h3 id="42-gan-diffusion">4.2 为什么 GAN 最终让位给 Diffusion</h3>
+<ul>
+<li><strong>训练不稳定</strong>：两个网络对抗容易 mode collapse、梯度消失</li>
+<li><strong>评估困难</strong>：没有明确的训练 loss → eval metric 映射</li>
+<li><strong>生成多样性受限</strong>：Discriminator 会倾向于让 Generator 输出"安全的"典型样本</li>
+</ul>
+<p>Diffusion models (DDPM 2020, Stable Diffusion 2022, FLUX 2024) 有更稳定的训练和更广的生成分布——所以 2026 年主流图像生成都是 Diffusion。</p>
+<p><strong>但 GAN 的对抗思想没死，它上升到了更抽象的层级。</strong></p>
+<h3 id="43-gan">4.3 GAN 思想的"升维"应用</h3>
+<table>
+<thead>
+<tr>
+<th>领域</th>
+<th>GAN-inspired 对应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RL self-play</strong></td>
+<td><a href="../self-improving-agents/spin.md">SPIN</a> — 模型 vs 上一版自己</td>
+</tr>
+<tr>
+<td><strong>RLHF / DPO</strong></td>
+<td><a href="dpo.md">DPO</a> — policy 在参考模型对比下被 "discriminate"</td>
+</tr>
+<tr>
+<td><strong>RL reasoning</strong></td>
+<td>GRPO（<a href="deepseek-r1.md">DeepSeek-R1</a>）—— group 中其他样本充当 discriminator baseline</td>
+</tr>
+<tr>
+<td><strong>Agent harness</strong></td>
+<td><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a> — Generator Agent + Evaluator Agent</td>
+</tr>
+<tr>
+<td><strong>Skill 优化</strong></td>
+<td><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a> — 子 agent 独立评分</td>
+</tr>
+<tr>
+<td><strong>Data quality</strong></td>
+<td><a href="../self-improving-agents/cherry-llm.md">Cherry LLM</a> — IFD 指标筛选 = 隐式的 discriminator</td>
+</tr>
+</tbody>
+</table>
+<p><strong>这是 GAN 最深刻的遗产：不是神经网络架构，是 "separate generator from evaluator" 的思想。</strong></p>
+<hr>
+<h2 id="5-key-takeaways">5. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="51">5.1 独立评判永远比自评强</h3>
+<p>GAN 的核心教训（被 Reflexion / RLHF / Harness 一再验证）：<strong>让 generator 自己评价自己的输出，它会系统性地高估</strong>。独立的 discriminator / evaluator 是<strong>不可替代的</strong>结构性需求。</p>
+<p><strong>应用场景：</strong> 任何有"生成 + 评估"循环的系统——代码生成 + 单元测试、设计生成 + 审美评估、文本生成 + 事实校验——都应该<strong>硬分离</strong>这两个角色。</p>
+<h3 id="52">5.2 对抗不是敌对，是共同进化</h3>
+<p>Generator 和 Discriminator 表面对抗，实际<strong>互相提升对方的上限</strong>。D 越强，G 就必须更精细；G 越精细，D 也必须更敏锐。两者的进步是<strong>耦合</strong>的。</p>
+<p>工程意义：<strong>不要只投资 generator 的 prompt / 模型，同样要投资 evaluator 的 prompt / 模型</strong>。否则 G 会超过 D，系统回到"generator 自评"的失败模式。</p>
+<h3 id="53">5.3 训练不稳定是对抗结构的代价</h3>
+<p>GAN 两个 network 联合训练，本身就不是传统的 SGD——是在 <strong>saddle point</strong> 上找 Nash 均衡。这意味着：</p>
+<ul>
+<li><strong>lr 对 G 和 D 可能要分开调</strong></li>
+<li><strong>哪个先走一步很重要</strong>（原论文 D 先走 k 步）</li>
+<li><strong>可能永远不收敛</strong>（Generator 可能在 Discriminator 周围 oscillate）</li>
+</ul>
+<p><strong>这些痛点今天仍然活在 RLHF / 对抗训练 / agent harness 里。</strong> 2026 年 Anthropic harness 的 Evaluator 校准问题，和 2014 年 GAN 的训练不稳定，在本质上是同一种问题——<strong>对抗系统需要精细的平衡</strong>。</p>
+<h3 id="54-gan-vs-gan">5.4 GAN "思想" vs GAN "架构"</h3>
+<p>2026 年你大概率<strong>不需要</strong>在做实际产品时用 GAN 架构（Diffusion 基本接管图像生成）。<strong>但你几乎必然会用到 GAN 思想</strong>：</p>
+<ul>
+<li>做 agent 系统？Generator + Evaluator 分工</li>
+<li>做数据生成？数据 + 自动校验 pipeline</li>
+<li>做模型训练？参考策略 + 当前策略的对比（DPO / GRPO）</li>
+</ul>
+<p><strong>学 GAN 是学一种模式，不是学一种网络</strong>。</p>
+<h3 id="55-mode-collapse">5.5 Mode Collapse 是任何对抗系统的通用风险</h3>
+<p>GAN 最著名的失败模式：Generator <strong>收敛到只产生少数几种输出</strong>，因为这些 output 骗 Discriminator 稳赚。即使 Discriminator 识破了，Generator 只会<strong>从一个 mode 跳到另一个</strong>，而不是覆盖整个分布。</p>
+<p>类比到 agent harness：
+- Generator agent 可能 <strong>反复产出相似的 pattern</strong> 绕过 Evaluator
+- 解法：Evaluator 需要 <strong>diverse test cases</strong> 逼 Generator 覆盖多种情况
+- 就像 GAN 用 minibatch discrimination 让 Discriminator 看到多个假样本一样</p>
+<p><strong>如果你的 agent 系统产生 "听起来都正确但解法单一" 的问题，就是 mode collapse 的 agent 版本。</strong></p>
+<hr>
+<h2 id="6-relation-to-other-papers">6. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a></strong></td>
+<td><strong>最直接的现代投射——GAN 的 generator-discriminator 在 2026 年变成 agent 层的 Generator-Evaluator</strong></td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/spin.md">SPIN</a></td>
+<td>用 GAN 思想做 LLM 自博弈微调</td>
+</tr>
+<tr>
+<td><a href="dpo.md">DPO</a></td>
+<td>把"discriminator"隐式内置到 log-ratio 的对比里</td>
+</tr>
+<tr>
+<td><a href="deepseek-r1.md">DeepSeek-R1 (GRPO)</a></td>
+<td>Group baseline 就是隐式 discriminator</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/reflexion.md">Reflexion</a></td>
+<td>Verbal RL 的外部 judge = discriminator 升级为 language-based</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a></td>
+<td>独立子 agent 评分 = evaluator，这是对"generator 不能自评"原则的工程化</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/cherry-llm.md">Cherry LLM</a></td>
+<td>IFD 指标充当 data-level 的 discriminator</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>现代深度学习最被引用的论文之一</strong>：2014 年至今引用超 <strong>7 万次</strong></li>
+<li><strong>作者 Goodfellow 是当代 AI 教父之一</strong>（也是《Deep Learning》教科书作者）</li>
+<li><strong>思想持续活跃 12+ 年</strong>：从 pixel 生成 → agent harness，在不同抽象层反复被重新发现</li>
+<li><strong>影响跨越多个领域</strong>：图像、文本、RL、agent 架构</li>
+<li><strong>直接可抄的思维模型</strong>：每次你做 "generator + evaluator" 分工时，都在用 GAN 思想</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>论文:</strong> <a href="https://arxiv.org/abs/1406.2661">Generative Adversarial Nets (Goodfellow et al. 2014)</a></li>
+<li><strong>作者:</strong></li>
+<li>Ian Goodfellow (<a href="https://x.com/goodfellow_ian">@goodfellow_ian on X</a>)</li>
+<li>Yoshua Bengio — 2018 Turing 奖得主，《Deep Learning》合著者</li>
+<li><strong>教科书:</strong> <a href="https://www.deeplearningbook.org/">Deep Learning (Goodfellow, Bengio, Courville)</a> — GAN 章节</li>
+<li><strong>关键衍生论文:</strong></li>
+<li><a href="https://arxiv.org/abs/1511.06434">DCGAN (Radford et al. 2015)</a></li>
+<li><a href="https://arxiv.org/abs/1812.04948">StyleGAN (Karras et al. 2018)</a></li>
+<li><a href="https://arxiv.org/abs/1703.10593">CycleGAN (Zhu et al. 2017)</a></li>
+<li><a href="https://arxiv.org/abs/1701.07875">WGAN (Arjovsky et al. 2017)</a> — 解决 JS-divergence 的不稳定性</li>
+<li><strong>为什么 Diffusion 接管:</strong></li>
+<li><a href="https://arxiv.org/abs/2006.11239">DDPM (Ho et al. 2020)</a> — Diffusion 模型的奠基</li>
+<li><strong>本仓库相关:</strong></li>
+<li><strong><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a></strong> — GAN 2026 年的 agent-level 复活</li>
+<li><a href="../self-improving-agents/spin.md">SPIN</a> · <a href="dpo.md">DPO</a> · <a href="deepseek-r1.md">DeepSeek-R1</a> · <a href="../self-improving-agents/reflexion.md">Reflexion</a></li>
+<li><a href="../open-source-models/README.md#11-image-generation--图像生成">开源模型目录 — Image Generation</a> — GAN 后继（FLUX / SDXL）</li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="lora.html"><div class="nav-label">← 上一篇</div><div class="nav-title">LoRA</div></a><span></span></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

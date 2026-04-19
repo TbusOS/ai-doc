@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Harness Design for Long-Running Apps — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../zh/">首页</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">6 篇</span></span></a>
+          <a href="../../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">4 篇</span></span></a>
+          <a href="../../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI 思维范式</span><br><span class="sub">2 篇</span></span></a>
+          <a href="../../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../agent-patterns.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 Agent 设计模式</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-agent">Agent 设计模式</span>
+            <span class="anth-caption">2026 · Prithvi Rajasekaran (Anthropic Labs)</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="harness-design-for-long-running-application-development-anthropic">Harness Design for Long-Running Application Development (Anthropic)</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Anthropic Engineering — Harness Design for Long-Running Application Development</a></p>
+<p><strong>作者:</strong> Prithvi Rajasekaran（Anthropic Labs）</p>
+<p><strong>发表:</strong> 2026-03-24</p>
+<p><strong>主题:</strong> 把<strong>生成对抗网络（GAN）的 generator-discriminator 结构</strong>搬到 agent 架构——用一个独立的 <strong>Evaluator Agent</strong> 去监督 <strong>Generator Agent</strong> 的输出。在复杂长时任务（前端设计、全栈应用开发）上显著提升 Claude 的可靠性。一个运行 <strong>6 小时、耗费 $200</strong> 的 harness 跑出可用游戏引擎；同一任务单 agent 跑 20 分钟、$9 产出<strong>根本不能用的结果</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>2025 年之后所有主流 agent 系统面对同一道墙：<strong>长任务</strong>。Agent 能修 bug、能写脚本、能做 5 分钟的代码改动，但让它自主写一个完整的 DAW（数字音频工作站）或者游戏引擎——6 小时不间断编码——几乎必然崩。</p>
+<p>问题根源：<strong>agent 在自评时会骗自己</strong>。它调用一次 test、tests 过了就宣告完成，完全忽略实际产品是不是真的能用。这类失败在 5 分钟任务里不明显，在 6 小时任务里会指数级累积成灾难。</p>
+<p>Anthropic 这篇文章展示的是<strong>第一次把长任务 harness 做对</strong>的工程配方——<strong>核心思想直接来自 GAN</strong>：generator 想糊弄自己的时候，派一个独立的 discriminator 站对面，拿 Playwright 去真实测试产品能不能用。</p>
+<p><strong>读这篇文章的价值：</strong> 它告诉你当 vanilla agent 吃力时，怎么设计 scaffold（脚手架/harness）让它扩展到长任务。这个方法论对<strong>所有有评估循环的 agent 应用</strong>（编码、设计、研究、数据分析）直接适用。</p>
+<hr>
+<h2 id="1-the-core-architecture">1. 核心架构 / The Core Architecture</h2>
+<p><strong>受 GAN 启发的三 agent 结构：</strong></p>
+<pre><code>     ┌──────────────┐
+     │   Planner    │   输入 1-4 句 prompt
+     │              │   输出完整产品规格（16 features × 10 sprints）
+     └──────┬───────┘
+            │
+            ▼
+     ┌──────────────┐   ┌──────────────┐
+     │  Generator   │◀─▶│  Evaluator   │
+     │              │   │              │
+     │  实现代码     │   │  用 Playwright │
+     │  self-commit │   │  MCP 真实测试 │
+     └──────────────┘   └──────────────┘
+            │
+            ▼
+       交付的应用
+</code></pre>
+<h3 id="11">1.1 三个角色的明确分工</h3>
+<p><strong>Planner Agent:</strong>
+- 把用户的 1-4 句 prompt 扩展成详细的<strong>产品规格</strong>
+- 强调 high-level 技术设计，不纠结实现细节
+- 把 AI 能力集成到规格中（例子中游戏引擎规格包含"AI 辅助精灵生成"）
+- 典型输出：<strong>16 个 features × 10 sprints</strong></p>
+<p><strong>Generator Agent:</strong>
+- 按 sprint 实现 features（v1）或持续开发（v2）
+- <strong>self-evaluates before handoff</strong> — 先自己测，再把代码交给 Evaluator
+- 用 git 版本控制
+- 对 evaluator 反馈做响应</p>
+<p><strong>Evaluator Agent:</strong>
+- 用 <strong>Playwright MCP</strong> 做<strong>真实功能测试</strong>（不是单元测试，是真的浏览器操作）
+- 对照 objective criteria + discovered bugs 打分
+- 在实现之前协商 <strong>Sprint Contract</strong>（"做完的定义"）</p>
+<h3 id="12-gan-agent-level">1.2 为什么这是 GAN 的 agent-level 复刻</h3>
+<table>
+<thead>
+<tr>
+<th>GAN 元素</th>
+<th>Harness 对应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generator（生成器）</td>
+<td>Generator Agent — 写代码</td>
+</tr>
+<tr>
+<td>Discriminator（判别器）</td>
+<td>Evaluator Agent — 检测 "是真的能用还是糊弄过去"</td>
+</tr>
+<tr>
+<td>对抗训练</td>
+<td>Generator 在 Evaluator 反馈下迭代改进</td>
+</tr>
+<tr>
+<td>避免 mode collapse</td>
+<td>Evaluator 标准明确，防止 Generator 退化为"交付 fake 成品"</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最核心的原则（GAN 与 harness 都遵守）：generator 不能评价自己</strong>。让它自评它就会撒谎。必须放一个<strong>独立的、只关心 "produkt 是不是真的好" 的评判者</strong>在对面。</p>
+<hr>
+<h2 id="2-making-subjective-quality-gradable">2. 前端设计的"可测量性"突破 / Making Subjective Quality Gradable</h2>
+<p>前端设计质量一直被认为是<strong>主观的、不可打分的</strong>。Anthropic 把它解构成 4 个<strong>可测量维度</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>含义</th>
+<th>反例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Design Quality</strong></td>
+<td>是否有 coherent 视觉身份 vs. 零散部件拼贴</td>
+<td>字体、间距、配色各做各的</td>
+</tr>
+<tr>
+<td><strong>Originality</strong></td>
+<td>定制决策 vs. 模板默认 / 通用 AI 模式</td>
+<td>一看就是 shadcn 默认主题的 SaaS 站</td>
+</tr>
+<tr>
+<td><strong>Craft</strong></td>
+<td>typography、spacing、color、contrast 的执行力</td>
+<td>字号未成层级、间距跳变、对比度不合规</td>
+</tr>
+<tr>
+<td><strong>Functionality</strong></td>
+<td>usability 与美学解耦</td>
+<td>好看但按钮找不到</td>
+</tr>
+</tbody>
+</table>
+<h3 id="21-dutch-art-museum-website">2.1 案例：Dutch Art Museum Website</h3>
+<p>初始版本：基础暗色主题 landing page——AI 生成的平庸默认输出。</p>
+<p><strong>迭代 10 轮后：</strong></p>
+<blockquote>
+<p><em>"a 3D room with checkered floor rendered in CSS perspective, artwork hung on walls in free-form positions"</em></p>
+<p><em>"一个 CSS perspective 渲染的 3D 房间，棋盘地板，艺术品以自由位置挂在墙上"</em></p>
+</blockquote>
+<p><strong>关键洞察：</strong> 有 Evaluator 反馈后，Generator 会做出<strong>创造性跳跃</strong>——它开始尝试 novel design 而不是 AI 模板默认。这在单 agent 模式下几乎不会发生。</p>
+<hr>
+<h2 id="3-solo-vs-full-harness-solo-vs-full-harness">3. 真实数据：Solo vs Full Harness 对比 / Solo vs Full Harness</h2>
+<h3 id="retro-game-maker">Retro Game Maker 应用</h3>
+<p>Anthropic 用<strong>同一个 prompt</strong> 分别跑两种架构：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Solo Harness</th>
+<th>Full Harness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>时间</strong></td>
+<td>20 分钟</td>
+<td>6 小时</td>
+</tr>
+<tr>
+<td><strong>成本</strong></td>
+<td>$9</td>
+<td>$200</td>
+</tr>
+<tr>
+<td><strong>结果</strong></td>
+<td><strong>完全破损</strong>（entity/input wiring 失败）</td>
+<td>完整可用游戏 + 精灵动画 + 行为模板 + 音效 + AI 辅助生成 + 可分享导出</td>
+</tr>
+</tbody>
+</table>
+<p><strong>质量差距"一眼就能看出"。</strong> 20× 成本换来的不是"更好一点"，而是"<strong>从不能用到能用</strong>"的质变。</p>
+<h3 id="daw">DAW（数字音频工作站）</h3>
+<p>V2 harness 的完整耗时分解（用 prompt: <em>"Build a fully featured DAW in the browser using Web Audio API"</em>）：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>时间</th>
+<th>成本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Planner</td>
+<td>4.7 min</td>
+<td>$0.46</td>
+</tr>
+<tr>
+<td>Build (Round 1)</td>
+<td>2h 7min</td>
+<td>$71.08</td>
+</tr>
+<tr>
+<td>QA (Round 1)</td>
+<td>8.8 min</td>
+<td>$3.24</td>
+</tr>
+<tr>
+<td>Build (Round 2)</td>
+<td>1h 2min</td>
+<td>$36.89</td>
+</tr>
+<tr>
+<td>QA (Round 2)</td>
+<td>6.8 min</td>
+<td>$3.09</td>
+</tr>
+<tr>
+<td>Build (Round 3)</td>
+<td>10.9 min</td>
+<td>$5.88</td>
+</tr>
+<tr>
+<td>QA (Round 3)</td>
+<td>9.6 min</td>
+<td>$4.06</td>
+</tr>
+<tr>
+<td><strong>总计</strong></td>
+<td><strong>3h 50min</strong></td>
+<td><strong>$124.70</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Evaluator 在 sprint 中捕获 27+ 条具体问题——<strong>clip dragging bug、route ordering error、frame reordering</strong>——这些都是 Generator 自评<strong>必然会错过</strong>的细节。</p>
+<hr>
+<h2 id="4-harness-key-pitfalls-and-lessons">4. Harness 设计的踩坑与关键经验 / Key Pitfalls and Lessons</h2>
+<h3 id="41-context-anxiety">4.1 "Context Anxiety"（上下文焦虑）</h3>
+<p><strong>现象：</strong> 模型接近它<strong>以为</strong>是 context limit 的位置时，会<strong>过早宣告任务完成</strong>——即使离真的 limit 还远。</p>
+<blockquote>
+<p><em>"Models exhibiting premature task completion as they approach what they believe is their context limit."</em></p>
+</blockquote>
+<p><strong>解决方案：Context Reset（重置），不是 Compaction（压缩）</strong></p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>机制</th>
+<th>问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compaction</strong></td>
+<td>原地压缩历史 conversation 成摘要</td>
+<td>细节丢失、agent 仍感受到"接近边界"的焦虑</td>
+</tr>
+<tr>
+<td><strong>Reset</strong></td>
+<td><strong>完全清空 context</strong>，用<strong>结构化 handoff 文档</strong>传递状态</td>
+<td>Agent 重新进入"清爽"状态，没有焦虑</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reset 比 Compaction 的威力：</strong> 它把"长对话"变成了"一系列短对话 + 文档 handoff"——每一次都是清醒的起点。</p>
+<p><strong>有意思的是：</strong> Sonnet 4.5 下 reset 是 essential 的；<strong>Opus 4.6 原生解决了这个问题</strong>，reset 不再必要。随着模型进化，一些 scaffold 变得多余。</p>
+<h3 id="42-sprint-contract">4.2 Sprint Contract（冲刺契约）</h3>
+<p>在 Generator 开始实现之前，Generator 和 Evaluator <strong>先协商"做完是什么样的"</strong>——把 high-level spec 桥接到<strong>可测试的产出</strong>。</p>
+<p><strong>工程意义：</strong>
+- 避免 Generator 做出 Evaluator 拒绝的东西
+- 避免 Evaluator 事后抬高标准（moving the goalposts）
+- 每个 sprint 开始前双方都清楚"达标线"在哪里</p>
+<p>这是 GAN 所没有的——GAN 的 Generator 和 Discriminator 是对抗关系；<strong>Harness 的 Generator 和 Evaluator 是协作关系</strong>，先谈清楚规则再开干。</p>
+<h3 id="43-evaluator">4.3 Evaluator 的校准是最难的部分</h3>
+<p><strong>典型失败：</strong> Evaluator 会<strong>自信地表扬 generator 的工作——即使质量明显平庸</strong>。</p>
+<blockquote>
+<p><em>"They tend to respond by confidently praising the work—even when quality is obviously mediocre."</em></p>
+</blockquote>
+<p><strong>解决方案：</strong> 迭代更新 Evaluator 的 prompt，基于"evaluator 的判断和实际期望差多远"的日志做针对性修正。</p>
+<p><strong>工程教训：</strong> <strong>Evaluator 的 prompt 比 Generator 的 prompt 更需要精调</strong>。如果 Evaluator 松散，整个 harness 就是一个漂亮的 theater——Generator 照常在自 congratulate。</p>
+<h3 id="44-scaffold">4.4 "模型进化会吞噬 scaffold"</h3>
+<p>Anthropic 直白地指出：</p>
+<blockquote>
+<p><em>"As models continue to improve...the scaffold surrounding the model matters less over time."</em></p>
+</blockquote>
+<p>Opus 4.6 发布后：
+- <strong>Sprint decomposition</strong> 不再必要
+- <strong>Per-sprint evaluation</strong> 简化为<strong>单次 final pass</strong>
+- <strong>Context resets</strong> 被原生解决</p>
+<p><strong>但：</strong></p>
+<blockquote>
+<p><em>"The space of interesting harness combinations doesn't shrink as models improve. Instead, it moves."</em></p>
+<p><em>Harness 的有趣组合空间不会随模型进化而收缩——它在移动。</em></p>
+</blockquote>
+<p><strong>Translation for engineers:</strong> 每出一代新模型，<strong>你当前 harness 里哪些是 load-bearing（承重墙）、哪些是冗余</strong>都要重新审视。不要迷恋你精心搭的 scaffold——它可能一周后就被 native capability 吃掉。</p>
+<hr>
+<h2 id="5-key-takeaways">5. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="51-agent-generator">5.1 长任务 agent 的铁律：generator 不能评价自己</h3>
+<p>这不是"good practice"，是<strong>生死线</strong>。如果你的 agent 任务超过 30 分钟，你<strong>必须</strong>有一个独立于 generator 的 evaluator——代码跑着 Playwright 实测、用 user-facing criteria 打分，不是 generator 自己读自己的 log。</p>
+<h3 id="52-harness">5.2 Harness 成本是非线性的——但结果也是</h3>
+<p>20 分钟 $9 的 Solo 和 6 小时 $200 的 Full：<strong>20× 成本差</strong>。但 Solo 的结果是 "broken"（零价值），Full 是 "functional"（高价值）。<strong>这个数学实际是 $9/0 vs $200/functional_product——前者无意义，不是便宜</strong>。</p>
+<p><strong>产品判断：</strong> 如果你的用户愿意为 "functional" 付 $10+，就用 full harness；如果他们只是要 demo，Solo 够。不要混用。</p>
+<h3 id="53-reset-compaction">5.3 Reset &gt; Compaction</h3>
+<p>长任务上下文策略，<strong>首选 reset + 结构化 handoff，不是 compaction</strong>。这是一个反直觉的发现——大多数人本能地去"压缩"，但<strong>压缩保留了 anxiety</strong>，reset 清除了 anxiety。</p>
+<h3 id="54-sprint-contract">5.4 Sprint Contract：预先谈标准</h3>
+<p>让 evaluator 和 generator 在<strong>实现前</strong>就 "done 是什么样"的问题达成一致。这防止两种失败：
+- Generator 做出 evaluator 拒绝的东西（白做）
+- Evaluator 事后抬高标准（打脸）</p>
+<h3 id="55-evaluator-generator">5.5 Evaluator 校准比 Generator 更重要</h3>
+<p>训练/调优资源先投 Evaluator。Generator 在 Evaluator 反馈下会自动收敛；但如果 Evaluator 本身松散，Generator 再聪明也往松散的方向靠。</p>
+<h3 id="56-harness">5.6 Harness 不是永恒的——每代模型都要重审</h3>
+<p>Anthropic 明确说了：每一次 model upgrade <strong>触发 load-bearing components 的重新审视</strong>。你在 Sonnet 4.5 时代精心做的 sprint decomposition，Opus 4.6 时代可能直接多余。<strong>不要把 harness 当护城河</strong>——它是<strong>当前能力下的脚手架</strong>。</p>
+<hr>
+<h2 id="6-relation-to-other-papers">6. 与本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../training-techniques/gan.md">GAN (原始论文)</a></td>
+<td><strong>直接灵感源头</strong>。Harness 是 GAN 思想在 agent 层的投射：generator + discriminator 的分工结构</td>
+</tr>
+<tr>
+<td><a href="anthropic-building-effective-agents.md">Anthropic Building Effective Agents</a></td>
+<td>本文是其中"Evaluator-Optimizer pattern"的<strong>长任务扩展版</strong>——从 5 分钟 loop 到 6 小时 loop</td>
+</tr>
+<tr>
+<td><a href="anthropic-multi-agent-research.md">Anthropic Multi-Agent Research</a></td>
+<td>互为姊妹篇：Research 是 "orchestrator-workers"、Harness 是 "generator-evaluator"</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/reflexion.md">Reflexion</a></td>
+<td>Verbal RL 的核心也是独立反馈——Reflexion 在单任务内，Harness 在长任务跨 sprint</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a></td>
+<td>Darwin 棘轮 = Harness 思想在 skill 优化的应用</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></td>
+<td>Harness 跑出的成功 sprint 可以被 AgentFactory 蒸馏为可复用子 agent</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/autoresearch.md">autoresearch</a></td>
+<td>autoresearch 的"val_bpb ratchet"就是 Harness 的极简单 agent 版本</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>frontier lab 一手工程细节</strong>——真实运行时间、成本、失败案例都公开</li>
+<li><strong>概念清晰</strong>：Generator/Evaluator/Planner 三角分工 + Sprint Contract + Context Reset vs Compaction</li>
+<li><strong>立即可用</strong>：任何做长任务 agent 应用的团队都能直接套这套架构</li>
+<li><strong>有实验数据</strong>：Solo vs Full 对比是可测量的价值证明</li>
+<li><strong>和 GAN 形成了美丽的 full-circle</strong>——2014 年 Goodfellow 的生成-判别对抗结构，12 年后在 agent 架构层复活</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>原文:</strong> <a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness Design for Long-Running Application Development (Anthropic Engineering, 2026-03-24)</a></li>
+<li><strong>作者:</strong> Prithvi Rajasekaran (<a href="https://www.anthropic.com/">Anthropic Labs</a>)</li>
+<li><strong>Anthropic 相关文章:</strong></li>
+<li><a href="https://www.anthropic.com/research/building-effective-agents">Building Effective Agents</a></li>
+<li><a href="https://www.anthropic.com/engineering/effective-context-engineering">Effective Context Engineering for AI Agents</a></li>
+<li><a href="https://www.anthropic.com/engineering">Effective Harnesses for Long-Running Agents</a></li>
+<li><strong>代码 / 工具:</strong></li>
+<li><a href="https://github.com/anthropics/claude-agent-sdk">Claude Agent SDK</a> — 本文 harness 基于此</li>
+<li><a href="https://github.com/microsoft/playwright-mcp">Playwright MCP</a> — Evaluator 用的真实浏览器测试工具</li>
+<li><a href="https://github.com/anthropics/claude-code">Anthropic Frontend Design Skill</a></li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="../training-techniques/gan.md">GAN</a> — 直接灵感源</li>
+<li><a href="anthropic-building-effective-agents.md">Building Effective Agents</a></li>
+<li><a href="anthropic-multi-agent-research.md">Multi-Agent Research System</a></li>
+<li><a href="../self-improving-agents/reflexion.md">Reflexion</a> · <a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="nuwa-skill.html"><div class="nav-label">← 上一篇</div><div class="nav-title">Nuwa Skill · 女娲</div></a><span></span></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>
