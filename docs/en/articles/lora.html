@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LoRA — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../en/">Home</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI Thinking</span><br><span class="sub">2 papers</span></span></a>
+          <a href="../../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../training-techniques.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Training Techniques</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-training">Training Techniques</span>
+            <span class="anth-caption">2021 · Edward Hu et al. (Microsoft)</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="lora-low-rank-adaptation-of-large-language-models">LoRA: Low-Rank Adaptation of Large Language Models</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2106.09685">arXiv:2106.09685</a></p>
+<p><strong>作者:</strong> Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, Weizhu Chen（Microsoft）</p>
+<p><strong>发表:</strong> ICLR 2022 / 2021-06 arXiv 首发</p>
+<p><strong>代码:</strong> <a href="https://github.com/microsoft/LoRA">github.com/microsoft/LoRA</a> · <a href="https://github.com/huggingface/peft">HuggingFace PEFT</a></p>
+<p><strong>主题:</strong> 大模型参数高效微调（PEFT）的<strong>事实标准</strong>。冻结主干模型，只在每个 linear 层旁边训练一对小矩阵 A、B，模型规模降低 <strong>~10,000×</strong>，存储成本降低 <strong>~3×</strong>，训练速度提升，质量<strong>几乎无损</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>没有 LoRA，就没有今天蓬勃的"微调生态"。</p>
+<ul>
+<li>Hugging Face 上有 <strong>数万个</strong> LoRA 适配器共享</li>
+<li>Stable Diffusion 的 LoRA 生态让创作者能轻松分享 style LoRA、character LoRA</li>
+<li>企业内部微调都基于 LoRA/QLoRA —— 改一次 7B 模型的成本从几万刀降到几百刀</li>
+<li>消费级显卡（RTX 3090/4090）能微调 13B 甚至 70B 模型——全靠 LoRA + 量化</li>
+</ul>
+<p>这是过去 5 年 AI 工程<strong>最实用</strong>的一篇论文——每个做 LLM 应用的人都直接或间接在用它。</p>
+<hr>
+<h2 id="1-the-core-insight">1. 核心洞察 / The Core Insight</h2>
+<h3 id="11">1.1 全量微调的问题</h3>
+<p>对 GPT-3 175B 做全量微调：</p>
+<ul>
+<li>需要存 175B × 4 bytes = <strong>700 GB</strong> 的梯度 + 同样大小的优化器状态</li>
+<li>每个任务都要存一份完整的 175B 参数</li>
+<li>训练需要多张 A100 / H100</li>
+</ul>
+<p><strong>完全不可扩展</strong>——你不可能给每个客户 / 每个小任务都存一份 175B。</p>
+<h3 id="12-full-fine-tune">1.2 经验观察：full fine-tune 的权重变化是低秩的</h3>
+<p>作者观察到：<strong>在下游任务上微调时，权重矩阵的变化 ΔW 通常具有很低的"内在秩"</strong>（intrinsic rank）。</p>
+<p>这意味着 ΔW 可以被分解为：</p>
+<p>$$
+\Delta W = B \cdot A
+$$</p>
+<p>其中 A 是 <code>d × r</code>、B 是 <code>r × d</code>，<strong>r ≪ d</strong>（比如 d = 4096, r = 8）。这样 ΔW 的参数量从 <strong>d² 个</strong>降到 <strong>2 × d × r 个</strong>，对 d=4096 和 r=8 来说是 <strong>~512×</strong> 减少。</p>
+<h3 id="13-lora">1.3 LoRA 的做法</h3>
+<p><strong>冻结原始权重 W₀</strong>，在每个 linear 层旁边加一对可训练小矩阵 A 和 B：</p>
+<pre><code>输入 x
+  │
+  ├───▶ W₀ x     (冻结的主路径)
+  └───▶ B·A·x    (可训练的低秩旁路)
+              │
+              ▼
+          输出 = W₀·x + B·A·x
+</code></pre>
+<p>训练时只更新 A 和 B，推理时可以 <strong>merge 回 W₀</strong>（W₀ + BA 还原成一个普通 linear），<strong>不增加推理延迟</strong>。</p>
+<h3 id="14-r">1.4 关键超参数 r</h3>
+<ul>
+<li><strong>r = 1 到 64</strong> 都能用；常见选择：<strong>4, 8, 16</strong></li>
+<li>任务越简单、数据越少，r 可以越小</li>
+<li>r = 8 通常是 good default，和 full fine-tune 的 gap 很小</li>
+</ul>
+<hr>
+<h2 id="2-key-results">2. 关键结果 / Key Results</h2>
+<h3 id="gpt-3-175b-on-roberta-benchmarks">GPT-3 175B on RoBERTa benchmarks</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>可训练参数</th>
+<th>WikiSQL</th>
+<th>MNLI</th>
+<th>存储成本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Full fine-tune</strong></td>
+<td>175,255M</td>
+<td>73.8</td>
+<td>89.5</td>
+<td>700 GB</td>
+</tr>
+<tr>
+<td>Adapter (Houlsby et al.)</td>
+<td>40.1M</td>
+<td>73.2</td>
+<td>91.5</td>
+<td>1.2 GB</td>
+</tr>
+<tr>
+<td>Prefix tuning</td>
+<td>3.2M</td>
+<td>63.1</td>
+<td>87.4</td>
+<td>0.2 GB</td>
+</tr>
+<tr>
+<td><strong>LoRA (r=8)</strong></td>
+<td><strong>4.7M</strong></td>
+<td><strong>73.4</strong></td>
+<td><strong>91.7</strong></td>
+<td><strong>0.3 GB</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>LoRA 用了 ~37,000× 更少的参数，效果和全量微调持平或更好</strong>。</p>
+<h3 id="lora">LoRA 的三大优势</h3>
+<ol>
+<li><strong>参数高效</strong>：只训练 0.01–1% 的参数</li>
+<li><strong>存储高效</strong>：每个 adapter 几十 MB 就够，可以为每个客户/每个任务存一份</li>
+<li><strong>无推理延迟</strong>：训练后 merge 回主权重，推理时和原模型一样快</li>
+</ol>
+<hr>
+<h2 id="3-why-the-low-rank-assumption-works">3. 为什么 "低秩假设" 成立 / Why the Low-Rank Assumption Works</h2>
+<p>这是一个<strong>经验观察</strong>，不是理论证明——但有几个直觉：</p>
+<h3 id="31">3.1 预训练已经学到通用表示</h3>
+<p>大模型在预训练阶段已经学到了语言的通用结构。<strong>下游任务只需要在这个通用表示上做"轻微调整"</strong>。</p>
+<p>这种轻微调整自然是低秩的：你不是在重新学语言，只是在激活一些已有通路、抑制另一些。</p>
+<h3 id="32-anthropic">3.2 与 Anthropic / 机制可解释性的关联</h3>
+<p>Anthropic 等机构的机制可解释性研究后来证实：
+- 模型权重里存在大量<strong>稀疏、低秩的"电路"</strong>
+- 每个电路负责一种具体能力（e.g., 识别 syntax 模式、检索事实）
+- 微调本质是"激活/抑制/重组"这些电路——自然是低秩操作</p>
+<p>这给了 LoRA 的低秩假设一个理论底色。</p>
+<hr>
+<h2 id="4-ecosystem-and-extensions">4. 生态与扩展 / Ecosystem and Extensions</h2>
+<h3 id="41-qlora-2023-lora">4.1 QLoRA (2023) — 量化 + LoRA</h3>
+<p><a href="https://arxiv.org/abs/2305.14314">QLoRA</a> (Tim Dettmers et al.) 把 LoRA 推到了极致：</p>
+<ul>
+<li>主干模型<strong>量化到 4-bit</strong>，冻结</li>
+<li>LoRA adapter 仍是 fp16 / bf16</li>
+<li><strong>单张 RTX 3090 (24GB) 微调 33B 模型</strong>；单张 A100 80GB 微调 65B</li>
+</ul>
+<p>这是 2023 年<strong>消费级硬件微调大模型的钥匙</strong>。每个做 LLM 的人都该知道 QLoRA。</p>
+<h3 id="42-lora">4.2 LoRA 的变种</h3>
+<table>
+<thead>
+<tr>
+<th>变种</th>
+<th>特点</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DoRA</strong> (Liu et al. 2024)</td>
+<td>分解权重的方向和大小</td>
+<td>更接近 full fine-tune 效果</td>
+</tr>
+<tr>
+<td><strong>LongLoRA</strong></td>
+<td>专门优化长上下文微调</td>
+<td>在有限 GPU 上做 100K+ 上下文</td>
+</tr>
+<tr>
+<td><strong>X-LoRA</strong></td>
+<td>在推理时动态混合多个 LoRA</td>
+<td>一个模型适应多种任务</td>
+</tr>
+<tr>
+<td><strong>Tied LoRA / VeRA</strong></td>
+<td>跨层参数共享</td>
+<td>极致参数效率，LoRA 再压 10×</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43">4.3 应用场景</h3>
+<ul>
+<li><strong>Diffusion models</strong>：Stable Diffusion 的 LoRA 生态（character / style LoRAs）</li>
+<li><strong>LLM 客户化</strong>：每个企业客户一个 LoRA，共享主干</li>
+<li><strong>多任务服务</strong>：一个 7B 主干 + N 个 LoRA，根据请求路由到不同 LoRA</li>
+<li><strong>RLHF/DPO 训练</strong>：只用 LoRA 就能做偏好学习（降低 RLHF 成本）</li>
+</ul>
+<hr>
+<h2 id="5-key-takeaways">5. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="51-lora">5.1 一切微调先试 LoRA</h3>
+<p><strong>2025 年工程默认：</strong>
+- 想微调 LLM → LoRA 或 QLoRA 优先
+- 内存不够 → 加大量化 / 减小 r / 减小 batch
+- LoRA 效果不够 → <strong>才</strong>考虑全量微调（通常用不到）</p>
+<h3 id="52">5.2 超参数的实用建议</h3>
+<pre><code>r: 8 是 good default
+   小任务（classification）：r=4 够
+   大任务（domain adaptation）：r=16-32
+
+lora_alpha: 一般设成 r 的 1-2 倍（scaling factor）
+            alpha/r 太大会过拟合
+
+target_modules: 
+   对 LLaMA/Mistral 类：[&quot;q_proj&quot;, &quot;v_proj&quot;] 最经济
+   追求极致效果：加上 &quot;k_proj&quot;, &quot;o_proj&quot;
+   非常追求效果：再加 &quot;gate_proj&quot;, &quot;up_proj&quot;, &quot;down_proj&quot;
+</code></pre>
+<h3 id="53-lora-merge-vs">5.3 LoRA merge vs 动态加载</h3>
+<ul>
+<li><strong>Merge 模式（W = W₀ + BA）</strong>：推理无开销，但每个 LoRA 都需要一份完整模型拷贝</li>
+<li><strong>动态加载（x → W₀x + BAx）</strong>：一个主干 + 多个 LoRA 共享，切换客户/任务零开销，推理有约 5–10% 开销</li>
+</ul>
+<p><strong>建议：</strong> 单任务生产用 merge；多客户 / A-B test / 快速迭代用动态加载。</p>
+<h3 id="54-huggingface-peft">5.4 HuggingFace PEFT 是事实标准</h3>
+<pre><code class="language-python">from peft import LoraConfig, get_peft_model
+
+config = LoraConfig(
+    r=8,
+    lora_alpha=16,
+    target_modules=[&quot;q_proj&quot;, &quot;v_proj&quot;],
+    task_type=&quot;CAUSAL_LM&quot;,
+)
+
+model = get_peft_model(base_model, config)
+# 现在 model 里只有 LoRA 参数可训练，其他冻结
+model.print_trainable_parameters()
+# Output: trainable params: 4,194,304 || all params: 6,742,609,920 || trainable%: 0.0622
+</code></pre>
+<p>这 4 行代码今天已经成为每个 LLM 工程师的<strong>肌肉记忆</strong>。</p>
+<hr>
+<h2 id="6-relation-to-other-papers">6. 与本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="dpo.md">DPO</a></td>
+<td>DPO 训练常结合 LoRA 使用——LoRA 降微调成本，DPO 降对齐成本，两者互补</td>
+</tr>
+<tr>
+<td><a href="deepseek-r1.md">DeepSeek-R1</a></td>
+<td>R1 的复现工作大量使用 LoRA 进行 RL 训练的基础微调</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/cherry-llm.md">Cherry LLM</a></td>
+<td>IFD 选高质量数据 + LoRA 微调 = 高效微调栈</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/self-improving-test-time.md">Self-Improving at Test-Time</a></td>
+<td>在测试时用 LoRA 做 on-the-fly adaptation</td>
+</tr>
+<tr>
+<td><a href="../inference-optimization/flashattention.md">FlashAttention</a></td>
+<td>一起构成高效训练栈：LoRA 降参数，FlashAttention 降内存/时间</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>被整个生态采纳</strong>：PyTorch、HuggingFace、Diffusers、社区微调工具全部内置</li>
+<li><strong>直接降低了 AI 民主化的门槛</strong>：没有 LoRA，家庭工作室 / 小团队微调大模型是不现实的</li>
+<li><strong>思想可迁移</strong>：低秩适配思想被扩展到 RLHF (LoRA-RLHF)、continual learning、multi-task 等</li>
+<li><strong>作者是前沿实践者</strong>：Microsoft 团队，论文也在做 Phi-4 等实际产品</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>论文:</strong> <a href="https://arxiv.org/abs/2106.09685">LoRA: Low-Rank Adaptation of Large Language Models</a></li>
+<li><strong>代码:</strong></li>
+<li>原始: <a href="https://github.com/microsoft/LoRA">microsoft/LoRA</a></li>
+<li>生产首选: <a href="https://github.com/huggingface/peft">huggingface/peft</a> — 含所有 PEFT 方法</li>
+<li><strong>相关论文:</strong></li>
+<li><a href="https://arxiv.org/abs/2305.14314">QLoRA: Efficient Finetuning of Quantized LLMs (Dettmers et al. 2023)</a></li>
+<li><a href="https://arxiv.org/abs/2402.09353">DoRA: Weight-Decomposed Low-Rank Adaptation</a></li>
+<li><a href="https://arxiv.org/abs/2309.12307">LongLoRA (Chen et al. 2023)</a></li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="dpo.md">DPO</a></li>
+<li><a href="deepseek-r1.md">DeepSeek-R1</a></li>
+<li><a href="../inference-optimization/flashattention.md">FlashAttention</a></li>
+<li><a href="../self-improving-agents/cherry-llm.md">Cherry LLM</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="dpo.html"><div class="nav-label">← Previous</div><div class="nav-title">Direct Preference Optimization</div></a><span></span></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

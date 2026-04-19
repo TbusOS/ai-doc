@@ -13,12 +13,20 @@
         <header class="anth-nav">
       <div class="anth-nav-inner">
         <a href="../" class="site-brand" aria-label="AI Doc">AI Doc</a>
-        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
           <a href="../zh/">首页</a>
-          <a href="../zh/inference-optimization.html">推理优化</a>
-          <a href="../zh/self-improving-agents.html">自我改进 Agent</a>
-          <a href="../zh/multi-agent-systems.html">多 Agent 系统</a>
-          <a href="../zh/memory-systems.html">记忆系统</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">3 篇</span></span></a>
+          <a href="../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI 思维范式</span><br><span class="sub">2 篇</span></span></a>
+          <a href="../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
           <a href="../zh/open-source-models.html">开源模型</a>
         </nav>
         <div class="lang-toggle">
@@ -43,56 +51,113 @@
 
       <section class="anth-section">
         <div class="anth-container anth-container--wide">
-          <div class="diagram-frame">
-  <svg viewBox="0 0 1100 420" role="img" aria-label="知识架构">
-    <!-- Column headers -->
-    <text x="140" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">输入</text>
-    <text x="550" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">知识脉络</text>
-    <text x="960" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">产出</text>
+          <div class="stack-diagram">
+  <svg viewBox="0 0 1080 560" role="img" aria-label="AI 工程栈">
 
-    <!-- Input: Papers -->
-    <rect x="50" y="70" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
-    <text x="140" y="105" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">论文</text>
+    <!-- Header -->
+    <text x="540" y="36" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="22" font-weight="600" fill="#141413">AI 工程栈</text>
+    <text x="540" y="62" text-anchor="middle" font-family="Lora, serif"
+          font-size="14" font-style="italic" fill="#6b6a5f">按你当前遇到的问题所在层级直接跳入</text>
 
-    <rect x="50" y="150" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
-    <text x="140" y="185" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">工程博客</text>
+    <!-- Layer gutter labels -->
+    <text x="30" y="130" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
+          fill="#6b6a5f" letter-spacing="2">L0 · 范式</text>
+    <text x="30" y="230" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
+          fill="#6b6a5f" letter-spacing="2">L1 · 造与跑</text>
+    <text x="30" y="360" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
+          fill="#6b6a5f" letter-spacing="2">L2 · 行为</text>
+    <text x="30" y="500" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
+          fill="#6b6a5f" letter-spacing="2">L3 · 选型</text>
 
-    <rect x="50" y="230" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
-    <text x="140" y="265" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">开源仓库</text>
+    <!-- L0: AI Thinking (single full-width block) -->
+    <rect x="180" y="100" width="720" height="60" rx="14" fill="#6b8e3c"/>
+    <text x="540" y="130" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="17" font-weight="600" fill="#ffffff">AI 思维范式</text>
+    <text x="540" y="150" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.9">
+      Sutton · Karpathy · 工程师心智模型
+    </text>
 
-    <!-- 5 Streams -->
-    <rect x="440" y="55" width="220" height="52" rx="12" fill="#6a9bcc" opacity="0.88"/>
-    <text x="550" y="86" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">推理优化</text>
+    <!-- L1: Training + Inference side by side -->
+    <rect x="180" y="200" width="340" height="80" rx="14" fill="#a14238"/>
+    <text x="350" y="235" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="17" font-weight="600" fill="#ffffff">训练技术</text>
+    <text x="350" y="256" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.92">
+      DeepSeek-R1 · DPO · LoRA
+    </text>
+    <text x="350" y="272" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#ffffff" opacity="0.85">
+      模型如何学习
+    </text>
 
-    <rect x="440" y="117" width="220" height="52" rx="12" fill="#d97757" opacity="0.9"/>
-    <text x="550" y="148" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">自我改进 Agent</text>
+    <rect x="560" y="200" width="340" height="80" rx="14" fill="#6a9bcc"/>
+    <text x="730" y="235" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="17" font-weight="600" fill="#ffffff">推理优化</text>
+    <text x="730" y="256" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.92">
+      FlashAttention · MoE offload · 量化
+    </text>
+    <text x="730" y="272" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#ffffff" opacity="0.85">
+      模型如何运行
+    </text>
 
-    <rect x="440" y="179" width="220" height="52" rx="12" fill="#788c5d" opacity="0.9"/>
-    <text x="550" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">多 Agent 系统</text>
+    <!-- L2: 3 behavior streams -->
+    <rect x="60" y="320" width="290" height="90" rx="14" fill="#d97757"/>
+    <text x="205" y="355" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="16" font-weight="600" fill="#ffffff">自我改进 Agent</text>
+    <text x="205" y="377" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.92">
+      SPIN · autoresearch · 达尔文
+    </text>
+    <text x="205" y="394" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#ffffff" opacity="0.85">
+      agent 持续改进
+    </text>
 
-    <rect x="440" y="241" width="220" height="52" rx="12" fill="#141413"/>
-    <text x="550" y="272" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#faf9f5">记忆系统</text>
+    <rect x="395" y="320" width="290" height="90" rx="14" fill="#141413"/>
+    <text x="540" y="355" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="16" font-weight="600" fill="#faf9f5">记忆系统</text>
+    <text x="540" y="377" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#faf9f5" opacity="0.88">
+      MemGPT · OMNE · Knowledge Bases
+    </text>
+    <text x="540" y="394" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#faf9f5" opacity="0.8">
+      agent 的记忆
+    </text>
 
-    <rect x="440" y="303" width="220" height="52" rx="12" fill="#b0aea5"/>
-    <text x="550" y="334" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">翻译与解读</text>
+    <rect x="730" y="320" width="290" height="90" rx="14" fill="#788c5d"/>
+    <text x="875" y="355" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="16" font-weight="600" fill="#ffffff">Agent 设计模式</text>
+    <text x="875" y="377" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.92">
+      ReAct · Anthropic · orchestrator-workers
+    </text>
+    <text x="875" y="394" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#ffffff" opacity="0.85">
+      agent 如何行动
+    </text>
 
-    <!-- Output -->
-    <rect x="870" y="180" width="180" height="80" rx="14" fill="#d97757"/>
-    <text x="960" y="212" text-anchor="middle" font-family="Poppins, sans-serif" font-size="15" font-weight="600" fill="#ffffff">模型目录</text>
-    <text x="960" y="232" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#ffffff" opacity="0.88">项目可用选型</text>
+    <!-- L3: Selection layer -->
+    <rect x="180" y="460" width="720" height="70" rx="14" fill="#b0aea5"/>
+    <text x="540" y="495" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="17" font-weight="600" fill="#141413">开源模型目录</text>
+    <text x="540" y="515" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#141413" opacity="0.85">
+      60+ 模型 · 12 类别 · 核验于 2026-04
+    </text>
 
-    <!-- Connector lines -->
-    <path d="M 230 100 Q 335 100 440 100" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
-    <path d="M 230 180 Q 335 180 440 180" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
-    <path d="M 230 260 Q 335 260 440 260" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
-
-    <path d="M 660 82 Q 760 82 860 200" stroke="#6a9bcc" stroke-width="1.5" fill="none" opacity="0.6"/>
-    <path d="M 660 144 Q 760 144 860 205" stroke="#d97757" stroke-width="1.5" fill="none" opacity="0.6"/>
-    <path d="M 660 206 Q 760 206 860 220" stroke="#788c5d" stroke-width="1.5" fill="none" opacity="0.6"/>
-    <path d="M 660 268 Q 760 268 860 235" stroke="#141413" stroke-width="1.5" fill="none" opacity="0.5"/>
-    <path d="M 660 330 Q 760 330 860 245" stroke="#b0aea5" stroke-width="1.5" fill="none" opacity="0.7"/>
+    <!-- Subtle connecting flow lines -->
+    <path d="M 540 160 L 540 200" stroke="#b0aea5" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+    <path d="M 350 280 L 205 320" stroke="#b0aea5" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+    <path d="M 540 280 L 540 320" stroke="#b0aea5" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+    <path d="M 730 280 L 875 320" stroke="#b0aea5" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+    <path d="M 540 410 L 540 460" stroke="#b0aea5" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
   </svg>
-  <p class="diagram-caption">五条研究脉络汇入开源模型目录</p>
+  <p class="stack-caption">从范式到选型——各主题如何关联</p>
 </div>
         </div>
       </section>
@@ -101,13 +166,13 @@
         <div class="anth-container anth-container--wide">
           <div style="text-align:center; max-width:640px; margin:0 auto;">
             <h2>按主题浏览</h2>
-            <p style="color:var(--anth-text-secondary); margin-top:var(--space-3);">五条研究脉络，每一篇都是精选。</p>
+            <p style="color:var(--anth-text-secondary); margin-top:var(--space-3);">六条研究脉络。每篇都是可以抽取到你项目里的蓝图。</p>
           </div>
           <div class="topic-grid">
             <a class="topic-card" href="inference-optimization.html">
               <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
                 <span class="anth-badge badge-inference">推理优化</span>
-                <span class="topic-count">4 papers</span>
+                <span class="topic-count">5 papers</span>
               </div>
               <h3>推理优化</h3>
               <p class="topic-desc">参数外存、稀疏加载、量化、MoE 缓存——让大模型跑在它本不该跑的硬件上所需的工程。</p>
@@ -116,19 +181,37 @@
 <a class="topic-card" href="self-improving-agents.html">
               <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
                 <span class="anth-badge badge-self">自我改进 Agent</span>
-                <span class="topic-count">9 papers</span>
+                <span class="topic-count">10 papers</span>
               </div>
               <h3>自我改进 Agent</h3>
               <p class="topic-desc">从自博弈、测试时适应到可执行子 agent、autoresearch 棘轮——agent 随时间复利累积能力的路径。</p>
               <p style="margin:0;"><span class="anth-link">进入</span></p>
             </a>
-<a class="topic-card" href="multi-agent-systems.html">
+<a class="topic-card" href="agent-patterns.html">
               <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
-                <span class="anth-badge badge-multi">多 Agent 系统</span>
+                <span class="anth-badge badge-agent">Agent 设计模式</span>
+                <span class="topic-count">5 papers</span>
+              </div>
+              <h3>Agent 设计模式</h3>
+              <p class="topic-desc">前沿实验室真正构建 agent 时用的模式——从 Anthropic 5 个工作流原型到 ReAct 的基础循环。</p>
+              <p style="margin:0;"><span class="anth-link">进入</span></p>
+            </a>
+<a class="topic-card" href="training-techniques.html">
+              <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
+                <span class="anth-badge badge-training">训练技术</span>
+                <span class="topic-count">3 papers</span>
+              </div>
+              <h3>训练技术</h3>
+              <p class="topic-desc">推动前沿且可开源复现的训练方法：GRPO 推理 RL（DeepSeek-R1）、替代 RLHF 的 DPO、参数高效适配 LoRA。</p>
+              <p style="margin:0;"><span class="anth-link">进入</span></p>
+            </a>
+<a class="topic-card" href="ai-thinking.html">
+              <div style="display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap;">
+                <span class="anth-badge badge-thinking">AI 思维范式</span>
                 <span class="topic-count">2 papers</span>
               </div>
-              <h3>多 Agent 系统</h3>
-              <p class="topic-desc">Agent 工厂架构、swarm 研究流水线、协作模式的综述与具体案例。</p>
+              <h3>AI 思维范式</h3>
+              <p class="topic-desc">前沿实践者的简短、高密度 essay——提供理解现代 AI 工程决策的心智模型。从 Sutton 的 scaling 哲学到 Karpathy 的 Software 2.0。</p>
               <p style="margin:0;"><span class="anth-link">进入</span></p>
             </a>
 <a class="topic-card" href="memory-systems.html">

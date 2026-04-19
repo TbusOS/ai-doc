@@ -100,6 +100,15 @@ CATEGORIES: list[Category] = [
                 "Data-oblivious vector quantization, KV cache to 3-bit with zero accuracy loss, 8× on H100.",
                 "数据无关向量量化，KV Cache 压到 3 bit 无精度损失，H100 加速 8 倍。",
             ),
+            Paper(
+                "flashattention",
+                "inference-optimization/flashattention.md",
+                "FlashAttention (v1/v2/v3)",
+                "Tri Dao (Stanford / Together AI)",
+                "2022–2024",
+                "IO-aware exact attention kernel. 2–4× speedup, O(N) memory. The kernel everyone's LLM runs on today.",
+                "IO-aware 精确 attention 内核。2–4× 加速、O(N) 内存。今天每个 LLM 的底层内核。",
+            ),
         ],
     ),
     Category(
@@ -194,22 +203,58 @@ CATEGORIES: list[Category] = [
                 "Autoresearch ratchet applied to SKILL.md optimization — 8-dim rubric (structure + effectiveness), independent sub-agent scoring, git-revert on regression.",
                 "把 autoresearch 的棘轮搬到 SKILL.md 优化——8 维评估（结构+实测）、独立子 agent 评分、退步自动回滚。",
             ),
+            Paper(
+                "reflexion",
+                "self-improving-agents/reflexion.md",
+                "Reflexion",
+                "Shinn et al.",
+                "2023",
+                "Verbal reinforcement learning — agent writes language 'lessons' after failures, reads them before retry. HumanEval 80% → 91% without weight updates.",
+                "用自然语言反馈替代梯度更新，HumanEval 从 80% 提到 91%，不改模型权重。",
+            ),
         ],
     ),
     Category(
-        key="multi-agent-systems",
-        en_title="Multi-Agent Systems",
-        zh_title="多 Agent 系统",
-        en_tagline="Orchestrating swarms that build, reason, and ship together",
-        zh_tagline="编排协同构建、推理、交付的 agent 群体",
-        en_desc="Landscape surveys and concrete case studies of agent-factory architectures, swarm research pipelines, and coordination patterns.",
-        zh_desc="Agent 工厂架构、swarm 研究流水线、协作模式的综述与具体案例。",
-        badge_class="badge-multi",
+        key="agent-patterns",
+        en_title="Agent Patterns",
+        zh_title="Agent 设计模式",
+        en_tagline="Production-ready blueprints for single-agent and multi-agent systems",
+        zh_tagline="单 agent 与多 agent 系统的生产级蓝图",
+        en_desc="The patterns that frontier labs use when they build real agents — from Anthropic's 5 workflow archetypes to ReAct's foundational loop.",
+        zh_desc="前沿实验室真正构建 agent 时用的模式——从 Anthropic 5 个工作流原型到 ReAct 的基础循环。",
+        badge_class="badge-agent",
         accent_color="#788c5d",
         papers=[
             Paper(
+                "anthropic-building-effective-agents",
+                "agent-patterns/anthropic-building-effective-agents.md",
+                "Building Effective Agents",
+                "Anthropic Applied AI",
+                "2024",
+                "The 5 production agent patterns from Anthropic: prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer. Industry de-facto reference.",
+                "Anthropic 提出的 5 大生产级 agent 工作流模式，2025 年之后的行业事实标准参考。",
+            ),
+            Paper(
+                "anthropic-multi-agent-research",
+                "agent-patterns/anthropic-multi-agent-research.md",
+                "How We Built Our Multi-Agent Research System",
+                "Anthropic Engineering",
+                "2025",
+                "Inside Claude Research — Opus lead + Sonnet workers, +90.2% quality vs single-agent, 15× token cost. Full engineering detail.",
+                "Claude Research 背后架构：Opus lead + Sonnet workers，质量 +90.2%，Token 成本 15 倍，完整工程细节。",
+            ),
+            Paper(
+                "react",
+                "agent-patterns/react.md",
+                "ReAct: Synergizing Reasoning and Acting",
+                "Yao et al. (Princeton / Google)",
+                "2022",
+                "The agent loop primitive — Thought + Action + Observation interleaved. Every modern agent framework is a ReAct variant.",
+                "agent 循环的原语——Thought + Action + Observation 交织。现代 agent 框架都是 ReAct 的变体。",
+            ),
+            Paper(
                 "coding-agents-landscape-2026",
-                "multi-agent-systems/coding-agents-landscape-2026.md",
+                "agent-patterns/coding-agents-landscape-2026.md",
                 "Coding Agents & Agent Factory Landscape 2026",
                 "Landscape article",
                 "2026",
@@ -218,12 +263,83 @@ CATEGORIES: list[Category] = [
             ),
             Paper(
                 "nuwa-skill",
-                "multi-agent-systems/nuwa-skill.md",
+                "agent-patterns/nuwa-skill.md",
                 "Nuwa Skill · 女娲",
                 "Huashu",
                 "2026",
                 "6-agent parallel research swarm distills a public figure's cognitive OS (mental models + decision heuristics + expression DNA) into a reusable SKILL.md.",
                 "6 个并行 agent 蒸馏人物认知操作系统（心智模型+决策启发式+表达 DNA）为可运行 SKILL.md。",
+            ),
+        ],
+    ),
+    Category(
+        key="training-techniques",
+        en_title="Training Techniques",
+        zh_title="训练技术",
+        en_tagline="Frontier training recipes — reasoning, alignment, and efficient fine-tuning",
+        zh_tagline="前沿训练配方——推理、对齐、高效微调",
+        en_desc="Open-source reproducible methods that moved the frontier: GRPO-based reasoning RL (DeepSeek-R1), RLHF replacement via DPO, parameter-efficient adaptation via LoRA.",
+        zh_desc="推动前沿且可开源复现的训练方法：GRPO 推理 RL（DeepSeek-R1）、替代 RLHF 的 DPO、参数高效适配 LoRA。",
+        badge_class="badge-training",
+        accent_color="#a14238",
+        papers=[
+            Paper(
+                "deepseek-r1",
+                "training-techniques/deepseek-r1.md",
+                "DeepSeek-R1",
+                "DeepSeek-AI",
+                "2025",
+                "Pure-RL reasoning training via GRPO. o1-level open-source model (AIME 79.8%, MATH-500 97.3%). Reshaped the open vs closed balance.",
+                "用 GRPO 做纯 RL 推理训练，达到 o1 级开源（AIME 79.8%、MATH-500 97.3%），重塑开源闭源格局。",
+            ),
+            Paper(
+                "dpo",
+                "training-techniques/dpo.md",
+                "Direct Preference Optimization",
+                "Rafailov et al. (Stanford)",
+                "2023",
+                "Replaces RLHF's reward model + PPO with a single cross-entropy loss. The alignment method every major open model now uses.",
+                "用一个交叉熵损失替代整套 RLHF（RM+PPO），2024 年之后主流开源模型对齐的事实标准。",
+            ),
+            Paper(
+                "lora",
+                "training-techniques/lora.md",
+                "LoRA",
+                "Edward Hu et al. (Microsoft)",
+                "2021",
+                "Low-rank adaptation — trains ~10,000× fewer parameters, no inference overhead, matches full fine-tune quality. The PEFT default.",
+                "低秩适配微调：可训练参数减少万倍、推理无额外开销、效果持平全量微调。PEFT 事实标准。",
+            ),
+        ],
+    ),
+    Category(
+        key="ai-thinking",
+        en_title="AI Thinking",
+        zh_title="AI 思维范式",
+        en_tagline="Paradigm-defining essays that shape how engineers build AI",
+        zh_tagline="定义范式的短文——塑造工程师构建 AI 的思维方式",
+        en_desc="Short, dense essays from frontier practitioners that give you the mental models driving modern AI engineering decisions — from Sutton's scaling philosophy to Karpathy's Software 2.0.",
+        zh_desc="前沿实践者的简短、高密度 essay——提供理解现代 AI 工程决策的心智模型。从 Sutton 的 scaling 哲学到 Karpathy 的 Software 2.0。",
+        badge_class="badge-thinking",
+        accent_color="#6b8e3c",
+        papers=[
+            Paper(
+                "bitter-lesson",
+                "ai-thinking/bitter-lesson.md",
+                "The Bitter Lesson",
+                "Rich Sutton",
+                "2019",
+                "70 years of AI research in 800 words: general methods that leverage computation win. The North Star of modern AI engineering.",
+                "70 年 AI 研究浓缩成 800 字：能从算力扩展中获益的通用方法最终胜出。现代 AI 工程的北极星。",
+            ),
+            Paper(
+                "software-2-0",
+                "ai-thinking/software-2-0.md",
+                "Software 2.0",
+                "Andrej Karpathy",
+                "2017",
+                "Reframes programming: neural network weights are source code. A 2017 prediction fully vindicated by the 2025 LLM era.",
+                "范式重塑：神经网络权重就是源代码。2017 年的预言在 2025 年 LLM 时代完全兑现。",
             ),
         ],
     ),
@@ -342,38 +458,57 @@ def page_shell(lang: str, title: str, body: str, extra_head: str = "", asset_pre
 
 
 def render_nav(lang: str, asset_prefix: str) -> str:
-    """Top nav with category links + language toggle.
+    """Top nav: Home · Topics ▾ (dropdown of 7 categories) · Models · lang toggle.
 
-    asset_prefix is relative to the page being rendered.
+    Condensed after we crossed 5 categories—keeps primary bar at 4 items.
     """
     is_en = lang.startswith("en")
     home_label = "Home" if is_en else "首页"
-    about_label = "About" if is_en else "关于"
+    topics_label = "Topics" if is_en else "主题"
+    models_label = "Models" if is_en else "开源模型"
+    topics_sub = "Browse 6 research streams" if is_en else "浏览 6 条研究脉络"
 
-    # Links to same-language category pages
-    cat_links = "\n".join(
-        f'          <a href="{asset_prefix}{lang}/{c.key}.html">{html.escape(c.en_title if is_en else c.zh_title)}</a>'
+    # Dropdown items — one per category, with color dot matching badge
+    dot_color_map = {
+        "inference-optimization": "var(--anth-blue)",
+        "self-improving-agents": "var(--anth-orange)",
+        "agent-patterns": "var(--anth-green)",
+        "memory-systems": "var(--anth-text)",
+        "training-techniques": "var(--anth-danger)",
+        "ai-thinking": "#6b8e3c",
+    }
+
+    def paper_count(c: Category) -> str:
+        return f"{len(c.papers)} papers" if is_en else f"{len(c.papers)} 篇"
+
+    dropdown_items = "\n".join(
+        f'          <a href="{asset_prefix}{lang}/{c.key}.html">'
+        f'<span class="dot" style="background:{dot_color_map.get(c.key, "var(--anth-mid-gray)")};"></span>'
+        f'<span><span class="label">{html.escape(c.en_title if is_en else c.zh_title)}</span><br>'
+        f'<span class="sub">{paper_count(c)}</span></span></a>'
         for c in CATEGORIES
     )
 
-    models_label = "Models" if is_en else "开源模型"
+    en_active = "active" if is_en else ""
+    zh_active = "active" if not is_en else ""
 
-    en_active = " active" if is_en else ""
-    zh_active = " active" if not is_en else ""
-
-    # language toggle: swap current page to other lang if it exists
-    # For simplicity we link to the lang root index.
     return f"""    <header class="anth-nav">
       <div class="anth-nav-inner">
         <a href="{asset_prefix}" class="site-brand" aria-label="AI Doc">AI Doc</a>
-        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
           <a href="{asset_prefix}{lang}/">{home_label}</a>
-{cat_links}
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">{topics_label}</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">{topics_sub}</p>
+{dropdown_items}
+            </div>
+          </div>
           <a href="{asset_prefix}{lang}/open-source-models.html">{models_label}</a>
         </nav>
         <div class="lang-toggle">
-          <a href="{asset_prefix}en/" class="{en_active.strip()}">EN</a>
-          <a href="{asset_prefix}zh/" class="{zh_active.strip()}">中文</a>
+          <a href="{asset_prefix}en/" class="{en_active}">EN</a>
+          <a href="{asset_prefix}zh/" class="{zh_active}">中文</a>
         </div>
       </div>
     </header>
@@ -402,61 +537,155 @@ def render_badge(category: Category, is_en: bool) -> str:
 
 
 def render_topic_svg_for_home(is_en: bool) -> str:
-    """Architecture overview — shows 5 categories and their flow into Models."""
+    """AI Engineering Stack — 4-layer pyramid showing where each topic sits.
+
+    Layers (top → bottom):
+      0. Paradigm (ai-thinking)          — what AI fundamentally is
+      1. Model layer (training · inference)  — build & serve
+      2. Behavior layer (self-improving · memory · agent-patterns) — how agents act
+      3. Selection (open-source model directory) — what to pick
+
+    Developers reading can locate "which layer is my current pain at?" and jump in.
+    """
     labels = {
-        "title": "Knowledge Architecture" if is_en else "知识架构",
-        "caption": "Five research streams feed the open-source model directory" if is_en else "五条研究脉络汇入开源模型目录",
+        "header": "The AI Engineering Stack" if is_en else "AI 工程栈",
+        "sub_header": ("Jump to the layer where your problem lives"
+                        if is_en else "按你当前遇到的问题所在层级直接跳入"),
+        "caption": ("From paradigm to model selection — how the topics relate"
+                    if is_en else "从范式到选型——各主题如何关联"),
     }
-    return f"""<div class="diagram-frame">
-  <svg viewBox="0 0 1100 420" role="img" aria-label="{labels['title']}">
-    <!-- Column headers -->
-    <text x="140" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">{"INPUTS" if is_en else "输入"}</text>
-    <text x="550" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">{"KNOWLEDGE STREAMS" if is_en else "知识脉络"}</text>
-    <text x="960" y="40" text-anchor="middle" font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b6a5f" letter-spacing="2">{"OUTPUTS" if is_en else "产出"}</text>
 
-    <!-- Input: Papers -->
-    <rect x="50" y="70" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
-    <text x="140" y="105" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">{"Papers" if is_en else "论文"}</text>
+    # Color constants matching site palette
+    C_BG = "#ffffff"
+    C_STROKE = "#e8e6dc"
+    C_TEXT = "#141413"
+    C_TEXT_SEC = "#6b6a5f"
+    C_BLUE = "#6a9bcc"
+    C_ORANGE = "#d97757"
+    C_GREEN = "#788c5d"
+    C_DANGER = "#a14238"
+    C_DARK = "#141413"
+    C_GRAY = "#b0aea5"
+    C_OLIVE = "#6b8e3c"
 
-    <rect x="50" y="150" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
-    <text x="140" y="185" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">{"Engineering Blogs" if is_en else "工程博客"}</text>
+    def t(en: str, zh: str) -> str:
+        return en if is_en else zh
 
-    <rect x="50" y="230" width="180" height="60" rx="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
-    <text x="140" y="265" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">{"OSS Repos" if is_en else "开源仓库"}</text>
+    # Layer captions (left gutter)
+    layer_labels = [
+        t("L0 · PARADIGM", "L0 · 范式"),
+        t("L1 · BUILD & SERVE", "L1 · 造与跑"),
+        t("L2 · BEHAVIOR", "L2 · 行为"),
+        t("L3 · SELECTION", "L3 · 选型"),
+    ]
 
-    <!-- 5 Streams -->
-    <rect x="440" y="55" width="220" height="52" rx="12" fill="#6a9bcc" opacity="0.88"/>
-    <text x="550" y="86" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">{"Inference Optimization" if is_en else "推理优化"}</text>
+    return f"""<div class="stack-diagram">
+  <svg viewBox="0 0 1080 560" role="img" aria-label="{labels['header']}">
 
-    <rect x="440" y="117" width="220" height="52" rx="12" fill="#d97757" opacity="0.9"/>
-    <text x="550" y="148" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">{"Self-Improving Agents" if is_en else "自我改进 Agent"}</text>
+    <!-- Header -->
+    <text x="540" y="36" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="22" font-weight="600" fill="{C_TEXT}">{labels['header']}</text>
+    <text x="540" y="62" text-anchor="middle" font-family="Lora, serif"
+          font-size="14" font-style="italic" fill="{C_TEXT_SEC}">{labels['sub_header']}</text>
 
-    <rect x="440" y="179" width="220" height="52" rx="12" fill="#788c5d" opacity="0.9"/>
-    <text x="550" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#ffffff">{"Multi-Agent Systems" if is_en else "多 Agent 系统"}</text>
+    <!-- Layer gutter labels -->
+    <text x="30" y="130" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
+          fill="{C_TEXT_SEC}" letter-spacing="2">{layer_labels[0]}</text>
+    <text x="30" y="230" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
+          fill="{C_TEXT_SEC}" letter-spacing="2">{layer_labels[1]}</text>
+    <text x="30" y="360" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
+          fill="{C_TEXT_SEC}" letter-spacing="2">{layer_labels[2]}</text>
+    <text x="30" y="500" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
+          fill="{C_TEXT_SEC}" letter-spacing="2">{layer_labels[3]}</text>
 
-    <rect x="440" y="241" width="220" height="52" rx="12" fill="#141413"/>
-    <text x="550" y="272" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#faf9f5">{"Memory Systems" if is_en else "记忆系统"}</text>
+    <!-- L0: AI Thinking (single full-width block) -->
+    <rect x="180" y="100" width="720" height="60" rx="14" fill="{C_OLIVE}"/>
+    <text x="540" y="130" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="17" font-weight="600" fill="#ffffff">{t("AI Thinking", "AI 思维范式")}</text>
+    <text x="540" y="150" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.9">
+      {t("Sutton · Karpathy · the mental models", "Sutton · Karpathy · 工程师心智模型")}
+    </text>
 
-    <rect x="440" y="303" width="220" height="52" rx="12" fill="#b0aea5"/>
-    <text x="550" y="334" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="600" fill="#141413">{"Translations & Analysis" if is_en else "翻译与解读"}</text>
+    <!-- L1: Training + Inference side by side -->
+    <rect x="180" y="200" width="340" height="80" rx="14" fill="{C_DANGER}"/>
+    <text x="350" y="235" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="17" font-weight="600" fill="#ffffff">{t("Training Techniques", "训练技术")}</text>
+    <text x="350" y="256" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.92">
+      {t("DeepSeek-R1 · DPO · LoRA", "DeepSeek-R1 · DPO · LoRA")}
+    </text>
+    <text x="350" y="272" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#ffffff" opacity="0.85">
+      {t("how the model learns", "模型如何学习")}
+    </text>
 
-    <!-- Output -->
-    <rect x="870" y="180" width="180" height="80" rx="14" fill="#d97757"/>
-    <text x="960" y="212" text-anchor="middle" font-family="Poppins, sans-serif" font-size="15" font-weight="600" fill="#ffffff">{"Model Directory" if is_en else "模型目录"}</text>
-    <text x="960" y="232" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12" font-weight="500" fill="#ffffff" opacity="0.88">{"Project-ready selection" if is_en else "项目可用选型"}</text>
+    <rect x="560" y="200" width="340" height="80" rx="14" fill="{C_BLUE}"/>
+    <text x="730" y="235" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="17" font-weight="600" fill="#ffffff">{t("Inference Optimization", "推理优化")}</text>
+    <text x="730" y="256" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.92">
+      {t("FlashAttention · MoE offload · quantization", "FlashAttention · MoE offload · 量化")}
+    </text>
+    <text x="730" y="272" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#ffffff" opacity="0.85">
+      {t("how the model runs", "模型如何运行")}
+    </text>
 
-    <!-- Connector lines -->
-    <path d="M 230 100 Q 335 100 440 100" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
-    <path d="M 230 180 Q 335 180 440 180" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
-    <path d="M 230 260 Q 335 260 440 260" stroke="#b0aea5" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+    <!-- L2: 3 behavior streams -->
+    <rect x="60" y="320" width="290" height="90" rx="14" fill="{C_ORANGE}"/>
+    <text x="205" y="355" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="16" font-weight="600" fill="#ffffff">{t("Self-Improving Agents", "自我改进 Agent")}</text>
+    <text x="205" y="377" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.92">
+      {t("SPIN · autoresearch · Darwin", "SPIN · autoresearch · 达尔文")}
+    </text>
+    <text x="205" y="394" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#ffffff" opacity="0.85">
+      {t("agents that get better", "agent 持续改进")}
+    </text>
 
-    <path d="M 660 82 Q 760 82 860 200" stroke="#6a9bcc" stroke-width="1.5" fill="none" opacity="0.6"/>
-    <path d="M 660 144 Q 760 144 860 205" stroke="#d97757" stroke-width="1.5" fill="none" opacity="0.6"/>
-    <path d="M 660 206 Q 760 206 860 220" stroke="#788c5d" stroke-width="1.5" fill="none" opacity="0.6"/>
-    <path d="M 660 268 Q 760 268 860 235" stroke="#141413" stroke-width="1.5" fill="none" opacity="0.5"/>
-    <path d="M 660 330 Q 760 330 860 245" stroke="#b0aea5" stroke-width="1.5" fill="none" opacity="0.7"/>
+    <rect x="395" y="320" width="290" height="90" rx="14" fill="{C_DARK}"/>
+    <text x="540" y="355" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="16" font-weight="600" fill="#faf9f5">{t("Memory Systems", "记忆系统")}</text>
+    <text x="540" y="377" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#faf9f5" opacity="0.88">
+      {t("MemGPT · OMNE · Knowledge Bases", "MemGPT · OMNE · Knowledge Bases")}
+    </text>
+    <text x="540" y="394" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#faf9f5" opacity="0.8">
+      {t("agents that remember", "agent 的记忆")}
+    </text>
+
+    <rect x="730" y="320" width="290" height="90" rx="14" fill="{C_GREEN}"/>
+    <text x="875" y="355" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="16" font-weight="600" fill="#ffffff">{t("Agent Patterns", "Agent 设计模式")}</text>
+    <text x="875" y="377" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="#ffffff" opacity="0.92">
+      {t("ReAct · Anthropic · orchestrator-workers", "ReAct · Anthropic · orchestrator-workers")}
+    </text>
+    <text x="875" y="394" text-anchor="middle" font-family="Lora, serif"
+          font-size="11" fill="#ffffff" opacity="0.85">
+      {t("how agents act", "agent 如何行动")}
+    </text>
+
+    <!-- L3: Selection layer -->
+    <rect x="180" y="460" width="720" height="70" rx="14" fill="{C_GRAY}"/>
+    <text x="540" y="495" text-anchor="middle" font-family="Poppins, sans-serif"
+          font-size="17" font-weight="600" fill="{C_TEXT}">{t("Open-Source Model Directory", "开源模型目录")}</text>
+    <text x="540" y="515" text-anchor="middle" font-family="Lora, serif"
+          font-size="12" fill="{C_TEXT}" opacity="0.85">
+      {t("60+ models · 12 categories · Last verified 2026-04", "60+ 模型 · 12 类别 · 核验于 2026-04")}
+    </text>
+
+    <!-- Subtle connecting flow lines -->
+    <path d="M 540 160 L 540 200" stroke="{C_GRAY}" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+    <path d="M 350 280 L 205 320" stroke="{C_GRAY}" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+    <path d="M 540 280 L 540 320" stroke="{C_GRAY}" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+    <path d="M 730 280 L 875 320" stroke="{C_GRAY}" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
+    <path d="M 540 410 L 540 460" stroke="{C_GRAY}" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="3 3"/>
   </svg>
-  <p class="diagram-caption">{labels['caption']}</p>
+  <p class="stack-caption">{labels['caption']}</p>
 </div>"""
 
 
@@ -473,7 +702,11 @@ def render_home(lang: str) -> str:
     )
 
     topics_h2 = "Browse by topic" if is_en else "按主题浏览"
-    topics_sub = "Five research streams. Each one carefully selected." if is_en else "五条研究脉络，每一篇都是精选。"
+    topics_sub = (
+        "Six research streams. Every paper is a blueprint you can extract into your project."
+        if is_en else
+        "六条研究脉络。每篇都是可以抽取到你项目里的蓝图。"
+    )
     models_h2 = "Open-source model directory" if is_en else "开源模型目录"
     models_sub = "Pick the right model for your domain in 60 seconds." if is_en else "60 秒选出适合你领域的模型。"
     models_label = "Open the directory" if is_en else "打开目录"

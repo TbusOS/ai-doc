@@ -13,12 +13,20 @@
         <header class="anth-nav">
       <div class="anth-nav-inner">
         <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
-        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
           <a href="../../zh/">首页</a>
-          <a href="../../zh/inference-optimization.html">推理优化</a>
-          <a href="../../zh/self-improving-agents.html">自我改进 Agent</a>
-          <a href="../../zh/multi-agent-systems.html">多 Agent 系统</a>
-          <a href="../../zh/memory-systems.html">记忆系统</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">3 篇</span></span></a>
+          <a href="../../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI 思维范式</span><br><span class="sub">2 篇</span></span></a>
+          <a href="../../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
           <a href="../../zh/open-source-models.html">开源模型</a>
         </nav>
         <div class="lang-toggle">
@@ -391,7 +399,7 @@
 </ul>
           </article>
 
-          <div class="article-nav"><a href="autoresearch.html"><div class="nav-label">← 上一篇</div><div class="nav-title">autoresearch</div></a><span></span></div>
+          <div class="article-nav"><a href="autoresearch.html"><div class="nav-label">← 上一篇</div><div class="nav-title">autoresearch</div></a><a class="nav-right" href="reflexion.html"><div class="nav-label">下一篇 →</div><div class="nav-title">Reflexion</div></a></div>
         </div>
       </section>
 

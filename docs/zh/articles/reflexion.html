@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reflexion — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../zh/">首页</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">3 篇</span></span></a>
+          <a href="../../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI 思维范式</span><br><span class="sub">2 篇</span></span></a>
+          <a href="../../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../self-improving-agents.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 自我改进 Agent</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-self">自我改进 Agent</span>
+            <span class="anth-caption">2023 · Shinn et al.</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="reflexion-language-agents-with-verbal-reinforcement-learning">Reflexion: Language Agents with Verbal Reinforcement Learning</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2303.11366">arXiv:2303.11366</a></p>
+<p><strong>作者:</strong> Noah Shinn, Federico Cassano, Edward Berman, Ashwin Gopinath, Karthik Narasimhan, Shunyu Yao</p>
+<p><strong>发表:</strong> NeurIPS 2023 / 2023-03 arXiv 首发</p>
+<p><strong>代码:</strong> <a href="https://github.com/noahshinn/reflexion">github.com/noahshinn/reflexion</a></p>
+<p><strong>主题:</strong> 给 agent 一种<strong>不用更新权重的强化学习</strong>——失败后让 LLM 自己写一段"lesson"存进记忆，下次尝试时先读 lesson 再行动。在 HumanEval 编码任务上把 GPT-4 从 80% 推到 <strong>91%</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="the-core-claim">核心命题 / The Core Claim</h2>
+<p>传统 RL 通过<strong>更新权重</strong>来让 agent 从失败中学习，但这对大模型来说<strong>不现实</strong>：</p>
+<ul>
+<li>权重几百 GB，update 一次很贵</li>
+<li>单个任务的 reward 信号太稀疏</li>
+<li>微调会污染其他能力（通才变专才）</li>
+</ul>
+<p>Reflexion 的洞察：<strong>用自然语言反馈代替梯度更新</strong>。让 LLM 自己写 "我上次为什么失败 / 下次该怎么做" 的<strong>口头反思</strong>，作为下次 trial 的上下文。整个"学习"过程不改任何权重。</p>
+<p>这是 RL 的一种极简形式——<strong>verbal reinforcement learning</strong>。</p>
+<hr>
+<h2 id="1-the-three-actor-architecture">1. 三个角色的循环 / The Three-Actor Architecture</h2>
+<p>Reflexion 把 agent 分成三个独立的 LLM 角色：</p>
+<pre><code>┌────────────┐   action    ┌──────────┐   reward
+│   Actor    │──────────▶  │ Environment │──────────┐
+└────────────┘             └──────────┘            │
+      ▲                                             │
+      │ trajectory + reflection                     ▼
+┌────────────┐   feedback   ┌──────────────┐
+│ Memory     │◀─────────────│  Evaluator   │
+│(语言反思)   │              │ (打分/评判)   │
+└────────────┘              └──────────────┘
+      ▲                              │
+      │                              ▼
+      │          ┌────────────────────────┐
+      └──────────│  Self-Reflection       │
+                 │(把 reward+trajectory   │
+                 │ 变成下次的 &quot;lesson&quot;)    │
+                 └────────────────────────┘
+</code></pre>
+<ol>
+<li><strong>Actor</strong> — 产生 trajectory（基于 ReAct 范式）</li>
+<li><strong>Evaluator</strong> — 给 trajectory 打分（任务特定：编程看 unit test 结果，游戏看胜负）</li>
+<li><strong>Self-Reflection</strong> — 看 trajectory + score，写一段<strong>自然语言反思</strong>存入 Memory</li>
+<li><strong>下一轮 Actor 开始前</strong>，从 Memory 里读出历史反思作为上下文</li>
+</ol>
+<hr>
+<h2 id="2-self-reflection">2. Self-Reflection 的样例</h2>
+<h3 id="humaneval-leetcode">编程任务：HumanEval / LeetCode</h3>
+<p>第一次尝试失败的 trajectory 一般长这样：</p>
+<pre><code>写代码解题 → 提交 → Evaluator 跑测试用例 → 报错 &quot;AssertionError on input [3, 1, 4]&quot;
+</code></pre>
+<p><strong>Reflexion step：</strong> 把 trajectory + 错误信息喂给 LLM，让它自己写：</p>
+<pre><code>反思：我的代码假设输入已排序，但测试用例里输入是乱序的。
+关键错误：在第 12 行直接对 nums[0] 做比较而没有先调用 sorted()。
+下次尝试要点：
+1. 先排序输入
+2. 检查边界情况：空列表、单元素列表
+3. 返回前再跑一遍测试用例验证逻辑
+</code></pre>
+<p>下一轮 Actor 尝试时，这段反思直接作为 prompt 的一部分——<strong>相当于 agent 给未来的自己留了一张 post-it 便签</strong>。</p>
+<h3 id="alfworld">决策任务：ALFWorld</h3>
+<p>假设 Actor 在家庭环境里失败（找不到物品）：</p>
+<pre><code>反思：我在找 pillow 时一直打开卧室的抽屉，但上次观察到 pillow 通常在 bed 或 couch 上。
+下次应该先检查 &quot;on the bed&quot; 和 &quot;on the couch&quot; 这两个位置，再考虑柜子和抽屉。
+</code></pre>
+<hr>
+<h2 id="3-key-results">3. 关键数字 / Key Results</h2>
+<h3 id="humaneval">HumanEval 编码任务</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>Pass@1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-4 baseline</td>
+<td>80.1%</td>
+</tr>
+<tr>
+<td>GPT-4 + Reflexion</td>
+<td><strong>91.0%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>+11 个百分点的提升</strong>——不改模型权重，只加一个反思循环。</p>
+<h3 id="hotpotqa">HotPotQA 知识问答</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>EM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ReAct</td>
+<td>27%</td>
+</tr>
+<tr>
+<td>ReAct + Reflexion (4 trials)</td>
+<td><strong>51%</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="alfworld_1">AlfWorld 决策任务</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>成功率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ReAct</td>
+<td>55%</td>
+</tr>
+<tr>
+<td>ReAct + Reflexion</td>
+<td><strong>91%</strong> (经过若干次反思迭代)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-verbal-rl-why-verbal-rl-works">4. 为什么 Verbal RL 有效 / Why Verbal RL Works</h2>
+<h3 id="41-credit-assignment">4.1 信用分配（Credit Assignment）用自然语言处理</h3>
+<p>传统 RL 最难的一件事：<strong>是轨迹里哪一步导致了最终失败？</strong> 梯度算法通过 backprop 做信用分配，但对稀疏 reward 极其低效。</p>
+<p>Reflexion 把这件事丢给了 LLM：<strong>"你看这段 trajectory 和结果，告诉我是哪一步错了"</strong>——LLM 的语言理解能力天然擅长做这种归因。</p>
+<h3 id="42-episodic-memory-parametric-memory">4.2 Episodic memory 比 parametric memory 更敏捷</h3>
+<p>权重更新是<strong>参数化记忆</strong>——learn 慢、rigid、可能污染其他能力。
+Reflexion 的反思是<strong>情景记忆</strong>（episodic memory）——instant、可读、可删、可重组。</p>
+<p>对 LLM agent 来说，情景记忆通常更符合需求：<strong>你希望 agent 记住"上次这个客户说他对延时敏感"，而不是修改整个模型的权重</strong>。</p>
+<h3 id="43-reward">4.3 Reward 信号不需要可微</h3>
+<p>传统 RL 需要 reward 函数可微或至少可评估。Reflexion 的 Evaluator 可以是<strong>任意黑盒</strong>——unit test、游戏引擎、人类评分、另一个 LLM 的 judge——只要能产出反馈，就能生成反思。</p>
+<hr>
+<h2 id="5-engineering-perspective">5. 工程视角 / Engineering Perspective</h2>
+<h3 id="51">5.1 最小实现（伪码）</h3>
+<pre><code class="language-python">def reflexion_agent(task, max_trials=3):
+    memory = []  # 存历次反思
+    for trial in range(max_trials):
+        # Actor 用 memory 作为上下文产生 trajectory
+        trajectory = actor.run(
+            task=task,
+            context=&quot;Previous reflections:\n&quot; + &quot;\n&quot;.join(memory)
+        )
+
+        # Evaluator 打分
+        score, feedback = evaluator.evaluate(trajectory)
+
+        if score == PASS:
+            return trajectory  # 成功
+
+        # 失败：生成反思
+        reflection = llm.generate(
+            f&quot;Task: {task}\n&quot;
+            f&quot;Trajectory: {trajectory}\n&quot;
+            f&quot;Evaluator feedback: {feedback}\n&quot;
+            f&quot;Write a short reflection on what went wrong and &quot;
+            f&quot;what to try differently next time.&quot;
+        )
+        memory.append(reflection)
+
+    return &quot;Failed after max trials&quot;
+</code></pre>
+<p>整个 "learning" 过程就在 <code>memory.append</code> 这一行——<strong>没有模型更新，没有优化器，没有 GPU 训练</strong>。</p>
+<h3 id="52-reflexion">5.2 什么情况适合 Reflexion</h3>
+<p><strong>适合：</strong>
+- Evaluator 信号<strong>快、便宜、可靠</strong>（unit test、compiler、确定性游戏）
+- 同类型任务会重复遇到
+- 任务可以被拆成"尝试→评估→反思→再尝试"的循环</p>
+<p><strong>不适合：</strong>
+- Evaluator 信号稀疏或不可靠（人类主观打分、多方意见分歧）
+- 单次任务（无重试机会）
+- 任务之间完全不相关（反思无法泛化）</p>
+<h3 id="53">5.3 反思质量决定一切</h3>
+<p>Reflexion 最大的失败模式不是"反思没效果"，而是<strong>反思写得太笼统</strong>：</p>
+<p>❌ 差的反思：<em>"我应该更仔细地思考"</em>
+❌ 差的反思：<em>"下次要考虑所有边界情况"</em>
+✅ 好的反思：<em>"输入中包含负数时我的 dp 公式没处理，第 14 行的 <code>dp[i] = max(dp[i-1] + nums[i], nums[i])</code> 会在负数连续时给出错误的累积和。下次先跑 <code>if len(nums) == 1: return nums[0]</code>，再对负数做特殊处理。"</em></p>
+<p><strong>实操建议：</strong> 给 self-reflection prompt 加约束——<strong>"列出具体的第几行/第几步出错，给出具体可执行的下一步"</strong>。</p>
+<h3 id="54-memory">5.4 Memory 管理是进阶话题</h3>
+<p>反思会越积越多。Reflexion 原论文用<strong>最近 3 条</strong>，但生产系统需要：</p>
+<ul>
+<li><strong>按语义检索</strong>（当前任务相关的反思优先）</li>
+<li><strong>失败率加权</strong>（反复失败的 lesson 保留更久）</li>
+<li><strong>定期蒸馏</strong>（N 条分散的反思 → 1 条综合 lesson）</li>
+</ul>
+<p>这和 <a href="../memory-systems/memorybank.md">MemoryBank</a> / <a href="../memory-systems/evo-memory.md">Evo-Memory</a> 的思路直接相关。</p>
+<hr>
+<h2 id="6-relation-to-other-papers">6. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>论文</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../agent-patterns/react.md">ReAct</a></td>
+<td>Reflexion 的 Actor 就是 ReAct 循环</td>
+</tr>
+<tr>
+<td><a href="agent-factory.md">AgentFactory</a></td>
+<td>AgentFactory 把"成功 trajectory 保存为可执行代码"；Reflexion 把"失败 trajectory 保存为语言反思"——两种互补的经验载体</td>
+</tr>
+<tr>
+<td><a href="../memory-systems/memorybank.md">MemoryBank</a></td>
+<td>Reflexion 的反思池就是一种 memory；MemoryBank 讨论如何管理这种记忆池</td>
+</tr>
+<tr>
+<td><a href="rise.md">RISE</a></td>
+<td>都是"失败后自我修正"，但 RISE 更聚焦单次推理内的递归，Reflexion 聚焦 trial 之间的记忆</td>
+</tr>
+<tr>
+<td><a href="evolver.md">EvolveR</a></td>
+<td>EvolveR 把反思进一步蒸馏为<strong>抽象策略原则</strong>——Reflexion 的下一层</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="7-2025-evolution-in-2025">7. 2025 年后的演化 / Evolution in 2025</h2>
+<p>Reflexion 开启的"verbal RL"思想在 2025 年已经是 agent 系统的标配组件：</p>
+<ul>
+<li><strong>Claude Code / Codex</strong> 类 agent：每次 task 失败后 LLM 自动总结 "lesson.md"，下次读入</li>
+<li><strong><a href="autoresearch.md">autoresearch</a></strong>：Karpathy 的版本——Agent 跑实验，val_bpb 回退后"反思为什么这个改动没用"</li>
+<li><strong>OpenAI o1/GPT-5</strong> 的 test-time thinking：内化了反思机制，不需要外部 loop</li>
+<li><strong>LangGraph 的 self-correcting chains</strong>：Reflexion 作为内置原语</li>
+</ul>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>把 RL 从"研究者专利"变成"应用工程师默认工具"</strong></li>
+<li><strong>概念极简但效果显著</strong>：HumanEval +11 个百分点是在不改模型的前提下获得的</li>
+<li><strong>作者有强项目影响力</strong>：Shunyu Yao 也是 ReAct 的一作</li>
+<li><strong>直接落地</strong>：任何有 evaluator 的 task 都能套 Reflexion，不需要任何特殊基础设施</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>论文:</strong> <a href="https://arxiv.org/abs/2303.11366">Reflexion: Language Agents with Verbal Reinforcement Learning</a></li>
+<li><strong>代码:</strong> <a href="https://github.com/noahshinn/reflexion">github.com/noahshinn/reflexion</a></li>
+<li><strong>作者:</strong></li>
+<li>Noah Shinn (<a href="https://x.com/noahshinn024">@noahshinn024 on X</a>)</li>
+<li>Shunyu Yao (<a href="https://x.com/ShunyuYao10">@ShunyuYao10 on X</a>) — ReAct 一作</li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="../agent-patterns/react.md">ReAct</a> — Reflexion 的基础循环</li>
+<li><a href="agent-factory.md">AgentFactory</a> — 互补的经验保存范式</li>
+<li><a href="autoresearch.md">autoresearch</a> — 2026 年的 verbal RL 应用</li>
+<li><a href="../memory-systems/memorybank.md">MemoryBank</a> — 管理反思记忆的方法论</li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="darwin-skill.html"><div class="nav-label">← 上一篇</div><div class="nav-title">Darwin Skill · 达尔文</div></a><span></span></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

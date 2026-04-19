@@ -13,12 +13,20 @@
         <header class="anth-nav">
       <div class="anth-nav-inner">
         <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
-        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-5);">
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
           <a href="../../en/">Home</a>
-          <a href="../../en/inference-optimization.html">Inference Optimization</a>
-          <a href="../../en/self-improving-agents.html">Self-Improving Agents</a>
-          <a href="../../en/multi-agent-systems.html">Multi-Agent Systems</a>
-          <a href="../../en/memory-systems.html">Memory Systems</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI Thinking</span><br><span class="sub">2 papers</span></span></a>
+          <a href="../../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
           <a href="../../en/open-source-models.html">Models</a>
         </nav>
         <div class="lang-toggle">
@@ -32,11 +40,11 @@
       <section class="anth-section">
         <div class="anth-container anth-container--narrow">
           <div class="article-meta-header">
-            <a href="../multi-agent-systems.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Multi-Agent Systems</a>
+            <a href="../agent-patterns.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Agent Patterns</a>
           </div>
 
           <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
-            <span class="anth-badge badge-multi">Multi-Agent Systems</span>
+            <span class="anth-badge badge-agent">Agent Patterns</span>
             <span class="anth-caption">2026 · Landscape article</span>
           </div>
 
@@ -396,7 +404,7 @@
 </ul>
           </article>
 
-          <div class="article-nav"><span></span><a class="nav-right" href="nuwa-skill.html"><div class="nav-label">Next →</div><div class="nav-title">Nuwa Skill · 女娲</div></a></div>
+          <div class="article-nav"><a href="react.html"><div class="nav-label">← Previous</div><div class="nav-title">ReAct: Synergizing Reasoning and Acting</div></a><a class="nav-right" href="nuwa-skill.html"><div class="nav-label">Next →</div><div class="nav-title">Nuwa Skill · 女娲</div></a></div>
         </div>
       </section>
 

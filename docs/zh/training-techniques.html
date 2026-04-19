@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>训练技术 — AI Doc</title>
+    <link rel="stylesheet" href="../assets/fonts.css">
+    <link rel="stylesheet" href="../assets/anthropic.css">
+    <link rel="stylesheet" href="../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../zh/">首页</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">3 篇</span></span></a>
+          <a href="../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI 思维范式</span><br><span class="sub">2 篇</span></span></a>
+          <a href="../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
+          <a href="../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../en/" class="">EN</a>
+          <a href="../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-hero" style="padding-block: var(--space-9);">
+        <div class="anth-container">
+          <span class="anth-badge badge-training">训练技术</span>
+          <h1 style="margin-top:var(--space-4); max-width:780px; margin-left:auto; margin-right:auto;">训练技术</h1>
+          <p style="font-size:20px; line-height:1.55; color:var(--anth-text-secondary); max-width:640px; margin:var(--space-5) auto var(--space-4);">前沿训练配方——推理、对齐、高效微调</p>
+          <p style="font-size:16px; line-height:1.6; color:var(--anth-text-secondary); max-width:640px; margin:0 auto;">推动前沿且可开源复现的训练方法：GRPO 推理 RL（DeepSeek-R1）、替代 RLHF 的 DPO、参数高效适配 LoRA。</p>
+        </div>
+      </section>
+
+      <section class="anth-section">
+        <div class="anth-container anth-container--wide">
+          <div class="paper-list">
+            <a class="paper-row" href="articles/deepseek-r1.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">DeepSeek-AI</div>
+                <h3>DeepSeek-R1</h3>
+                <p>用 GRPO 做纯 RL 推理训练，达到 o1 级开源（AIME 79.8%、MATH-500 97.3%），重塑开源闭源格局。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/dpo.html">
+              <span class="paper-year">2023</span>
+              <div>
+                <div class="paper-meta">Rafailov et al. (Stanford)</div>
+                <h3>Direct Preference Optimization</h3>
+                <p>用一个交叉熵损失替代整套 RLHF（RM+PPO），2024 年之后主流开源模型对齐的事实标准。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/lora.html">
+              <span class="paper-year">2021</span>
+              <div>
+                <div class="paper-meta">Edward Hu et al. (Microsoft)</div>
+                <h3>LoRA</h3>
+                <p>低秩适配微调：可训练参数减少万倍、推理无额外开销、效果持平全量微调。PEFT 事实标准。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

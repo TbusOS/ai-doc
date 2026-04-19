@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DeepSeek-R1 — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../en/">Home</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI Thinking</span><br><span class="sub">2 papers</span></span></a>
+          <a href="../../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../training-techniques.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Training Techniques</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-training">Training Techniques</span>
+            <span class="anth-caption">2025 · DeepSeek-AI</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="deepseek-r1-incentivizing-reasoning-capability-in-llms-via-reinforcement-learning">DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</h1>
+<blockquote>
+<p><strong>原文链接:</strong>
+- 技术报告: <a href="https://arxiv.org/abs/2501.12948">arXiv:2501.12948</a>
+- GitHub: <a href="https://github.com/deepseek-ai/DeepSeek-R1">deepseek-ai/DeepSeek-R1</a>
+- HuggingFace: <a href="https://huggingface.co/deepseek-ai/DeepSeek-R1">deepseek-ai/DeepSeek-R1</a></p>
+<p><strong>作者:</strong> DeepSeek-AI 团队</p>
+<p><strong>发表:</strong> 2025-01-20</p>
+<p><strong>许可:</strong> MIT（模型权重 + 蒸馏模型均开源）</p>
+<p><strong>主题:</strong> 震撼全球 AI 界的开源推理模型。用纯 RL（<strong>无需 SFT 冷启动</strong>）把一个预训练模型直接训出 o1 级推理能力。AIME 2024 达到 79.8%、MATH-500 达到 97.3%。关键算法 <strong>GRPO</strong> 是 RLHF/DPO 之后的重要进展。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>2024 年底 OpenAI 发布 o1，行业震惊——<strong>test-time thinking</strong>（测试时长思考）似乎是一种新能力，怎么复现不知道。各家大厂和学术界试了各种模仿方法，效果都不尽如人意。</p>
+<p><strong>2025 年 1 月 DeepSeek 直接开源 R1</strong>，附带完整技术报告 + 权重 + 蒸馏模型——并且：</p>
+<ol>
+<li>证明<strong>纯 RL</strong> 不需要 SFT 也能涌现推理能力（R1-Zero 版本）</li>
+<li>算力<strong>显著低于</strong> o1 训练预算</li>
+<li>蒸馏出的小模型（Qwen-32B-distilled）<strong>击败 o1-mini</strong></li>
+<li><strong>MIT 许可，完全开源</strong></li>
+</ol>
+<p>这篇论文的发布导致了 AI 股市震荡、Meta 启动 Llama 4 回应、整个推理模型训练方法公开化。是 LLM 时代<strong>开源追上甚至超越闭源前沿的标志性事件</strong>。</p>
+<hr>
+<h2 id="1-key-contributions">1. 关键贡献 / Key Contributions</h2>
+<p>R1 的技术贡献可以总结成三条：</p>
+<h3 id="11-grpo-critic">1.1 GRPO: 去 critic 的强化学习</h3>
+<p>传统 RLHF 用 <strong>PPO</strong>——需要一个 critic（value network）估计状态价值，显存翻倍、训练复杂。</p>
+<p>R1 用 <strong>Group Relative Policy Optimization (GRPO)</strong>——<strong>不需要 critic</strong>：</p>
+<pre><code>对每个 prompt，同时采样 G 个回答（G 通常 = 64）
+对这 G 个回答打分（用 reward function）
+以这 G 个回答的平均 reward 作为 baseline
+梯度 = (reward_i - mean_reward) * log_prob_i
+</code></pre>
+<p><strong>优势：</strong>
+- 不需要 value network，显存节省 ~2×
+- 天然的方差减少（group baseline）
+- 适合可验证任务（reward 是 deterministic 的，比如"答案对不对"）</p>
+<h3 id="12-r1-zero-rl-sft">1.2 R1-Zero: 纯 RL 训练（不需要 SFT 冷启动）</h3>
+<p>大多数人相信"RL 必须从一个 SFT 好的 checkpoint 开始"。R1-Zero 证明<strong>不是</strong>：</p>
+<ul>
+<li>直接从 base model (DeepSeek-V3 base) 开始</li>
+<li>用 GRPO + 可验证 reward（数学答案对错、代码 pass/fail）</li>
+<li>不做任何 SFT</li>
+</ul>
+<p><strong>结果：模型自己涌现出 chain-of-thought、反思、验证步骤</strong>。</p>
+<p>报告里的经典图示："aha moment" — 训练中某个步骤，模型突然开始在数学题中间说 <em>"Wait, let me reconsider..."</em> 然后自我修正。这不是训练数据里教的，是 RL 中涌现的。</p>
+<h3 id="13-r1-sft-rl">1.3 R1: SFT 冷启动 + 多阶段 RL</h3>
+<p>R1-Zero 有一个问题：语言不流畅、输出可读性差、有时中英文混用。R1（生产版本）通过以下流程解决：</p>
+<pre><code>1. 少量高质量 reasoning SFT 数据（~1000 样本）做冷启动
+2. 第一轮 RL：用 GRPO + reasoning reward 训练
+3. Rejection sampling：从 RL 模型采样，筛选高质量输出
+4. SFT on 筛选数据（加入通用任务 SFT）
+5. 第二轮 RL：加入人类偏好 reward（安全、有用）
+</code></pre>
+<p><strong>四阶段 pipeline</strong> 让 R1 既保留 R1-Zero 的推理能力，又修复了语言问题。</p>
+<hr>
+<h2 id="2-key-benchmarks">2. 关键数字 / Key Benchmarks</h2>
+<p>R1 完整版（671B MoE · 37B 激活）对比 o1：</p>
+<table>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th>DeepSeek-R1</th>
+<th>OpenAI o1-1217</th>
+<th>OpenAI o1-mini</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AIME 2024 (Pass@1)</strong></td>
+<td><strong>79.8%</strong></td>
+<td>79.2%</td>
+<td>63.6%</td>
+</tr>
+<tr>
+<td><strong>MATH-500 (Pass@1)</strong></td>
+<td><strong>97.3%</strong></td>
+<td>96.4%</td>
+<td>90.0%</td>
+</tr>
+<tr>
+<td><strong>Codeforces (percentile)</strong></td>
+<td>96.3%</td>
+<td>96.6%</td>
+<td>93.4%</td>
+</tr>
+<tr>
+<td><strong>GPQA Diamond (Pass@1)</strong></td>
+<td>71.5%</td>
+<td>75.7%</td>
+<td>60.0%</td>
+</tr>
+<tr>
+<td><strong>MMLU</strong></td>
+<td>90.8%</td>
+<td>91.8%</td>
+<td>85.2%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>R1 在数学上略超 o1，在其他 benchmark 上打平或略输</strong>。这是开源模型<strong>第一次全面追平 o1 水平</strong>。</p>
+<h3 id="_1">蒸馏模型（更便宜但仍强）</h3>
+<table>
+<thead>
+<tr>
+<th>蒸馏模型</th>
+<th>AIME 2024</th>
+<th>MATH-500</th>
+<th>基础模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeepSeek-R1-Distill-Qwen-1.5B</td>
+<td>28.9%</td>
+<td>83.9%</td>
+<td>Qwen2.5-Math-1.5B</td>
+</tr>
+<tr>
+<td>DeepSeek-R1-Distill-Qwen-7B</td>
+<td>55.5%</td>
+<td>92.8%</td>
+<td>Qwen2.5-Math-7B</td>
+</tr>
+<tr>
+<td>DeepSeek-R1-Distill-Qwen-14B</td>
+<td>69.7%</td>
+<td>93.9%</td>
+<td>Qwen2.5-14B</td>
+</tr>
+<tr>
+<td><strong>DeepSeek-R1-Distill-Qwen-32B</strong></td>
+<td><strong>72.6%</strong></td>
+<td><strong>94.3%</strong></td>
+<td>Qwen2.5-32B</td>
+</tr>
+<tr>
+<td>DeepSeek-R1-Distill-Llama-70B</td>
+<td>70.0%</td>
+<td>94.5%</td>
+<td>Llama-3.3-70B</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Qwen-32B 蒸馏版 AIME 72.6% 超过 o1-mini 的 63.6%</strong>——一张 A100 80GB 跑得动的模型击败 OpenAI 的付费 API。</p>
+<hr>
+<h2 id="3-grpo-grpo-mathematics">3. GRPO 的数学细节 / GRPO Mathematics</h2>
+<p>GRPO 的损失函数：</p>
+<p>$$
+\mathcal{L}<em>{\text{GRPO}} = \mathbb{E}</em>{x, {y_i}<em>{i=1}^G \sim \pi</em>\theta} \left[ \frac{1}{G} \sum_{i=1}^G \min\left(\rho_i A_i, \text{clip}(\rho_i, 1-\epsilon, 1+\epsilon) A_i\right) - \beta \cdot \text{KL}(\pi_\theta | \pi_{\text{ref}}) \right]
+$$</p>
+<p>其中：</p>
+<ul>
+<li>$\rho_i = \frac{\pi_\theta(y_i|x)}{\pi_{\text{old}}(y_i|x)}$ — importance ratio（和 PPO 一样）</li>
+<li>$A_i = \frac{r_i - \text{mean}(r_1, ..., r_G)}{\text{std}(r_1, ..., r_G)}$ — <strong>group-normalized advantage</strong>（关键创新）</li>
+<li>clip 项防止 policy 更新过激</li>
+<li>KL 项保持和参考模型的距离</li>
+</ul>
+<p><strong>核心 trick：</strong> $A_i$ 用 group mean 和 std 归一化，而不是用 critic。这消除了 PPO 最复杂的那一半。</p>
+<hr>
+<h2 id="4-aha-moment-emergence-of-reasoning">4. "Aha Moment" — 推理能力如何涌现 / Emergence of Reasoning</h2>
+<p>技术报告里最有名的是 Table 3 展示的"aha moment"。以下是一个数学题训练过程中的真实输出：</p>
+<h3 id="r1-zero-1000">R1-Zero 训练步骤 ~1000 的输出：</h3>
+<pre><code>问题：若 x² + ax + b = 0 有两个不同的正整数根，求 a 和 b 的可能值...
+
+Response: Let me compute x = ... We get x = 3 and x = 5. 
+Therefore a = -(3+5) = -8 and b = 3·5 = 15.
+
+Wait. Let me re-examine this carefully to make sure I am correct.
+Actually, I need to verify: for x = 3, we have 9 - 24 + 15 = 0. ✓
+For x = 5, we have 25 - 40 + 15 = 0. ✓
+So the answer is a = -8, b = 15.
+</code></pre>
+<p><strong>那句 "Wait. Let me re-examine this carefully..." 不是训练数据里教的</strong>——是 RL 过程中模型发现"在 final answer 之前插入一次自检能显著提升 reward"而自行涌现的行为。</p>
+<p>这验证了 Sutton <a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a> 的核心论点：<strong>只要给对搜索/学习信号，通用算法会自己发现最优 meta-skill，不需要人类教</strong>。</p>
+<hr>
+<h2 id="5-training-stack-overview">5. 训练栈全貌 / Training Stack Overview</h2>
+<pre><code>DeepSeek-V3 base（已预训练）
+    │
+    ├── 路径 A：R1-Zero
+    │     GRPO + 可验证 reward 直接 RL
+    │     └─ 涌现推理能力
+    │         但语言流畅度差
+    │
+    └── 路径 B：R1（生产版本）
+          1. Cold-start SFT（~1k 高质量 reasoning 样本）
+          2. GRPO reasoning RL
+          3. Rejection sampling → 再 SFT（加通用任务）
+          4. 第二轮 RL（加人类偏好 reward）
+          └─ 保留推理 + 修复语言
+</code></pre>
+<p>并且对所有 6 个尺寸（1.5B/7B/14B/32B/Llama-70B）做<strong>蒸馏</strong>——用 R1 的 output 作为 SFT 数据训练小模型。蒸馏小模型不做 RL，单 SFT 就能继承大模型的推理能力。</p>
+<hr>
+<h2 id="6-key-takeaways">6. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="61-rl">6.1 RL 不再是大厂专利</h3>
+<p>GRPO 把 RL 训练门槛降低了一个数量级：</p>
+<ul>
+<li>不需要 critic → 显存砍半</li>
+<li>用可验证 reward → 不需要 human labeling</li>
+<li>开源参考实现（<code>verl</code>、<code>OpenRLHF</code> 等）</li>
+</ul>
+<p><strong>2025 年的 trend：</strong> RL 微调从"OpenAI/Anthropic 特权"变成"每个中型团队都能做的事"。</p>
+<h3 id="62-reward">6.2 可验证 reward 改变训练思路</h3>
+<p>R1 成功的前提是 reward 可验证：</p>
+<ul>
+<li>数学题：答案对错可自动判断</li>
+<li>代码题：跑 unit test 就知道 pass/fail</li>
+<li>特定格式任务：regex 匹配输出</li>
+</ul>
+<p><strong>对工程师的启示：</strong> 如果你的任务能设计出可验证 reward，考虑 GRPO 微调；如果不能，考虑 DPO。</p>
+<h3 id="63-r1">6.3 蒸馏是 R1 最被低估的贡献</h3>
+<p>R1 最实用的产品不是 671B 主模型，而是<strong>蒸馏小模型</strong>：</p>
+<ul>
+<li>Qwen-32B-Distill 能在一张 A100 跑</li>
+<li>Qwen-7B-Distill 能在 RTX 4090 跑</li>
+<li>Qwen-1.5B-Distill 能在手机跑</li>
+</ul>
+<p><strong>"大模型做 RL，小模型做蒸馏"</strong> 成为 2025 年新范式。</p>
+<h3 id="64">6.4 开源重塑行业</h3>
+<p>R1 发布后：</p>
+<ul>
+<li>学术界有了可复现的 o1 级参考</li>
+<li>中小公司可以基于 R1 做垂直领域微调（法律推理、金融推理、医学推理）</li>
+<li>闭源模型（o1, Claude Opus）失去技术护城河，只剩产品/工程护城河</li>
+<li>各大厂加速发布 reasoning 模型（Gemini 2.0 Thinking, GPT-5 Pro, Qwen3-Thinking）</li>
+</ul>
+<p><strong>开源 &gt; 闭源</strong> 这一趋势在 R1 之后几乎不可逆。</p>
+<h3 id="65-r1-reasoning">6.5 实操：用 R1 栈训练你自己的 reasoning 模型</h3>
+<pre><code>1. 选一个开源基础模型（Qwen2.5-Math 或 Llama-3.1）
+2. 用 R1 技术报告的 cold-start 配方：1k 高质量 reasoning 样本 SFT
+3. 用 verl 或 OpenRLHF 跑 GRPO
+4. reward 函数：数学题答案对错 + 格式合规性
+5. 训练 1-3 天（单机 8×A100）
+</code></pre>
+<p>这套流程已经被 2025 年多个开源复现项目验证（TinyZero、SimpleRL、open-r1 等）。</p>
+<hr>
+<h2 id="7-relation-to-other-papers">7. 与本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="dpo.md">DPO</a></td>
+<td>DPO 处理对齐（偏好），GRPO 处理推理（可验证 reward）。<strong>DPO + GRPO 是 2025 年对齐 + 推理的双基础</strong></td>
+</tr>
+<tr>
+<td><a href="lora.md">LoRA</a></td>
+<td>R1 的多个开源复现用 LoRA + GRPO，降低训练成本到单卡可跑</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/autoresearch.md">autoresearch</a></td>
+<td>Karpathy 的 autoresearch 本质是在 train.py 上应用 R1 的思想：可验证目标（val_bpb）+ 迭代改进</td>
+</tr>
+<tr>
+<td><a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a></td>
+<td>R1 是 Bitter Lesson 2025 年最大的印证：不教模型 chain-of-thought，让它自己涌现</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/self-improving-test-time.md">Self-Improving at Test-Time</a></td>
+<td>R1 把 test-time thinking 能力内化；两者互补</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>开源重塑行业的标志性事件</strong>：R1 之后整个 AI 行业格局变化</li>
+<li><strong>技术贡献实在</strong>：GRPO 不是营销，是可复现的有效算法</li>
+<li><strong>完全透明</strong>：权重 + 技术报告 + 数据配方全开源，MIT 许可</li>
+<li><strong>立即可用</strong>：HuggingFace 上直接跑，或用 API（DeepSeek $0.55/M tokens）</li>
+<li><strong>持续引发浪潮</strong>：Qwen3、Kimi K2、GLM-5 等后续开源前沿模型都在借鉴 R1 配方</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>技术报告:</strong> <a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</a></li>
+<li><strong>GitHub:</strong> <a href="https://github.com/deepseek-ai/DeepSeek-R1">deepseek-ai/DeepSeek-R1</a></li>
+<li><strong>HuggingFace:</strong> <a href="https://huggingface.co/deepseek-ai/DeepSeek-R1">deepseek-ai/DeepSeek-R1</a></li>
+<li><strong>蒸馏系列:</strong></li>
+<li><a href="https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-32B">DeepSeek-R1-Distill-Qwen-32B</a></li>
+<li><a href="https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-70B">DeepSeek-R1-Distill-Llama-70B</a></li>
+<li><strong>开源复现项目:</strong></li>
+<li><a href="https://github.com/huggingface/open-r1">Hugging Face open-r1</a> — 官方追 R1 复现</li>
+<li><a href="https://github.com/hkust-nlp/simpleRL-reason">SimpleRL</a> — 小规模 R1 风格训练</li>
+<li><a href="https://github.com/volcengine/verl">verl</a> — 字节跳动开源的 RL 训练框架，支持 GRPO</li>
+<li><strong>相关论文:</strong></li>
+<li><a href="https://github.com/deepseek-ai/DeepSeek-V3">DeepSeek-V3 技术报告</a> — R1 的 base model</li>
+<li><a href="https://arxiv.org/abs/2402.03300">DeepSeekMath (GRPO 最早提出)</a></li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="dpo.md">DPO</a> · <a href="lora.md">LoRA</a></li>
+<li><a href="../self-improving-agents/autoresearch.md">autoresearch</a> · <a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a></li>
+<li><a href="../open-source-models/README.md">开源模型目录</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><span></span><a class="nav-right" href="dpo.html"><div class="nav-label">Next →</div><div class="nav-title">Direct Preference Optimization</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

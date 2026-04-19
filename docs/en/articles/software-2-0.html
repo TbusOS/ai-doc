@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Software 2.0 — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../en/">Home</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI Thinking</span><br><span class="sub">2 papers</span></span></a>
+          <a href="../../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../ai-thinking.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to AI Thinking</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-thinking">AI Thinking</span>
+            <span class="anth-caption">2017 · Andrej Karpathy</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="software-20">Software 2.0</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://karpathy.medium.com/software-2-0-a64152b37c35">Software 2.0 (Medium)</a></p>
+<p><strong>作者:</strong> Andrej Karpathy（时任 Tesla AI Director）</p>
+<p><strong>发表:</strong> November 11, 2017 / Medium 个人博客</p>
+<p><strong>主题:</strong> 重新定义"编程"——软件 1.0 是人类写显式指令的 Python/C++，软件 2.0 是<strong>神经网络权重</strong>本身作为程序。2017 年的这篇预言在 2025 年的 LLM 时代完全兑现。</p>
+</blockquote>
+<hr>
+<h2 id="_1">为什么要读这篇</h2>
+<p>2017 年 Karpathy 看到的东西，2024 年才被大多数人意识到：<strong>我们正在从"人类写代码"的范式过渡到"人类定义目标 + 数据 + 架构 → 优化器写代码"的范式</strong>。大模型时代这个预言完全实现——Claude、GPT、Cursor 里每一行"代码"都是 Software 2.0 的产物。</p>
+<p>这篇文章是理解"为什么 LLM 改变了软件工程本身"的<strong>思维起点</strong>。读懂它你就知道为什么"写好 prompt"、"管好 evals"、"调好微调数据"变成了新一代的编程核心技能——它们才是 Software 2.0 的源代码。</p>
+<hr>
+<h2 id="the-core-thesis">核心论点 / The Core Thesis</h2>
+<h3 id="software-10-vs-software-20">Software 1.0 vs Software 2.0</h3>
+<p>Karpathy 在文章里用了一张著名的对比：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Software 1.0</th>
+<th>Software 2.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>代码</strong></td>
+<td>Python / C++ 等显式指令</td>
+<td>神经网络权重</td>
+</tr>
+<tr>
+<td><strong>程序员做什么</strong></td>
+<td>写每一行逻辑</td>
+<td>选架构、选数据、定义 loss、管训练循环</td>
+</tr>
+<tr>
+<td><strong>程序怎么形成</strong></td>
+<td>编译源代码</td>
+<td>优化器在数据上搜索</td>
+</tr>
+<tr>
+<td><strong>可执行代码</strong></td>
+<td>CPU / GPU 运行的指令流</td>
+<td>GPU 上的一堆矩阵乘法</td>
+</tr>
+<tr>
+<td><strong>调试方法</strong></td>
+<td>断点、单步、print</td>
+<td>看训练曲线、看失败样本、改数据</td>
+</tr>
+<tr>
+<td><strong>版本控制</strong></td>
+<td>git 管源码</td>
+<td>git 管模型权重、数据集、超参</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="_2">原文精要节选 + 翻译</h2>
+<h3 id="1-software-20">核心段落 1 — 什么是 Software 2.0</h3>
+<blockquote>
+<p><em>"Sometimes people refer to neural networks as just 'another tool in your machine learning toolbox'. They have some pros and cons, they work here or there, and sometimes you can use them to win Kaggle competitions. Unfortunately, this interpretation completely misses the forest for the trees. </em><em>Neural networks are not just another classifier, they represent the beginning of a fundamental shift in how we write software</em><em>. They are Software 2.0."</em></p>
+<p><em>"有时候人们把神经网络称为'机器学习工具箱里的另一件工具'——有优点有缺点，这里能用那里能用，偶尔能赢个 Kaggle。不幸的是，这种解读完全是</em><em>只见树木不见森林</em><em>。</em><em>神经网络不只是另一种分类器，它们代表了我们写软件方式的根本性转变的开端</em><em>。它们就是 Software 2.0。"</em></p>
+</blockquote>
+<h3 id="2">核心段落 2 — 为什么权重是代码</h3>
+<blockquote>
+<p><em>"The 'classical stack' of Software 1.0 is what we're all familiar with—it is written in languages such as Python, C++, etc. It consists of explicit instructions to the computer written by a programmer. By writing each line of code, the programmer identifies a specific point in program space with some desirable behavior. In contrast, Software 2.0 is written in </em><em>much more abstract, human unfriendly language, such as the weights of a neural network</em><em>. No human is involved in writing this code because there are a lot of weights (typical networks might have millions), and coding directly in weights is kind of hard (I tried)."</em></p>
+<p><em>"Software 1.0 的'经典栈'我们都熟——用 Python、C++ 等语言写，由程序员写下对计算机的显式指令。程序员每写一行代码，就在程序空间中确定一个具有期望行为的点。相比之下，Software 2.0 是用</em><em>一种远更抽象、对人类远更不友好的语言写成的——神经网络的权重</em><em>。没有人类参与写这种代码，因为权重数量巨大(典型网络有上百万个)，而且直接写权重非常困难(我试过)。"</em></p>
+</blockquote>
+<h3 id="3">核心段落 3 — 新范式下人类做什么</h3>
+<blockquote>
+<p><em>"Instead, our approach is to specify some goal on the behavior of a desirable program (e.g., 'satisfy a dataset of input output pairs of examples', or 'win a game of Go'), write a rough skeleton of the code (i.e. a neural net architecture) that identifies a subset of program space to search, and use the computational resources at our disposal to search this space for a program that works. In the specific case of neural networks, we restrict the search to a continuous subset of the program space where the search process can be made (somewhat surprisingly) efficient with backpropagation and stochastic gradient descent."</em></p>
+<p><em>"我们的新方法是：</em><em>指定理想程序的行为目标</em><em>(比如"满足一个输入输出样例数据集"、"赢一盘围棋")，</em><em>写一个代码骨架</em><em>(即神经网络架构)确定要搜索的程序空间子集，</em><em>用我们手上的算力在这个空间里搜索一个能 work 的程序</em><em>。在神经网络这个特例里，我们把搜索限制在程序空间的一个</em><em>连续子集</em><em>内，在那里搜索过程可以(有点令人惊讶地)通过反向传播和随机梯度下降变得高效。"</em></p>
+</blockquote>
+<h3 id="4-software-20">核心段落 4 — Software 2.0 的优势</h3>
+<p>Karpathy 列了 Software 2.0 相对于 1.0 的几个优势：</p>
+<ol>
+<li><strong>Computationally homogeneous</strong> — 2.0 程序就是一堆矩阵乘法，硬件可以极度优化(GPU/TPU)</li>
+<li><strong>Simple to bake into silicon</strong> — 神经网络可以硬编码到专用芯片</li>
+<li><strong>Constant running time</strong> — 每次前向传播算力消耗固定，易于 capacity planning</li>
+<li><strong>Constant memory use</strong> — 同上</li>
+<li><strong>Highly portable</strong> — 权重能跨硬件迁移</li>
+<li><strong>Very agile</strong> — 改数据重训比重写代码快</li>
+<li><strong>Modules can meld into an optimal whole</strong> — 端到端优化</li>
+<li><strong>It is better than you</strong> — "在很多领域里神经网络已经比人类写的代码好"(2017 年这句预言现在看是大多数领域已发生)</li>
+</ol>
+<h3 id="5">核心段落 5 — 预言未来</h3>
+<blockquote>
+<p><em>"I also want to temper this view a little bit since Software 2.0 is not going to replace 1.0 (indeed, a large amount of 1.0 infrastructure is needed for training and inference of 2.0 code), but it is going to take over increasingly large portions of what Software 1.0 is responsible for today. And whenever I see or hear a rerun of arguments along the lines of 'developers will be replaced by AI', I now tune them out because while some new paradigms will emerge, </em><em>it's not about replacement; Software 2.0 is a shift in how we program, not a shift in who programs</em><em>."</em></p>
+<p><em>"我也想稍微缓和这个观点——Software 2.0 不会取代 1.0(事实上大量 1.0 基础设施是训练和推理 2.0 代码所必需的)。</em><em>但它会逐步接管越来越多今天由 Software 1.0 承担的部分</em><em>。每次我听到'开发者将被 AI 取代'类的论调，我现在就自动屏蔽——因为虽然新范式会出现，</em><em>这不是替代问题；Software 2.0 是我们编程方式的转变，不是谁来编程的转变</em><em>。"</em></p>
+</blockquote>
+<hr>
+<h2 id="2017-2025">2017 → 2025 兑现回顾</h2>
+<p>Karpathy 2017 年写这篇文章时，他列举的 Software 2.0 接管的领域有：视觉识别、语音识别、语音合成、机器翻译、游戏(围棋/Atari)、机器人控制、数据库。</p>
+<p><strong>2025 年回头看：</strong></p>
+<table>
+<thead>
+<tr>
+<th>Karpathy 预测的接管领域</th>
+<th>2025 年现状</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>视觉识别</td>
+<td>✅ 完全接管，传统 CV pipeline 基本淘汰</td>
+</tr>
+<tr>
+<td>语音识别</td>
+<td>✅ Whisper / Canary 完全接管</td>
+</tr>
+<tr>
+<td>语音合成</td>
+<td>✅ CosyVoice / Fish Audio 超越规则合成</td>
+</tr>
+<tr>
+<td>机器翻译</td>
+<td>✅ Transformer 完全接管</td>
+</tr>
+<tr>
+<td>游戏 AI</td>
+<td>✅ AlphaZero 范式通用化</td>
+</tr>
+<tr>
+<td>机器人控制</td>
+<td>⏳ 正在接管(RT-2、π0 等)</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>⏳ 部分(学习索引)，传统 B-tree 仍主流</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Karpathy 没预测但 2025 年发生的更大的事：</strong>
+- <strong>编程本身</strong> — LLM 用 Software 2.0 范式训练的模型来写 Software 1.0 的代码。Cursor / Copilot / Claude Code 这些工具的底层都是 Software 2.0，表层产出仍是 Software 1.0
+- <strong>Agent 架构</strong> — 整个 agent loop 是 Software 1.0 的脚手架 + Software 2.0 的大脑，这个"1.0 + 2.0 混合"的架构是 Karpathy 没细说但 2025 年成为主流的形态
+- <strong>Prompt engineering 成为"边界编程"</strong> — 在 Software 2.0 和用户之间的边界上，prompt 变成了一种新的源代码</p>
+<hr>
+<h2 id="key-takeaways">工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="1-source-code">1. 把"数据 + 评估"当 source code 管</h3>
+<p>Software 2.0 的源代码不是 Python，是<strong>训练数据 + 评估集</strong>。这意味着：</p>
+<ul>
+<li><strong>数据集应该进 git</strong> (或 DVC) — 和代码一样版本化</li>
+<li><strong>评估集 (evals) 是单元测试的 2.0 版本</strong> — 每次训完模型都跑</li>
+<li><strong>数据质量工程 &gt; 模型架构工程</strong> — 改数据往往比改架构收益大得多</li>
+<li><strong>prompt 模板和 few-shot 示例是 source code</strong> — 应该 code review、应该版本化、应该有测试</li>
+</ul>
+<h3 id="2_1">2. 调试范式完全换血</h3>
+<table>
+<thead>
+<tr>
+<th>Software 1.0 调试</th>
+<th>Software 2.0 调试</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>断点、单步</td>
+<td>看失败样本的 activation / attention</td>
+</tr>
+<tr>
+<td>print log</td>
+<td>训练曲线 + loss 分布</td>
+</tr>
+<tr>
+<td>单测</td>
+<td>eval benchmark + behavioral test</td>
+</tr>
+<tr>
+<td>修 bug = 改一行代码</td>
+<td>修 bug = 加样本 / 换损失 / 换架构</td>
+</tr>
+<tr>
+<td>git blame</td>
+<td>数据血缘 + 训练 run 追溯</td>
+</tr>
+</tbody>
+</table>
+<p><strong>工程实操：</strong> 如果你在维护一个 LLM 应用，问自己——<strong>我们的调试流程还停留在 Software 1.0 时代吗？</strong> 如果团队还在用"改 if-else 的心态"改 prompt，说明还没切换到 2.0 思维。</p>
+<h3 id="3_1">3. 架构选择 = 选搜索空间</h3>
+<p>Karpathy 文里最精妙的一句：<strong>"写神经网络架构就是确定要搜索的程序空间子集"</strong>。这意味着：</p>
+<ul>
+<li>选 CNN = 搜索"平移不变的程序"</li>
+<li>选 Transformer = 搜索"序列上的注意力程序"</li>
+<li>选 MoE = 搜索"条件计算程序"</li>
+<li>选 SSM (Mamba) = 搜索"循环状态程序"</li>
+</ul>
+<p><strong>做架构决策时的问题：</strong> 我的问题的程序空间是什么形状？我选的架构能不能覆盖这个形状？不能覆盖的部分我是加归纳偏置(bias)还是加数据？</p>
+<h3 id="4-software-20-10">4. "Software 2.0 + 1.0 混合"是主流形态</h3>
+<p>2025 年的成熟 AI 系统几乎全是混合：</p>
+<ul>
+<li><strong>外层 1.0 脚手架：</strong> agent loop、tool registry、error handling、rate limiting、缓存、回退逻辑</li>
+<li><strong>内核 2.0 大脑：</strong> LLM 决策</li>
+<li><strong>数据侧 2.0：</strong> 训练数据管线、eval 集</li>
+<li><strong>控制面 1.0：</strong> 部署、监控、A/B 测试</li>
+</ul>
+<p>理解两者边界对系统设计至关重要——2.0 擅长处理模糊、泛化、语义；1.0 擅长处理确定性、安全、可审计。<strong>新手常犯的错是让 2.0 做 1.0 的事(比如让 LLM 做精确数值计算)或让 1.0 做 2.0 的事(比如用大量 if-else 模仿语义理解)</strong>。</p>
+<h3 id="5-it-is-better-than-you">5. "It is better than you" 这句话的工程意义</h3>
+<p>Karpathy 列优势的第 8 条。2017 年是预言，2025 年是现实：<strong>在越来越多的任务上，训练出来的模型比任何人类手工代码都好</strong>。这意味着：</p>
+<ul>
+<li>如果你的 business logic 是"分类 / 提取 / 翻译 / 生成"，默认考虑 2.0 解法</li>
+<li>如果你的 business logic 是"规则驱动 / 安全关键 / 需要审计"，默认考虑 1.0 解法</li>
+<li>混合架构的关键是<strong>清晰的边界</strong>——哪些部分交给 2.0，哪些部分锁在 1.0</li>
+</ul>
+<hr>
+<h2 id="connections">和本仓库其他文章的关联 / Connections</h2>
+<ul>
+<li><strong><a href="bitter-lesson.md">Sutton — Bitter Lesson</a></strong> — 兄弟文章。Sutton 告诉你"为什么"scaling 最终胜出，Karpathy 告诉你"这意味着软件工程怎么变"</li>
+<li><strong><a href="../self-improving-agents/autoresearch.md">Karpathy — autoresearch</a></strong> — Software 2.0 思想在 2026 年的具体实验：让 agent 做 Software 2.0 的研究员</li>
+<li><strong><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></strong> — 主张"经验 = 代码"，是 Software 2.0 思维扩展到"子 agent 生产"层面</li>
+<li><strong><a href="../training-techniques/deepseek-r1.md">DeepSeek-R1</a></strong> — 把 Software 2.0 的"数据 + 目标 → 优化器搜索"精确应用到推理能力上</li>
+</ul>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是一篇 "Tier-S" 文章 / Why This Is Tier-S</h2>
+<ul>
+<li><strong>预言级别的思想工作</strong> — 2017 年写，2025 年兑现</li>
+<li><strong>作者是前沿实践者</strong> — Karpathy 在 OpenAI、Tesla、独立研究都在用这个框架做设计决策</li>
+<li><strong>直接改变工程师的世界观</strong> — 读懂它，你就知道为什么要把评估集版本化、为什么数据管线比架构重要、为什么"AI 时代的程序员"和 2015 年的程序员做的是不同的事</li>
+<li><strong>简短但密度极高</strong> — 原文 ~2500 词，但每一段都能独立成为一个工程决策的出发点</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>原文:</strong> <a href="https://karpathy.medium.com/software-2-0-a64152b37c35">Software 2.0 by Andrej Karpathy (2017)</a></li>
+<li><strong>作者:</strong></li>
+<li><a href="https://karpathy.ai">Karpathy 个人网站</a></li>
+<li><a href="https://x.com/karpathy">@karpathy on X</a></li>
+<li><a href="https://karpathy.ai/zero-to-hero.html">Neural Networks: Zero to Hero</a> — 配套理解 Software 2.0 实操的最佳教程</li>
+<li><strong>相关思想:</strong></li>
+<li><a href="bitter-lesson.md">Sutton — The Bitter Lesson</a>(本仓库同目录)</li>
+<li><a href="http://colah.github.io/posts/2015-09-NN-Types-FP/">Chris Olah — Neural Networks, Types, and Functional Programming</a></li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="../self-improving-agents/autoresearch.md">autoresearch</a></li>
+<li><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></li>
+<li><a href="../memory-systems/llm-knowledge-bases.md">LLM Knowledge Bases</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="bitter-lesson.html"><div class="nav-label">← Previous</div><div class="nav-title">The Bitter Lesson</div></a><span></span></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

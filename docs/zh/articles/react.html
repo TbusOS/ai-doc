@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ReAct: Synergizing Reasoning and Acting — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../zh/">首页</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">3 篇</span></span></a>
+          <a href="../../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI 思维范式</span><br><span class="sub">2 篇</span></span></a>
+          <a href="../../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../agent-patterns.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 Agent 设计模式</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-agent">Agent 设计模式</span>
+            <span class="anth-caption">2022 · Yao et al. (Princeton / Google)</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="react-synergizing-reasoning-and-acting-in-language-models">ReAct: Synergizing Reasoning and Acting in Language Models</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2210.03629">arXiv:2210.03629</a> / <a href="https://react-lm.github.io/">项目页</a></p>
+<p><strong>作者:</strong> Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, Yuan Cao</p>
+<p><strong>发表:</strong> ICLR 2023 / 2022-10 arXiv 首发</p>
+<p><strong>代码:</strong> <a href="https://github.com/ysymyth/ReAct">github.com/ysymyth/ReAct</a></p>
+<p><strong>主题:</strong> LLM agent 的<strong>原型设计模式</strong>——把 reasoning (CoT 思考) 和 acting (工具调用) 交织在一个循环里。2023 年之后几乎所有 agent 框架(LangChain、AutoGPT、Claude/GPT agent 模式)都是 ReAct 的变体。</p>
+</blockquote>
+<hr>
+<h2 id="the-core-claim">核心命题 / The Core Claim</h2>
+<p>在 ReAct 之前，LLM 处理复杂任务有两条主流路径，各有致命缺陷：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>优势</th>
+<th>缺陷</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chain-of-Thought (CoT)</strong> — 只思考不行动</td>
+<td>多步推理能力强</td>
+<td><strong>幻觉严重</strong>——内部推理无法用外部事实纠正</td>
+</tr>
+<tr>
+<td><strong>Act-only</strong> — 只工具调用不思考</td>
+<td>能访问外部信息</td>
+<td><strong>无法做长链推理</strong>——每次工具调用都是孤立的</td>
+</tr>
+</tbody>
+</table>
+<p>ReAct 的洞察：<strong>两者应该交织，不是二选一</strong>。一个 agent 步骤里同时产出 <code>Thought</code>（推理）+ <code>Action</code>（工具）+ <code>Observation</code>（反馈），循环推进。</p>
+<hr>
+<h2 id="1-the-algorithm">1. 算法 / The Algorithm</h2>
+<p>ReAct 的核心是一个交织循环。每一步 agent 产生三段结构化输出：</p>
+<pre><code>Thought:  &lt;关于下一步该做什么的推理&gt;
+Action:   &lt;工具调用，例如 Search[&quot;Apple Park&quot;]&gt;
+Observation: &lt;工具返回的结果&gt;
+</code></pre>
+<p>循环直到 Thought 判断任务完成，产出最终答案。</p>
+<h3 id="figure-1">一个具体例子（论文 Figure 1）</h3>
+<p>任务：<em>Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?</em></p>
+<p><strong>仅 CoT（幻觉）:</strong></p>
+<pre><code>Thought: Apple Remote was designed for Apple TV. Other devices are iPhone and iPad.
+(错误：答案听起来合理但没有验证事实)
+</code></pre>
+<p><strong>仅 Act（无推理）:</strong></p>
+<pre><code>Action: Search[&quot;Apple Remote&quot;]
+Observation: [返回一大段 Apple Remote 百科内容]
+→ 无法从这段原始信息中推断出&quot;最初控制的程序&quot;+&quot;其他可以控制的设备&quot;两层关系
+</code></pre>
+<p><strong>ReAct（交织）:</strong></p>
+<pre><code>Thought 1: 我需要先搜 Apple Remote 找出它最初是为什么设计的
+Action 1:  Search[&quot;Apple Remote&quot;]
+Observation 1: 主要设计用来控制 Front Row 媒体中心程序
+
+Thought 2: 现在搜 Front Row，找出还能用什么控制它
+Action 2:  Search[&quot;Front Row&quot;]
+Observation 2: Front Row 可以用键盘功能键或苹果 Remote 控制
+
+Thought 3: 所以答案是键盘功能键
+Action 3:  Finish[keyboard function keys]
+</code></pre>
+<hr>
+<h2 id="2-why-interleaving-wins">2. 为什么交织有效 / Why Interleaving Wins</h2>
+<p>ReAct 工作的原因不是"它用了更多 token"——而是<strong>思考和行动互相校准</strong>：</p>
+<ul>
+<li><strong>Thought → Action</strong> 让推理<strong>具体化为可验证的步骤</strong>（每个 thought 都必须转化为可执行的 action）</li>
+<li><strong>Observation → Thought</strong> 让后续推理<strong>锚定在外部事实上</strong>（不能自己编）</li>
+<li><strong>Action → Thought</strong> 让"发现新事实时能动态更新计划"（纯 CoT 做不到：推理是一次性的）</li>
+</ul>
+<p>论文里用三个任务验证：
+- <strong>HotPotQA / FEVER</strong>（知识问答）——ReAct 把幻觉率显著降低
+- <strong>ALFWorld / WebShop</strong>（决策制定）——ReAct 在 ALFWorld 上比模仿学习+RL 基线的绝对胜率高 <strong>34%</strong>（62% vs 28%）</p>
+<p><strong>关键数字（论文 Table 1, 2）:</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>HotPotQA EM</th>
+<th>ALFWorld 成功率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Standard prompting</td>
+<td>28.7</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Chain-of-Thought</td>
+<td>29.4</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Act-only</td>
+<td>25.7</td>
+<td>45</td>
+</tr>
+<tr>
+<td><strong>ReAct</strong></td>
+<td><strong>35.1</strong></td>
+<td><strong>71</strong></td>
+</tr>
+</tbody>
+</table>
+<p>ReAct 比任一单独方法都明显更强，而且在 ALFWorld 上的优势<strong>特别大</strong>——这验证了"需要长链推理 + 外部信息交互"的任务最能受益于交织。</p>
+<hr>
+<h2 id="3-react">3. 工程视角：ReAct 的三层价值</h2>
+<h3 id="31">3.1 作为<strong>提示词模式</strong>（最原始形态）</h3>
+<p>只改 prompt，不改模型，就能让任何 instruction-tuned LLM 变成简易 agent：</p>
+<pre><code>你是一个 agent。对每一步产出：
+Thought: &lt;你对下一步的推理&gt;
+Action: &lt;工具调用 或 Finish[答案]&gt;
+
+可用工具：
+- Search[query]：搜索
+- Lookup[keyword]：在上次搜索结果里查找
+- Finish[answer]：输出最终答案并结束
+
+任务：&lt;用户问题&gt;
+</code></pre>
+<p>Agent 框架运行：
+1. 让模型产出一条 <code>Thought + Action</code>
+2. 执行 Action，把结果作为 <code>Observation</code> 追加到上下文
+3. 回到第 1 步</p>
+<p><strong>这就是 LangChain、AutoGPT、Claude/GPT agent 模式的基础结构</strong>。</p>
+<h3 id="32-agent">3.2 作为<strong>agent 架构原语</strong></h3>
+<p>ReAct 给出了 agent 系统设计的最小词汇表：</p>
+<table>
+<thead>
+<tr>
+<th>原语</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Thought</strong></td>
+<td>推理 / 规划 / 元认知</td>
+</tr>
+<tr>
+<td><strong>Action</strong></td>
+<td>与外部世界交互（工具、API、文件系统）</td>
+</tr>
+<tr>
+<td><strong>Observation</strong></td>
+<td>工具返回的环境反馈</td>
+</tr>
+<tr>
+<td><strong>State</strong></td>
+<td>到目前为止所有 Thought/Action/Observation 的累积上下文</td>
+</tr>
+<tr>
+<td><strong>Termination</strong></td>
+<td>Finish 动作（或 max step 护栏）</td>
+</tr>
+</tbody>
+</table>
+<p>今天所有复杂 agent 架构都可以被分解成这些原语的组合变种：
+- <strong>Reflexion</strong> = ReAct + 自我反思 step
+- <strong>Tree of Thoughts</strong> = ReAct 带分支搜索
+- <strong>Plan-and-Execute</strong> = ReAct 但 Plan 提前、Act 后置
+- <strong>Anthropic orchestrator-workers</strong> = 外层 ReAct（planner） + 内层 ReAct（workers）</p>
+<h3 id="33">3.3 作为<strong>评估框架</strong></h3>
+<p>ReAct 论文的另一个贡献：它<strong>同时在知识问答和决策任务上</strong>做评估，避免了"agent 框架只在 toy task 上看起来好"的陷阱。</p>
+<p><strong>设计新 agent 时的 ReAct 启示：</strong>
+- <strong>评估集必须跨任务类型</strong> — 只在知识问答上 work 的 agent 不算 agent
+- <strong>Baseline 必须包括 CoT 和 Act-only</strong> — 否则你不知道交织本身的贡献
+- <strong>记录 trajectory 长度</strong> — ReAct 平均用 <strong>6-7 步</strong>完成 HotPotQA，太短说明没做工具调用，太长说明在兜圈子</p>
+<hr>
+<h2 id="4-reflexion-agent">4. 与 Reflexion / 现代 agent 的关系</h2>
+<p>ReAct 是 2022 年的工作，到 2025 年已经是每个 agent 系统的<strong>基础循环</strong>。但工程实践里衍生了几个重要模式：</p>
+<h3 id="react">ReAct 的局限</h3>
+<ul>
+<li><strong>没有反思机制</strong>：步步走，走错没法纠正——只能重试整个任务</li>
+<li><strong>没有长期记忆</strong>：trajectory 靠上下文窗口，超过就断</li>
+<li><strong>没有层级规划</strong>：所有步骤都是扁平的，处理复杂任务时 trajectory 膨胀</li>
+</ul>
+<h3 id="_1">后续工作的解决方案</h3>
+<table>
+<thead>
+<tr>
+<th>衍生工作</th>
+<th>补了什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="../self-improving-agents/reflexion.md">Reflexion</a></strong></td>
+<td>失败后写 "lesson" 进入长期记忆，下次重试时先读 lesson</td>
+</tr>
+<tr>
+<td><strong>Tree of Thoughts</strong></td>
+<td>在 Thought 处分支，搜索多条路径，回溯错路径</td>
+</tr>
+<tr>
+<td><strong>Plan-and-Execute</strong></td>
+<td>先一次规划所有 sub-task，再分别 ReAct 执行</td>
+</tr>
+<tr>
+<td><strong><a href="anthropic-building-effective-agents.md">Anthropic Building Effective Agents</a></strong></td>
+<td>把 ReAct 做成 orchestrator-workers 架构的内层循环</td>
+</tr>
+<tr>
+<td><strong><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></strong></td>
+<td>成功的 ReAct trajectory 蒸馏为可复用 Python 子 agent</td>
+</tr>
+</tbody>
+</table>
+<p>理解 ReAct 是理解所有这些后续工作的前提。</p>
+<hr>
+<h2 id="5-key-takeaways">5. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="1-think-step-by-step-agent">1. <strong>"Think step by step"配合"能调工具"就是一个可用 agent</strong></h3>
+<p>今天做个简易 agent，不需要 LangGraph 或者其他框架——一个 while 循环、一个工具注册表、一个 ReAct 格式 prompt 就够。保持最小化能让你真正理解失败模式出在哪里。</p>
+<h3 id="2-trajectory-agent">2. Trajectory <strong>是</strong> agent 的源代码</h3>
+<p>ReAct 让你看到 agent 的推理痕迹。在生产中：</p>
+<ul>
+<li><strong>记录所有 trajectory 到日志</strong>——这是 debug 的第一资源</li>
+<li><strong>失败的 trajectory 比成功的更宝贵</strong>——它告诉你 prompt / 工具 / 护栏哪里需要加强</li>
+<li><strong>trajectory 可以做 evals</strong>——定义"理想 trajectory 形状"，对比实际产出是否匹配</li>
+</ul>
+<h3 id="3-prompt">3. <strong>工具设计比 prompt 设计重要</strong></h3>
+<p>ReAct 里的工具描述直接决定 agent 的行为质量。一个常见错误：工具太少（agent 卡住）或太多（agent 选错）。<strong>5-10 个明确命名、边界清晰的工具</strong> 通常是最优点。</p>
+<h3 id="4-max-step">4. <strong>Max step 是必须的护栏</strong></h3>
+<p>没有 max step，agent 会进入"反复搜索、反复反思、永不 Finish" 的死循环。ReAct 原论文用 max step = 7 就够处理 HotPotQA。<strong>现代系统建议 max step = 20-50 + 超时</strong>。</p>
+<h3 id="5-thought-cot">5. <strong>"Thought"</strong>不只是 CoT——是审计口子</h3>
+<p>生产系统里 Thought 行的真正价值不是推理质量，而是<strong>可审计性</strong>：</p>
+<ul>
+<li>任务失败时，从 Thought 字段能看到 agent 在哪步开始偏</li>
+<li>人类可以在 Thought 里注入修正指令（human-in-the-loop）</li>
+<li>合规审查可以基于 Thought 内容做政策检查</li>
+</ul>
+<hr>
+<h2 id="6-minimal-reproduction">6. 复现最小代码 / Minimal Reproduction</h2>
+<p>一个可运行的最小 ReAct loop（伪码，任何 LLM API 都能跑）：</p>
+<pre><code class="language-python">def react_loop(task, tools, llm, max_steps=10):
+    context = f&quot;Task: {task}\n&quot;
+    for step in range(max_steps):
+        # 让 LLM 产出 Thought + Action
+        response = llm.generate(
+            context + &quot;Produce a Thought followed by an Action.\n&quot;
+            + &quot;Available tools: &quot; + tool_list(tools)
+        )
+        thought, action, args = parse(response)
+        context += f&quot;Thought: {thought}\nAction: {action}[{args}]\n&quot;
+
+        # 终止
+        if action == &quot;Finish&quot;:
+            return args
+
+        # 执行工具
+        observation = tools[action](args)
+        context += f&quot;Observation: {observation}\n&quot;
+
+    return &quot;Max steps reached&quot;
+</code></pre>
+<p>这 15 行代码是现代所有 agent 框架的内核。</p>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>论文:</strong> <a href="https://arxiv.org/abs/2210.03629">ReAct: Synergizing Reasoning and Acting in Language Models</a></li>
+<li><strong>项目页(含可交互 demo):</strong> <a href="https://react-lm.github.io/">react-lm.github.io</a></li>
+<li><strong>代码:</strong> <a href="https://github.com/ysymyth/ReAct">github.com/ysymyth/ReAct</a></li>
+<li><strong>作者后续工作:</strong></li>
+<li><a href="https://arxiv.org/abs/2305.10601">Tree of Thoughts</a> — Yao 同一作者的分支搜索扩展</li>
+<li><a href="https://arxiv.org/abs/2303.11366">Reflexion</a> — 互补的反思扩展</li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="../self-improving-agents/reflexion.md">Reflexion</a> — ReAct 的反思增强版</li>
+<li><a href="anthropic-building-effective-agents.md">Anthropic Building Effective Agents</a> — ReAct 在生产 agent 架构里的角色</li>
+<li><a href="../self-improving-agents/agent-factory.md">AgentFactory</a> — 把 ReAct trajectory 固化为可复用代码</li>
+<li><a href="coding-agents-landscape-2026.md">Coding Agents Landscape 2026</a> — ReAct 在编码 agent 生态的演化</li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="anthropic-multi-agent-research.html"><div class="nav-label">← 上一篇</div><div class="nav-title">How We Built Our Multi-Agent Research System</div></a><a class="nav-right" href="coding-agents-landscape-2026.html"><div class="nav-label">下一篇 →</div><div class="nav-title">Coding Agents &amp; Agent Factory Landscape 2026</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

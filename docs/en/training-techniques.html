@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Training Techniques — AI Doc</title>
+    <link rel="stylesheet" href="../assets/fonts.css">
+    <link rel="stylesheet" href="../assets/anthropic.css">
+    <link rel="stylesheet" href="../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../en/">Home</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI Thinking</span><br><span class="sub">2 papers</span></span></a>
+          <a href="../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
+          <a href="../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../en/" class="active">EN</a>
+          <a href="../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-hero" style="padding-block: var(--space-9);">
+        <div class="anth-container">
+          <span class="anth-badge badge-training">Training Techniques</span>
+          <h1 style="margin-top:var(--space-4); max-width:780px; margin-left:auto; margin-right:auto;">Training Techniques</h1>
+          <p style="font-size:20px; line-height:1.55; color:var(--anth-text-secondary); max-width:640px; margin:var(--space-5) auto var(--space-4);">Frontier training recipes — reasoning, alignment, and efficient fine-tuning</p>
+          <p style="font-size:16px; line-height:1.6; color:var(--anth-text-secondary); max-width:640px; margin:0 auto;">Open-source reproducible methods that moved the frontier: GRPO-based reasoning RL (DeepSeek-R1), RLHF replacement via DPO, parameter-efficient adaptation via LoRA.</p>
+        </div>
+      </section>
+
+      <section class="anth-section">
+        <div class="anth-container anth-container--wide">
+          <div class="paper-list">
+            <a class="paper-row" href="articles/deepseek-r1.html">
+              <span class="paper-year">2025</span>
+              <div>
+                <div class="paper-meta">DeepSeek-AI</div>
+                <h3>DeepSeek-R1</h3>
+                <p>Pure-RL reasoning training via GRPO. o1-level open-source model (AIME 79.8%, MATH-500 97.3%). Reshaped the open vs closed balance.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/dpo.html">
+              <span class="paper-year">2023</span>
+              <div>
+                <div class="paper-meta">Rafailov et al. (Stanford)</div>
+                <h3>Direct Preference Optimization</h3>
+                <p>Replaces RLHF&#x27;s reward model + PPO with a single cross-entropy loss. The alignment method every major open model now uses.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/lora.html">
+              <span class="paper-year">2021</span>
+              <div>
+                <div class="paper-meta">Edward Hu et al. (Microsoft)</div>
+                <h3>LoRA</h3>
+                <p>Low-rank adaptation — trains ~10,000× fewer parameters, no inference overhead, matches full fine-tune quality. The PEFT default.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

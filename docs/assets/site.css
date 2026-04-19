@@ -17,15 +17,21 @@
   font-size: 16px;
 }
 
-/* Topic cards: taller, consistent heights */
+/* Topic cards: taller, consistent heights, 3-col desktop */
 .topic-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-6);
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
   margin-top: var(--space-7);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .topic-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
   .topic-grid {
     grid-template-columns: 1fr;
   }
@@ -451,7 +457,8 @@
   background: var(--anth-orange);
   color: #ffffff;
 }
-.anth-badge.badge-multi {
+.anth-badge.badge-multi,
+.anth-badge.badge-agent {
   background: var(--anth-green);
   color: #ffffff;
 }
@@ -462,6 +469,14 @@
 .anth-badge.badge-models {
   background: var(--anth-mid-gray);
   color: var(--anth-text);
+}
+.anth-badge.badge-training {
+  background: var(--anth-danger);
+  color: #ffffff;
+}
+.anth-badge.badge-thinking {
+  background: #6b8e3c;
+  color: #ffffff;
 }
 
 /* Footer tighter */
@@ -480,4 +495,112 @@
   letter-spacing: -0.01em;
   color: var(--anth-text);
   text-decoration: none;
+}
+
+/* Topics dropdown menu */
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown > button {
+  background: transparent;
+  border: 0;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--anth-text);
+  cursor: pointer;
+  padding: 8px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-dropdown > button::after {
+  content: "▾";
+  font-size: 10px;
+  margin-top: 1px;
+  color: var(--anth-text-secondary);
+}
+
+.nav-dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 6px;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+  padding: var(--space-3);
+  min-width: 320px;
+  display: none;
+  z-index: 100;
+  border: 1px solid var(--anth-light-gray);
+}
+
+.nav-dropdown:hover .nav-dropdown-panel,
+.nav-dropdown:focus-within .nav-dropdown-panel {
+  display: block;
+}
+
+.nav-dropdown-panel a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--duration-sm) var(--ease-anth);
+}
+
+.nav-dropdown-panel a:hover {
+  background: var(--anth-bg-subtle);
+}
+
+.nav-dropdown-panel .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.nav-dropdown-panel .label {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--anth-text);
+}
+
+.nav-dropdown-panel .sub {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--anth-text-secondary);
+}
+
+/* AI engineering stack diagram container */
+.stack-diagram {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-7);
+  margin: var(--space-8) auto;
+}
+
+.stack-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.stack-caption {
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  color: var(--anth-text-secondary);
+  margin-top: var(--space-5);
+  letter-spacing: 0.02em;
 }

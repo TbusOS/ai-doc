@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Direct Preference Optimization — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../en/">Home</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI Thinking</span><br><span class="sub">2 papers</span></span></a>
+          <a href="../../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../training-techniques.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Training Techniques</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-training">Training Techniques</span>
+            <span class="anth-caption">2023 · Rafailov et al. (Stanford)</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="direct-preference-optimization-your-language-model-is-secretly-a-reward-model">Direct Preference Optimization: Your Language Model is Secretly a Reward Model</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2305.18290">arXiv:2305.18290</a></p>
+<p><strong>作者:</strong> Rafael Rafailov, Archit Sharma, Eric Mitchell, Stefano Ermon, Christopher D. Manning, Chelsea Finn（Stanford）</p>
+<p><strong>发表:</strong> NeurIPS 2023（Outstanding Paper Award）</p>
+<p><strong>代码:</strong> <a href="https://github.com/eric-mitchell/direct-preference-optimization">github.com/eric-mitchell/direct-preference-optimization</a></p>
+<p><strong>主题:</strong> 用<strong>一个简单的交叉熵损失</strong>替代 RLHF 的整套流程——<strong>不需要训练 reward model，不需要 PPO，不需要 RL 基础设施</strong>。直接用偏好数据微调 LLM。2024 年起成为事实新标准，Llama 3、Mistral、Qwen 等主流模型都用 DPO 或其变种做对齐。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>2023 年前做对齐的标准流程（RLHF）是这样的：</p>
+<pre><code>步骤 1：从偏好数据训练一个 reward model（RM）——需要大量工程
+步骤 2：用 RM 打分，通过 PPO 强化学习微调 LLM——需要 RL 基础设施、调参极难
+步骤 3：跑 KL-penalty 稳定训练——引入新的超参数
+</code></pre>
+<p>这套流程<strong>只有 OpenAI / Anthropic / Meta 等大公司才玩得起</strong>。学术界和中小公司几乎无法做 RLHF。</p>
+<p>DPO 的贡献是：<strong>把这整套流程压缩成一个单一的监督损失函数</strong>。同样的偏好数据，用 DPO 训练：</p>
+<ul>
+<li><strong>不需要 RM</strong></li>
+<li><strong>不需要 PPO 或任何 RL</strong></li>
+<li><strong>只需要一个普通的 Transformer 训练循环</strong></li>
+<li><strong>效果通常和 RLHF 持平甚至更好</strong></li>
+</ul>
+<p>这是<strong>RLHF 民主化</strong>的转折点——之后 Mistral / Qwen / Llama / DeepSeek 全部切到 DPO 或其变种。</p>
+<hr>
+<h2 id="1-the-core-derivation">1. 核心数学推导 / The Core Derivation</h2>
+<h3 id="11-rlhf">1.1 RLHF 目标</h3>
+<p>RLHF 想优化的目标是：</p>
+<p>$$
+\max_{\pi_\theta} \mathbb{E}<em>{x \sim D, y \sim \pi</em>\theta(\cdot|x)} [r(x, y)] - \beta \cdot \text{KL}(\pi_\theta(\cdot|x) | \pi_{\text{ref}}(\cdot|x))
+$$</p>
+<p>用中文说：<strong>让模型 πθ 产出的 reward 尽量高，同时不要离参考模型 π_ref 太远</strong>。</p>
+<h3 id="12">1.2 关键洞察：最优策略有闭式解</h3>
+<p>上面那个目标函数的<strong>最优解</strong>有闭式形式：</p>
+<p>$$
+\pi^*(y|x) = \frac{1}{Z(x)} \pi_{\text{ref}}(y|x) \exp\left(\frac{1}{\beta} r(x, y)\right)
+$$</p>
+<p>把它反推出 reward：</p>
+<p>$$
+r(x, y) = \beta \log \frac{\pi^*(y|x)}{\pi_{\text{ref}}(y|x)} + \beta \log Z(x)
+$$</p>
+<p><strong>这意味着：你的模型的 log-ratio 本身就是一个 reward model</strong>——训练 LLM 的同时就在训练一个隐式的 reward model。</p>
+<h3 id="13">1.3 用到偏好数据上</h3>
+<p>偏好数据 <code>(x, y_w, y_l)</code> 表示"在 prompt x 下，y_w 比 y_l 更好"。用 Bradley-Terry 模型建模：</p>
+<p>$$
+P(y_w \succ y_l) = \sigma(r(x, y_w) - r(x, y_l))
+$$</p>
+<p>把 r 用上面的式子代入（Z(x) 项相消），得到 <strong>DPO loss</strong>：</p>
+<p>$$
+L_{\text{DPO}} = -\log \sigma\left(\beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)
+$$</p>
+<p><strong>这就是全部了</strong>——一个 sigmoid + log-ratio 差。用标准 SGD / AdamW 训练。</p>
+<hr>
+<h2 id="2-dpo-loss-intuitive-understanding">2. DPO Loss 直观理解 / Intuitive Understanding</h2>
+<p>抛开数学，DPO 在做什么？</p>
+<pre><code>目标：让偏好答案 y_w 的概率相对参考模型 提升
+      让非偏好答案 y_l 的概率相对参考模型 下降
+</code></pre>
+<p>具体看 loss 里的两个项：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\log \pi_\theta(y_w|x) - \log \pi_{\text{ref}}(y_w|x)$</td>
+<td>偏好答案相对参考模型的 log-odds 变化，<strong>希望它变大（正）</strong></td>
+</tr>
+<tr>
+<td>$\log \pi_\theta(y_l|x) - \log \pi_{\text{ref}}(y_l|x)$</td>
+<td>非偏好答案相对参考模型的 log-odds 变化，<strong>希望它变小（负）</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>β 的作用</strong>：控制 KL divergence 约束的强度。β 大 → 更保守，不要偏离参考模型；β 小 → 更激进，追求拟合偏好。典型 β = 0.1-0.5。</p>
+<hr>
+<h2 id="3-the-training-recipe">3. 训练流程 / The Training Recipe</h2>
+<p>和 RLHF 的巨大差别：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>RLHF</th>
+<th>DPO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>预训练</strong></td>
+<td>一样</td>
+<td>一样</td>
+</tr>
+<tr>
+<td><strong>SFT（监督微调）</strong></td>
+<td>一样</td>
+<td>一样</td>
+</tr>
+<tr>
+<td><strong>偏好数据收集</strong></td>
+<td>一样</td>
+<td>一样</td>
+</tr>
+<tr>
+<td><strong>对齐阶段</strong></td>
+<td>训 RM + PPO</td>
+<td><strong>一个训练循环</strong></td>
+</tr>
+<tr>
+<td><strong>需要的基础设施</strong></td>
+<td>RL trainer、PPO、多 model rollout</td>
+<td>标准 <code>Trainer.train()</code></td>
+</tr>
+<tr>
+<td><strong>显存占用</strong></td>
+<td>πθ + π_ref + RM + Value Network（4 个模型）</td>
+<td>πθ + π_ref（2 个模型）</td>
+</tr>
+<tr>
+<td><strong>训练稳定性</strong></td>
+<td>很难调</td>
+<td>和 SFT 一样稳</td>
+</tr>
+<tr>
+<td><strong>超参数</strong></td>
+<td>很多（PPO clip、value loss coef、...）</td>
+<td>少（β, lr）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最简 DPO 训练代码（HuggingFace TRL 库）：</strong></p>
+<pre><code class="language-python">from trl import DPOTrainer, DPOConfig
+from datasets import load_dataset
+
+dataset = load_dataset(&quot;anthropic/hh-rlhf&quot;)
+
+trainer = DPOTrainer(
+    model=my_sft_model,        # 已经 SFT 过的模型
+    ref_model=my_ref_model,    # 通常就是 SFT 模型的拷贝（冻结）
+    args=DPOConfig(
+        beta=0.1,
+        learning_rate=5e-7,
+        per_device_train_batch_size=4,
+    ),
+    train_dataset=dataset[&quot;train&quot;],
+    tokenizer=tokenizer,
+)
+
+trainer.train()
+</code></pre>
+<p><strong>和训练 SFT 一样简单</strong>——唯一的不同是数据格式变成 <code>(prompt, chosen, rejected)</code> 三元组。</p>
+<hr>
+<h2 id="4-key-results">4. 关键结果 / Key Results</h2>
+<h3 id="tldr-imdb">TL;DR: IMDB 生成可控性任务</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>Reward vs KL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SFT</td>
+<td>baseline</td>
+</tr>
+<tr>
+<td>PPO-based RLHF</td>
+<td>achieves frontier</td>
+</tr>
+<tr>
+<td><strong>DPO</strong></td>
+<td><strong>achieves same frontier</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="alpacaeval-20-llm-as-judge">AlpacaEval 2.0 (LLM-as-judge)</h3>
+<p>2024 年之后主流开源对齐模型：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>对齐方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Llama 3 70B Instruct</td>
+<td>DPO</td>
+</tr>
+<tr>
+<td>Mistral 7B Instruct v0.2</td>
+<td>DPO</td>
+</tr>
+<tr>
+<td>Qwen2.5 Instruct series</td>
+<td>DPO + SimPO</td>
+</tr>
+<tr>
+<td>Zephyr 7B β</td>
+<td>DPO (HuggingFace 示范)</td>
+</tr>
+<tr>
+<td>Tulu 2</td>
+<td>DPO</td>
+</tr>
+</tbody>
+</table>
+<p><strong>DPO 已经是开源模型对齐的默认选项</strong>。</p>
+<hr>
+<h2 id="5-dpo-dpo-variants-ecosystem">5. DPO 的变种生态 / DPO Variants Ecosystem</h2>
+<p>DPO 原始版本开启了一个"简化 RLHF"的研究浪潮。重要变种：</p>
+<table>
+<thead>
+<tr>
+<th>变种</th>
+<th>核心改动</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IPO</strong> (Identity Preference Optimization)</td>
+<td>修正 DPO 的过拟合问题</td>
+<td>高噪声偏好数据</td>
+</tr>
+<tr>
+<td><strong>KTO</strong> (Kahneman-Tversky Optimization)</td>
+<td>不需要偏好对，只需要 "好/坏" 二元标签</td>
+<td>数据便宜，但一次只能标一条</td>
+</tr>
+<tr>
+<td><strong>SimPO</strong> (2024)</td>
+<td>去掉 reference model，用 length-normalized reward</td>
+<td>省显存，效果常更好</td>
+</tr>
+<tr>
+<td><strong>ORPO</strong> (2024)</td>
+<td>把 SFT 和对齐合并成一步</td>
+<td>极简训练 pipeline</td>
+</tr>
+<tr>
+<td><strong>DPO-Positive</strong></td>
+<td>只用正样本的变种</td>
+<td>没有"差答案"对比的场景</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2025 年工程实践：</strong> 标准起点是 DPO 或 SimPO。KTO 在某些生产任务（客服质量标注）上更实用。</p>
+<hr>
+<h2 id="6-key-takeaways">6. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="61">6.1 对齐现在是小公司也能做的事</h3>
+<p>DPO 之前：对齐 = 大厂特权
+DPO 之后：任何一个能做 SFT 的团队都能做 DPO</p>
+<p><strong>2025 年的对齐基准栈：</strong></p>
+<pre><code>SFT (高质量数据 + LoRA)
+    ↓
+DPO 或 KTO / SimPO (偏好数据)
+    ↓
+（可选）RLVR / GRPO (可验证任务，如数学、代码)
+</code></pre>
+<h3 id="62">6.2 偏好数据的质量决定效果</h3>
+<p>DPO 把工程难点从<strong>算法</strong>转移到了<strong>数据</strong>：</p>
+<ul>
+<li>偏好对的<strong>差别要明显</strong>（<code>y_w</code> 显著优于 <code>y_l</code>），否则 DPO 学不到信号</li>
+<li><strong>标注一致性</strong>比<strong>标注量大</strong>重要</li>
+<li>数据里要有<strong>多样化的"坏答案"类型</strong>（safety 问题、事实错误、逻辑错误、语气问题各种）</li>
+</ul>
+<h3 id="63">6.3 β 的调试直觉</h3>
+<ul>
+<li>β 过大（e.g., 1.0）→ 模型几乎不变——你在训练"安慰剂"</li>
+<li>β 过小（e.g., 0.01）→ 模型剧烈偏离参考，产生 reward hacking 行为</li>
+<li><strong>起始 β = 0.1-0.3</strong>，根据 eval 调整</li>
+</ul>
+<h3 id="64-lora-dpo">6.4 LoRA + DPO 是消费级硬件对齐栈</h3>
+<p>QLoRA + DPO = 单张 A100（或 RTX 4090）上对齐 7B-13B 模型。TRL 库内置支持：</p>
+<pre><code class="language-python">trainer = DPOTrainer(
+    model=model,
+    args=DPOConfig(...),
+    peft_config=LoraConfig(r=16, ...),  # LoRA 开启
+    train_dataset=preference_data,
+)
+</code></pre>
+<p>这是今天大部分开源对齐项目的默认栈。</p>
+<h3 id="65-dpo-reasoning">6.5 DPO 不能解决 reasoning 类任务</h3>
+<p>DPO 的偏好学习本质是"让偏好答案概率变高"——<strong>对需要分步推理、可验证结果的任务效果有限</strong>。2024-2025 年针对这类任务的做法是 <strong>GRPO</strong>（DeepSeek-R1 用的）或 <strong>PPO + 可验证 reward</strong>（参考 DeepSeek-R1 文章）。</p>
+<hr>
+<h2 id="7-relation-to-other-papers">7. 与本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="deepseek-r1.md">DeepSeek-R1</a></td>
+<td>R1 用 GRPO（DPO 的 RL 版本）训练 reasoning；DPO 处理对齐、GRPO 处理 reasoning</td>
+</tr>
+<tr>
+<td><a href="lora.md">LoRA</a></td>
+<td>LoRA + DPO 是消费级微调对齐的黄金组合</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/spin.md">SPIN</a></td>
+<td>都是"不需要大量人工标注的训练方法"，SPIN 是自博弈，DPO 是偏好对比</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/cherry-llm.md">Cherry LLM</a></td>
+<td>可以用 Cherry IFD 选高质量 SFT 数据，再用 DPO 做对齐，整套 pipeline 极小</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/metacognitive-learning.md">Metacognitive Learning</a></td>
+<td>DPO 是 self-improvement 的一块基础能力</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>改变了整个行业的对齐实践</strong>：2023 年后主流开源模型全部切到 DPO</li>
+<li><strong>数学优雅 + 工程简洁</strong>：论文本身只有几页，但思想完整闭合</li>
+<li><strong>民主化了大模型对齐</strong>：RLHF 曾经是大厂专利，DPO 让每个中小团队都能做</li>
+<li><strong>持续衍生新范式</strong>：IPO/KTO/SimPO/ORPO/GRPO 都是 DPO 思想的变种</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>论文:</strong> <a href="https://arxiv.org/abs/2305.18290">Direct Preference Optimization: Your Language Model is Secretly a Reward Model</a></li>
+<li><strong>代码:</strong></li>
+<li>原始: <a href="https://github.com/eric-mitchell/direct-preference-optimization">eric-mitchell/direct-preference-optimization</a></li>
+<li>生产: <a href="https://github.com/huggingface/trl">huggingface/trl</a> — 包括 DPO / KTO / SimPO / ORPO 等全系列</li>
+<li><strong>相关论文:</strong></li>
+<li><a href="https://arxiv.org/abs/2402.01306">KTO: Model Alignment as Prospect Theoretic Optimization</a></li>
+<li><a href="https://arxiv.org/abs/2405.14734">SimPO: Simple Preference Optimization with a Reference-Free Reward</a></li>
+<li><a href="https://arxiv.org/abs/2403.07691">ORPO: Monolithic Preference Optimization without Reference Model</a></li>
+<li><strong>作者:</strong></li>
+<li>Rafael Rafailov (<a href="https://x.com/rm_rafailov">@rm_rafailov on X</a>)</li>
+<li>Chelsea Finn (<a href="https://x.com/chelseabfinn">@chelseabfinn on X</a>) — Stanford IRIS lab</li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="deepseek-r1.md">DeepSeek-R1</a></li>
+<li><a href="lora.md">LoRA</a></li>
+<li><a href="../self-improving-agents/spin.md">SPIN</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="deepseek-r1.html"><div class="nav-label">← Previous</div><div class="nav-title">DeepSeek-R1</div></a><a class="nav-right" href="lora.html"><div class="nav-label">Next →</div><div class="nav-title">LoRA</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

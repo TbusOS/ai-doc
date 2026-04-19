@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Building Effective Agents — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../en/">Home</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI Thinking</span><br><span class="sub">2 papers</span></span></a>
+          <a href="../../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../agent-patterns.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Agent Patterns</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-agent">Agent Patterns</span>
+            <span class="anth-caption">2024 · Anthropic Applied AI</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="building-effective-agents-anthropic">Building Effective Agents (Anthropic)</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://www.anthropic.com/research/building-effective-agents">Anthropic Engineering Blog — Building Effective Agents</a></p>
+<p><strong>Mirror:</strong> <a href="https://resources.anthropic.com/building-effective-agents">resources.anthropic.com/building-effective-agents</a></p>
+<p><strong>作者:</strong> Erik Schluntz、Barry Zhang（Anthropic 应用 AI 团队）</p>
+<p><strong>发表:</strong> 2024-12-19</p>
+<p><strong>主题:</strong> Anthropic 基于<strong>真实生产 agent 部署经验</strong>总结出的 5 个 agent 工作流模式 + 对"何时用 workflow vs 何时用 agent"的清晰划分。这是 <strong>agent 工程的事实标准参考</strong>——2025 年后绝大多数讨论"agent 该怎么设计"的文章都在直接引用或改编这 5 个 pattern。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>2024 年 agent 生态的核心问题：<strong>怎么设计一个能上生产的 agent？</strong></p>
+<ul>
+<li>LangChain 推了无数框架但没有定义"什么时候用什么模式"</li>
+<li>Twitter 上各种 agent demo 看着惊艳但一到生产就崩</li>
+<li>"autonomous agent" 被滥用——很多号称 agent 的东西其实是脚本</li>
+</ul>
+<p>Anthropic 这篇文章<strong>第一次权威地</strong>回答了：</p>
+<ol>
+<li>什么是 workflow，什么是 agent，两者区别是什么</li>
+<li>常见 agent 架构有哪些 pattern（给名字）</li>
+<li>什么情况下你不需要 agent，普通 LLM 调用就够</li>
+<li>在生产里什么 pattern 最可靠</li>
+</ol>
+<p><strong>这是 2024-2025 agent 设计</strong>的指南针<strong>——连 OpenAI、Google 后来发布的 agent 工程指南都在模仿这套分类</strong>。</p>
+<hr>
+<h2 id="1-workflow-vs-agent">1. 核心定义 / Workflow vs Agent</h2>
+<p>Anthropic 把两个常混用的概念分清楚：</p>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>定义</th>
+<th>控制流</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Workflow</strong></td>
+<td>LLM 和工具按<strong>预定义路径</strong>被编排</td>
+<td>确定性 — 代码决定路径</td>
+</tr>
+<tr>
+<td><strong>Agent</strong></td>
+<td>LLM <strong>动态决定</strong>自己的过程和工具使用</td>
+<td>非确定性 — LLM 决定路径</td>
+</tr>
+</tbody>
+</table>
+<p><strong>实操判断：</strong> 如果你的流程图可以提前画出来（prompt A → tool B → prompt C → 返回），那是 workflow；如果 LLM 要在运行时决定"下一步该做什么"，那是 agent。</p>
+<p><strong>Anthropic 的关键建议：</strong></p>
+<blockquote>
+<p><em>"Start with simple prompts, optimize them with comprehensive evaluation, and add multi-step agentic systems only when simpler solutions fall short."</em></p>
+<p><em>从简单 prompt 开始，用全面的评估优化它们。只有当简单方案不够用时，才加入多步 agentic 系统。</em></p>
+</blockquote>
+<p>这是<strong>贯穿全文的核心哲学：复杂性是最后手段，不是起点</strong>。</p>
+<hr>
+<h2 id="2-workflow-the-5-workflow-patterns">2. 五大 Workflow 模式 / The 5 Workflow Patterns</h2>
+<p>Anthropic 把 agent 工程的可靠性主要放在<strong>workflow</strong> 模式上。这 5 个 pattern 覆盖了 ~80% 的生产用例：</p>
+<h3 id="21-prompt-chaining">2.1 Prompt Chaining（提示链）</h3>
+<pre><code>LLM Call 1  →  LLM Call 2  →  LLM Call 3  →  Output
+    ↓              ↓              ↓
+  (可能还有 gate，失败就 stop)
+</code></pre>
+<p><strong>什么时候用：</strong> 任务可以干净地拆成一系列确定的子步骤。</p>
+<p><strong>典型案例：</strong>
+- 生成 outline → 检查 outline 质量（gate） → 按 outline 写正文 → 翻译成其他语言
+- 先做事实抽取 → 再做情感分类（两步都需要 LLM 但职责不同）</p>
+<p><strong>关键设计：</strong>
+- 每一步输出有明确 schema
+- 中间加 <strong>gate</strong>（用 if 或一个 LLM 判断）在前置条件不满足时提前退出
+- 每一步独立可 evaluate</p>
+<h3 id="22-routing">2.2 Routing（路由）</h3>
+<pre><code>Input  →  Classifier LLM  →  [Route A | Route B | Route C]
+                                    ↓
+                            专门化的 LLM / 工具
+</code></pre>
+<p><strong>什么时候用：</strong> 不同类型的 input 需要走完全不同的处理路径，且分类可靠。</p>
+<p><strong>典型案例：</strong>
+- 客服：普通问题 → Haiku；复杂问题 → Opus；退款请求 → 人工工单
+- 代码任务：bug 修复 → 诊断路径；新功能 → 规划路径；重构 → 结构分析路径</p>
+<p><strong>关键设计：</strong>
+- 分类本身要可靠（分错路比不路由更糟）
+- 每条 route 的 prompt 高度专门化
+- 保留 "fallback route"</p>
+<h3 id="23-parallelization">2.3 Parallelization（并行化）</h3>
+<pre><code>Input  ─┬─▶  LLM Call 1  ─┐
+        ├─▶  LLM Call 2  ─┤  →  Aggregator  →  Output
+        └─▶  LLM Call 3  ─┘
+</code></pre>
+<p>有两种子模式：</p>
+<ul>
+<li><strong>Sectioning</strong>（分片）：任务独立切分后并行，结果拼接。例：一次处理 10 页 PDF 的 OCR</li>
+<li><strong>Voting</strong>（投票）：同一任务多次并行，结果聚合。例：3 次 LLM 判断 → 多数决，提升可靠性</li>
+</ul>
+<p><strong>什么时候用：</strong>
+- 子任务独立（sectioning）
+- 需要更高置信度（voting）
+- 需要多视角（让一个 LLM 扮演多角色，再汇总）</p>
+<p><strong>典型案例：</strong> 代码审查：一个 agent 查安全，一个查性能，一个查风格，一个查可读性——最后合并建议。</p>
+<h3 id="24-orchestrator-workers-">2.4 Orchestrator-Workers（编排器-工人）</h3>
+<pre><code>              ┌─▶ Worker 1 ─┐
+Orchestrator ─┼─▶ Worker 2 ─┼─▶ Orchestrator (synthesize) → Output
+              └─▶ Worker 3 ─┘
+</code></pre>
+<p><strong>和 Parallelization 的区别：</strong> Workers 的数量和任务<strong>由 Orchestrator 在运行时动态决定</strong>，不是预设的 N 个。</p>
+<p><strong>典型案例：</strong>
+- 深度研究：Orchestrator 看问题后决定"我需要搜 4 个主题"，动态派 4 个 worker
+- 复杂代码修改：Orchestrator 决定"要改 5 个文件"，派 5 个 worker 分别编辑</p>
+<p><strong>关键设计：</strong>
+- Orchestrator prompt 要明确"决定要派多少 worker、每个干什么"
+- Workers 应独立，不互相依赖
+- Synthesis 步骤要处理冲突的 worker 输出</p>
+<p><strong>这是 <a href="anthropic-multi-agent-research.md">Anthropic 多 agent 研究系统</a>的核心模式</strong>。</p>
+<h3 id="25-evaluator-optimizer-">2.5 Evaluator-Optimizer（评估-优化循环）</h3>
+<pre><code>Generator LLM  →  Output  →  Evaluator LLM  →  (pass? → output | fail? → 反馈 → Generator)
+                                                                               ↑____________________|
+</code></pre>
+<p><strong>什么时候用：</strong>
+- 有清晰的评估标准
+- 迭代式改进能带来明显提升
+- 可以承受多次 LLM 调用</p>
+<p><strong>典型案例：</strong>
+- 文学翻译：翻译 → 母语人士视角评估 → 提出改进 → 重译
+- 复杂搜索：搜索结果 → 判断是否回答了问题 → 如果不够则再搜 → ...</p>
+<p><strong>这是 <a href="../self-improving-agents/reflexion.md">Reflexion</a>、<a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a> 的思想源头</strong>。</p>
+<hr>
+<h2 id="3-agent-true-agents">3. 真正的 Agent / True Agents</h2>
+<p>Anthropic 对"agent"的使用<strong>极其谨慎</strong>。只有在以下情况才推荐用 agent（而非 workflow）：</p>
+<ul>
+<li>任务<strong>开放式</strong>，无法预先规划步骤</li>
+<li>无法可靠预测需要哪些工具、多少步</li>
+<li>错误可控，有回退机制</li>
+</ul>
+<p><strong>agent 基本循环：</strong></p>
+<pre><code>while not done:
+    1. 看当前环境/任务状态
+    2. 决定下一个 action（tool call / 响应）
+    3. 执行 action
+    4. 观察结果
+</code></pre>
+<p><strong>Anthropic 强调的 agent 关键注意事项：</strong></p>
+<ul>
+<li><strong>工具设计</strong>比 prompt 调优重要（见 Anthropic 另一篇文章 <a href="https://www.anthropic.com/engineering/writing-tools-for-agents">Writing tools for agents</a>）</li>
+<li><strong>Stopping condition</strong> 必须明确（max iterations、达成目标、超时）</li>
+<li><strong>Sandbox</strong> — agent 能做的事要限制（工具权限、文件访问范围）</li>
+<li><strong>Observability</strong> — 记录每一步 thought/action/observation，失败时可回溯</li>
+</ul>
+<hr>
+<h2 id="4-anthropic-the-three-core-principles">4. Anthropic 的三条核心准则 / The Three Core Principles</h2>
+<p>文章里反复强调的三条：</p>
+<h3 id="41-keep-it-simple">4.1 Keep it Simple（保持简单）</h3>
+<p><strong>Anthropic 原话：</strong></p>
+<blockquote>
+<p><em>"Start simple. Add complexity only when needed."</em></p>
+</blockquote>
+<p>在生产中，<strong>简单的 pipeline 几乎总是比复杂的 agent 可靠</strong>。Anthropic 举的反例：有团队用复杂的 multi-agent 架构处理一个能用 "routing + 2 个专门 prompt" 搞定的问题，结果调试几周、成本高 10 倍。</p>
+<h3 id="42-make-agents-observable-agent">4.2 Make Agents Observable（让 agent 可观测）</h3>
+<p>每一步都要能被审计：</p>
+<ul>
+<li>所有 LLM call 的 input/output 记录</li>
+<li>所有 tool call 的参数和返回</li>
+<li>每一步的推理（thought）</li>
+<li>每一步的决策原因（为什么选了 tool X）</li>
+</ul>
+<p><strong>没有 observability 的 agent 是黑盒——失败时你不知道为什么</strong>。</p>
+<h3 id="43-test-agent-computer-interfaces">4.3 Test Agent-Computer Interfaces（测试工具接口）</h3>
+<p>工具描述（tool schema）是 agent 和环境的界面。<strong>大部分 agent 失败不是 LLM 能力问题，是工具描述不清晰</strong>。</p>
+<p>Anthropic 推荐：
+- 像写 API 文档一样写 tool description（含参数含义、返回格式、错误场景）
+- 让另一个 LLM 只读 tool description 尝试用它——看看它能否正确使用
+- 记录工具误用的案例，回头改 tool description</p>
+<hr>
+<h2 id="5-key-takeaways">5. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="51-pattern">5.1 选对 pattern 比选对框架重要</h3>
+<p>LangGraph、AutoGen、CrewAI、LangChain 都能实现这 5 个 pattern。<strong>先定 pattern，再选框架</strong>——不要被"这个框架功能最多"骗到。</p>
+<h3 id="52-parallelization-voting">5.2 Parallelization + Voting 是提升可靠性的最简方法</h3>
+<p>如果你的 LLM 输出不稳定，上 Voting 比花时间调 prompt 往往 ROI 更高：</p>
+<pre><code>3 次并行 LLM 调用 + 多数决 = 显著降低随机失败率
+</code></pre>
+<p>典型情景：LLM 做结构化数据提取，单次 85% 准确，3-投票后 97%。</p>
+<h3 id="53-orchestrator-workers">5.3 Orchestrator-Workers 是"大任务拆解"的标准模式</h3>
+<p>你看到 <strong>Claude Code / Cursor / Windsurf</strong> 等编码 agent、Anthropic Research 模式、OpenAI Deep Research——全部是 orchestrator-workers 的变种。</p>
+<p><strong>这个 pattern 你必须掌握。</strong></p>
+<h3 id="54-evaluator-optimizer">5.4 Evaluator-Optimizer 适合质量敏感任务</h3>
+<p>写代码、写文章、设计 UI——这些任务的"好"有清晰判据但单次 LLM 容易达不到。evaluator 循环几乎总能显著提升质量。成本换质量的权衡。</p>
+<h3 id="55-agent">5.5 不需要 agent 的场景</h3>
+<p>Anthropic 明确列出"不要用 agent"的场景：</p>
+<ul>
+<li>任务能被预设 workflow 覆盖</li>
+<li>延迟敏感（agent 循环慢）</li>
+<li>成本敏感（agent token 消耗是 workflow 的 5-15×）</li>
+<li>错误成本高（agent 犯错后果严重）</li>
+</ul>
+<p><strong>默认是 workflow，agent 是最后选项。</strong></p>
+<hr>
+<h2 id="6-relation-to-other-papers">6. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="react.md">ReAct</a></td>
+<td>ReAct 是"agent 循环"的原始实现；Anthropic 把它归为"True Agent"类别</td>
+</tr>
+<tr>
+<td><a href="anthropic-multi-agent-research.md">Anthropic Multi-Agent Research System</a></td>
+<td>本文 5 个 pattern 在真实系统中的组合应用——orchestrator-workers + parallelization</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/reflexion.md">Reflexion</a></td>
+<td>Evaluator-Optimizer pattern 的具体实现</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></td>
+<td>把"多 Orchestrator-Worker trajectory 蒸馏为子 agent"——本文 pattern 的演化</td>
+</tr>
+<tr>
+<td><a href="coding-agents-landscape-2026.md">Coding Agents Landscape 2026</a></td>
+<td>编码 agent 生态在 2026 全面对接本文的 pattern 语言</td>
+</tr>
+<tr>
+<td><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a></td>
+<td>Evaluator-Optimizer 在 skill 优化的具体落地</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>行业共享语言</strong>：2025 年以后几乎所有 agent 设计讨论都在用 Anthropic 的术语（orchestrator-workers, evaluator-optimizer, workflow vs agent）</li>
+<li><strong>基于真实生产经验</strong>：Anthropic 应用 AI 团队在为 Coinbase、Intercom、Thomson Reuters 等公司部署 agent，这些 pattern 是从真实事故学到的</li>
+<li><strong>可直接抄入项目</strong>：每个 pattern 都是具体架构图 + 何时用 + 何时不用，没有废话</li>
+<li><strong>反过度设计</strong>：旗帜鲜明地反对"万事用 agent"的风气，给工程师理性的复杂度边界</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>原文:</strong> <a href="https://www.anthropic.com/research/building-effective-agents">Anthropic — Building Effective Agents</a></li>
+<li><strong>Anthropic 相关文章:</strong></li>
+<li><a href="https://www.anthropic.com/engineering/writing-tools-for-agents">Writing tools for agents</a> — tool 设计指南</li>
+<li><a href="https://www.anthropic.com/engineering/advanced-tool-use">Advanced tool use</a> — 2025 年工具使用进阶</li>
+<li><strong>延伸阅读:</strong></li>
+<li><a href="https://simonwillison.net/2024/Dec/20/building-effective-agents/">Simon Willison 读后笔记</a></li>
+<li><a href="https://huggingface.co/blog/Sri-Vigneshwar-DJ/building-effective-agents-with-anthropics-best-pra">HuggingFace smolagents 对本文 pattern 的实现</a></li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="anthropic-multi-agent-research.md">Anthropic Multi-Agent Research System</a></li>
+<li><a href="react.md">ReAct</a> · <a href="../self-improving-agents/reflexion.md">Reflexion</a></li>
+<li><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a> · <a href="../self-improving-agents/agent-factory.md">AgentFactory</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><span></span><a class="nav-right" href="anthropic-multi-agent-research.html"><div class="nav-label">Next →</div><div class="nav-title">How We Built Our Multi-Agent Research System</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>
