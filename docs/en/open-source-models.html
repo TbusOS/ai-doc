@@ -31,30 +31,1010 @@
     <main>
       <section class="anth-hero" style="padding-block: var(--space-9);">
         <div class="anth-container">
-          <span class="anth-badge badge-models">Directory</span>
-          <h1 style="margin-top:var(--space-4);">Open-Source Model Directory</h1>
-          <p style="font-size:20px; line-height:1.55; color:var(--anth-text-secondary); max-width:680px; margin:var(--space-5) auto;">A curated guide to the best open-source models by capability domain — for project selection, not exhaustive listing.</p>
+          <span class="anth-badge badge-models">Directory · 目录</span>
+          <h1 style="margin-top:var(--space-4); max-width:800px; margin-left:auto; margin-right:auto;">Open-Source Model Directory</h1>
+          <p style="font-family:var(--font-body); font-size:22px; line-height:1.5; color:var(--anth-text-secondary); max-width:640px; margin:var(--space-5) auto var(--space-4);">Pick the right open-source model for your domain</p>
+          <p style="font-size:16px; line-height:1.6; color:var(--anth-text-secondary); max-width:680px; margin:0 auto var(--space-7);">Curated guide to the best open-source models across 12 capability domains — benchmark-verified, hardware-aware, license-annotated. Content is rendered from the live source-of-truth at open-source-models/README.md.</p>
+
+          <div class="stat-grid" style="max-width:880px; margin:var(--space-7) auto 0;">
+            <div class="stat">
+              <div class="stat-number">12</div>
+              <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">60+</div>
+              <div class="stat-label">Models listed</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number" style="font-size:28px;">2026-04-19</div>
+              <div class="stat-label">Last verified</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number" style="font-size:28px;">100%</div>
+              <div class="stat-label">License transparency</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="anth-section anth-section--subtle">
+        <div class="anth-container anth-container--wide">
+          <div style="text-align:center; max-width:820px; margin:0 auto;">
+            <p class="anth-caption" style="letter-spacing:0.08em; text-transform:uppercase; font-family:var(--font-heading); font-weight:600;">Jump to category</p>
+            <div style="margin-top:var(--space-4); display:flex; flex-wrap:wrap; justify-content:center; gap:var(--space-2);">
+              <a href="#1-frontier-reasoning" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Frontier Reasoning</a><a href="#2-coding" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Coding</a><a href="#3-math-reasoning" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Math &amp; Reasoning</a><a href="#4-multimodal-vision" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Multimodal / Vision</a><a href="#5-long-context" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Long Context</a><a href="#6-agent-tool-use" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Agent / Tool Use</a><a href="#7-edge-mobile" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Edge &amp; Mobile</a><a href="#8-embedding-retrieval" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Embedding &amp; Retrieval</a><a href="#9-speech-to-text" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Speech-to-Text</a><a href="#10-text-to-speech" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Text-to-Speech</a><a href="#11-image-generation" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Image Generation</a><a href="#12-video-generation" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">Video Generation</a>
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="anth-section">
         <div class="anth-container anth-container--wide">
-          <div class="article-body" style="background:#ffffff; padding:var(--space-6); border-radius:var(--radius-lg); box-shadow: var(--shadow-card);">
-            <table>
-              <thead>
-                <tr><th>Domain</th><th>Top picks</th><th>Why</th></tr>
-              </thead>
-              <tbody>
-                <tr><td><strong>General Reasoning</strong></td><td>DeepSeek-V3.2, Qwen3.5</td><td>GPT-5 level reasoning, MIT/Apache</td></tr>
-<tr><td><strong>Coding</strong></td><td>GLM-4.7, Kimi K2.5</td><td>91%+ SWE-bench, real bug fixing</td></tr>
-<tr><td><strong>Math</strong></td><td>Qwen3-Max, DeepSeek-V3.2-Speciale</td><td>97.8% MATH-500, AIME-level</td></tr>
-<tr><td><strong>Multimodal</strong></td><td>GLM-4.6V, Qwen2.5-VL</td><td>Native tool use, 128K context</td></tr>
-<tr><td><strong>Edge / Mobile</strong></td><td>Phi-4-mini, Gemma-3n, Qwen3.5-0.8B</td><td>4GB RAM, mobile-ready</td></tr>
-<tr><td><strong>Long Context</strong></td><td>Llama 4 Scout</td><td>10M token context window</td></tr>
-<tr><td><strong>Multilingual</strong></td><td>Qwen3</td><td>119 languages</td></tr>
-              </tbody>
-            </table>
-          </div>
+          <article class="article-body" style="background:#ffffff; padding:var(--space-7) var(--space-7); border-radius:var(--radius-lg); box-shadow: var(--shadow-card);">
+<p>A curated, <strong>living</strong> guide to the best open-source models across capability domains. Updated from live research on public leaderboards, benchmarks, and Hugging Face releases. Focused on models that are <strong>free, production-ready, and genuinely useful</strong> for vertical domain projects.</p>
+<p>精选各能力域最佳开源模型指南——<strong>动态维护</strong>，基于公开排行榜、benchmark 和 Hugging Face 发布实时研究。聚焦于<strong>免费、可生产部署、对垂直领域项目真正有用</strong>的模型。</p>
+<blockquote>
+<p><strong>Last verified / 最后核验:</strong> 2026-04-19
+<strong>Methodology / 方法:</strong> Cross-referenced BenchLM.ai, Onyx open-weight leaderboard, HF Open ASR Leaderboard, MTEB, SWE-bench Verified / Pro, Seed-TTS Eval, Artificial Analysis, bentoml.com guides. See <a href="#sources--参考来源">Sources</a> at bottom.</p>
+</blockquote>
+<hr>
+<p><a name="english"></a></p>
+<h2 id="1-frontier-reasoning">1. Frontier Reasoning / 前沿推理</h2>
+<p>For agentic workflows, multi-step planning, and general-purpose high-quality reasoning.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights (2026-04)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/THUDM"><strong>GLM-5.1</strong></a></td>
+<td>Zhipu AI</td>
+<td>MoE (undisclosed active)</td>
+<td>Open weight</td>
+<td>Agentic engineering, long-horizon SWE</td>
+<td><strong>#1 on BenchLM.ai open-weight leaderboard (84 overall)</strong> — purpose-built for agent loops</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/THUDM"><strong>GLM-5 (Reasoning)</strong></a></td>
+<td>Zhipu AI</td>
+<td>MoE</td>
+<td>Open weight</td>
+<td>Multi-step reasoning</td>
+<td>Leaderboard top at 85 overall; reasoning-tuned variant</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3.5-397B-A17B</strong></a></td>
+<td>Alibaba</td>
+<td>397B MoE · 17B active</td>
+<td>Apache 2.0</td>
+<td>Multimodal reasoning, ultra-long ctx</td>
+<td>Flagship MoE, 81 on leaderboard; 119 languages</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/deepseek-ai"><strong>DeepSeek-V3.2</strong></a></td>
+<td>DeepSeek</td>
+<td>685B MoE</td>
+<td>MIT</td>
+<td>General reasoning + tool use</td>
+<td>Very cheap inference (~$0.28/M tokens on hosted APIs); 73.1% SWE-bench</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/deepseek-ai"><strong>DeepSeek-V3.2-Speciale</strong></a></td>
+<td>DeepSeek</td>
+<td>685B MoE</td>
+<td>MIT</td>
+<td>Hard math/competition reasoning</td>
+<td><strong>Surpasses GPT-5 and reaches Gemini-3.0-Pro-level on AIME / HMMT 2025</strong></td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/meta-llama"><strong>Llama 4 Maverick</strong></a></td>
+<td>Meta</td>
+<td>400B MoE · 17B active</td>
+<td>Llama 4 License</td>
+<td>General purpose + 1M ctx</td>
+<td>Strong all-rounder with cheap per-token cost (17B active)</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/MiniMaxAI"><strong>MiniMax-M2.7</strong></a></td>
+<td>MiniMax</td>
+<td>Large MoE</td>
+<td>Open weight</td>
+<td>Agentic workflows</td>
+<td>Actively refines its own agent system — agent-native design</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/google"><strong>Gemma 4 26B</strong></a></td>
+<td>Google</td>
+<td>26B dense</td>
+<td>Gemma License</td>
+<td>Consumer-hardware reasoning</td>
+<td><strong>Only Western model in top 5</strong>; 85 t/s on M3 Max / RTX 4090</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="2-coding">2. Coding / 代码</h2>
+<p>Bug fixing, feature implementation, SWE-bench. Ranked by SWE-bench Verified.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>SWE-bench</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/moonshotai"><strong>Kimi K2.5</strong></a></td>
+<td>Moonshot AI</td>
+<td>MoE</td>
+<td>MIT*</td>
+<td><strong>76.8%</strong></td>
+<td><strong>#1 open-source on SWE-bench Verified</strong> (Jan 2026 release). *Commercial restriction at 100M+ MAU</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/THUDM"><strong>GLM-5.1</strong></a></td>
+<td>Zhipu AI</td>
+<td>MoE</td>
+<td>Open weight</td>
+<td>leads SWE-bench Pro</td>
+<td>Best on SWE-bench Pro + Terminal Bench (full agentic SWE)</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/THUDM"><strong>GLM-4.7</strong></a></td>
+<td>Zhipu AI</td>
+<td>—</td>
+<td>Open weight</td>
+<td>73.8%</td>
+<td><strong>Runs on consumer hardware</strong> (single RTX 4090 quantized); 94.2 HumanEval</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/deepseek-ai"><strong>DeepSeek-V3.2</strong></a></td>
+<td>DeepSeek</td>
+<td>685B MoE</td>
+<td>MIT</td>
+<td>73.1%</td>
+<td>More consistent than GLM-4.7 across direct comparisons</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3-Coder-480B-A35B</strong></a></td>
+<td>Alibaba</td>
+<td>480B MoE · 35B active</td>
+<td>Apache 2.0</td>
+<td>70.6%</td>
+<td>Qwen's flagship coder; strong on repo-scale edits</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3-Coder-30B-A3B</strong></a></td>
+<td>Alibaba</td>
+<td>30B MoE · 3B active</td>
+<td>Apache 2.0</td>
+<td>~65%</td>
+<td><strong>Best self-hostable coder</strong> — runs on 24GB VRAM</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct"><strong>Qwen2.5-Coder-32B</strong></a></td>
+<td>Alibaba</td>
+<td>32B dense</td>
+<td>Apache 2.0</td>
+<td>~56%</td>
+<td>Mature option, largest LoRA ecosystem</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-math-reasoning">3. Math &amp; Reasoning / 数学与推理</h2>
+<p>Competition math (AIME, HMMT), chain-of-thought, self-correction.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/stepfun-ai"><strong>Step-3.5-Flash</strong></a></td>
+<td>StepFun</td>
+<td>196B</td>
+<td>Open weight</td>
+<td>AIME/HMMT</td>
+<td><strong>AIME 2025: 97.3</strong> — tied for highest on full leaderboard at modest size</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/THUDM"><strong>GLM-4.7 (Reasoning)</strong></a></td>
+<td>Zhipu AI</td>
+<td>—</td>
+<td>Open weight</td>
+<td>Competition math</td>
+<td>AIME 2025: 97.3; strong open-weight competitor</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/deepseek-ai"><strong>DeepSeek-V3.2-Speciale</strong></a></td>
+<td>DeepSeek</td>
+<td>685B MoE</td>
+<td>MIT</td>
+<td>Proof-style math</td>
+<td>GPT-5-level on AIME/HMMT; HMMT-specialized variant</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/deepseek-ai/DeepSeek-R1"><strong>DeepSeek-R1</strong></a></td>
+<td>DeepSeek</td>
+<td>671B MoE</td>
+<td>MIT</td>
+<td>o1-level reasoning</td>
+<td>Classic R1 still competitive; long thinking chains</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3 235B (Thinking)</strong></a></td>
+<td>Alibaba</td>
+<td>235B dense</td>
+<td>Apache 2.0</td>
+<td>All-round reasoning</td>
+<td>AIME 2025: 92.3; <code>/think</code> mode</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen/QwQ-32B"><strong>QwQ-32B</strong></a></td>
+<td>Alibaba</td>
+<td>32B dense</td>
+<td>Apache 2.0</td>
+<td><strong>Self-hostable reasoning</strong></td>
+<td>Rivals DeepSeek-R1 / o1-mini at 32B; ~48GB for BF16</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/deepseek-ai"><strong>DeepSeek-Math-V2</strong></a></td>
+<td>DeepSeek</td>
+<td>671B MoE</td>
+<td>MIT</td>
+<td>Formal math, proofs</td>
+<td>Proof generation, Lean integration</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/THUDM/GLM-Z1-9B-0414"><strong>GLM-Z1-9B</strong></a></td>
+<td>Zhipu</td>
+<td>9B</td>
+<td>Open weight</td>
+<td>Lightweight math</td>
+<td>Runs on single RTX 3090; punches well above weight</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-multimodal-vision">4. Multimodal / Vision / 多模态与视觉</h2>
+<p>Vision-language models (VLMs): image understanding, document / chart parsing, visual agents.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Instruct"><strong>Qwen3-VL-235B-A22B</strong></a></td>
+<td>Alibaba</td>
+<td>235B MoE · 22B active</td>
+<td>Apache 2.0</td>
+<td><strong>Frontier VLM</strong></td>
+<td><strong>Rivals Gemini-2.5-Pro / GPT-5</strong> on multimodal benchmarks</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/THUDM"><strong>GLM-4.6V</strong></a></td>
+<td>Zhipu AI</td>
+<td>—</td>
+<td>Open weight</td>
+<td>Visual agent, tool use</td>
+<td>End-to-end visual tool use, 128K context</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/THUDM"><strong>GLM-4.5V</strong></a></td>
+<td>Zhipu AI</td>
+<td>—</td>
+<td>Open weight</td>
+<td>Everyday VLM</td>
+<td>Smaller but strong agentic abilities</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/OpenGVLab"><strong>InternVL3-78B</strong></a></td>
+<td>Shanghai AI Lab</td>
+<td>78B</td>
+<td>Apache 2.0</td>
+<td>Document, chart, 3D vision</td>
+<td><strong>MMMU: 72.2 — SOTA among open-source</strong></td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen/Qwen2.5-VL-32B-Instruct"><strong>Qwen2.5-VL-32B</strong></a></td>
+<td>Alibaba</td>
+<td>32B</td>
+<td>Apache 2.0</td>
+<td>OCR, structured extraction</td>
+<td>Fits single A100 80GB</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct"><strong>Qwen2.5-VL-7B</strong></a></td>
+<td>Alibaba</td>
+<td>7B</td>
+<td>Apache 2.0</td>
+<td>Self-host VLM</td>
+<td>Runs on 16GB VRAM</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="5-long-context">5. Long Context / 长上下文</h2>
+<p>When you need to ingest full books, codebases, or document archives in one shot.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Context</th>
+<th>License</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/meta-llama"><strong>Llama 4 Scout</strong></a></td>
+<td>Meta</td>
+<td><strong>10M tokens</strong></td>
+<td>Llama 4 License</td>
+<td>109B MoE · 17B active. Industry-leading context; handles entire codebases</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/MiniMaxAI"><strong>MiniMax-Text-01</strong></a></td>
+<td>MiniMax</td>
+<td>4M tokens</td>
+<td>Open weight</td>
+<td>Between standard and Scout extreme</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen2.5-1M</strong></a></td>
+<td>Alibaba</td>
+<td>1M tokens</td>
+<td>Apache 2.0</td>
+<td>7B/14B variants; proven stability at 1M</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/meta-llama"><strong>Llama 4 Maverick</strong></a></td>
+<td>Meta</td>
+<td>1M tokens</td>
+<td>Llama 4 License</td>
+<td>400B MoE · 17B active</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3.5-397B-A17B</strong></a></td>
+<td>Alibaba</td>
+<td>≥1M</td>
+<td>Apache 2.0</td>
+<td>Flagship, multimodal + long ctx</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3.5-0.8B</strong></a></td>
+<td>Alibaba</td>
+<td><strong>262K</strong></td>
+<td>Apache 2.0</td>
+<td>Long ctx at edge device scale</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="6-agent-tool-use-agent">6. Agent / Tool Use / Agent 与工具调用</h2>
+<p>Optimized for function calling, multi-tool orchestration, browser use.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/THUDM"><strong>GLM-4.5-Air</strong></a></td>
+<td>Zhipu AI</td>
+<td>—</td>
+<td>Open weight</td>
+<td><strong>Purpose-built for agent workflows</strong> — optimized tool use + web browsing</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3-30B-A3B-Thinking-2507</strong></a></td>
+<td>Alibaba</td>
+<td>30B MoE · 3B active</td>
+<td>Apache 2.0</td>
+<td>Complex reasoning agents with <code>/think</code> mode</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3-Coder-30B-A3B</strong></a></td>
+<td>Alibaba</td>
+<td>30B MoE</td>
+<td>Apache 2.0</td>
+<td>Agentic <strong>coding</strong> workflows (IDE-level)</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/MiniMaxAI"><strong>MiniMax-M2.7</strong></a></td>
+<td>MiniMax</td>
+<td>MoE</td>
+<td>Open weight</td>
+<td>Self-refines its own agent system</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/NousResearch"><strong>Hermes-4 70B</strong></a></td>
+<td>Nous Research</td>
+<td>70B</td>
+<td>Llama License</td>
+<td>Best open tool-calling on Llama base</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Salesforce"><strong>xLAM-2 (series)</strong></a></td>
+<td>Salesforce</td>
+<td>8B–70B</td>
+<td>CC-BY-NC</td>
+<td>Function-calling specialist; APIGen-trained</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="7-edge-mobile-7b">7. Edge &amp; Mobile (≤7B) / 边缘与移动端</h2>
+<p>Under 7B params, runs on phones / laptops / Jetson-class hardware.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/microsoft/Phi-4-mini-instruct"><strong>Phi-4-mini</strong></a></td>
+<td>Microsoft</td>
+<td>3.8B</td>
+<td>MIT</td>
+<td>Tool calling, structured</td>
+<td>Reasoning on par with 7–9B models</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/google/gemma-3-4b-it"><strong>Gemma 3 4B</strong></a></td>
+<td>Google</td>
+<td>4B</td>
+<td>Gemma License</td>
+<td>Apple M-series / Snapdragon</td>
+<td>20-30 t/s at 4-bit; audio + video input</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/google"><strong>Gemma 3 2B</strong></a></td>
+<td>Google</td>
+<td>2B</td>
+<td>Gemma License</td>
+<td>Ultra-lightweight</td>
+<td>For truly tiny devices</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3.5-0.8B</strong></a></td>
+<td>Alibaba</td>
+<td>0.8B</td>
+<td>Apache 2.0</td>
+<td>Multilingual micro-agent</td>
+<td><strong>262K context + thinking</strong> at 0.8B</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/HuggingFaceTB"><strong>SmolLM3-3B</strong></a></td>
+<td>Hugging Face</td>
+<td>3B</td>
+<td>Apache 2.0</td>
+<td>General edge</td>
+<td>Beats Llama-3.2-3B and Qwen2.5-3B</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct"><strong>Llama 3.2-3B</strong></a></td>
+<td>Meta</td>
+<td>3B</td>
+<td>Llama License</td>
+<td>Mobile</td>
+<td>Proven, enormous ecosystem</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct"><strong>Llama 3.2-1B</strong></a></td>
+<td>Meta</td>
+<td>1B</td>
+<td>Llama License</td>
+<td>Tiny fallback</td>
+<td>4GB RAM at 4-bit</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="8-embedding-retrieval">8. Embedding &amp; Retrieval / 嵌入与检索</h2>
+<p>Semantic search, RAG retrieval. Ranked for production RAG.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/BAAI/bge-m3"><strong>BGE-M3</strong></a></td>
+<td>BAAI</td>
+<td>568M</td>
+<td>MIT</td>
+<td><strong>Multilingual RAG default</strong></td>
+<td>Dense + sparse + ColBERT in one model; 100+ languages</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3-Embedding-8B</strong></a></td>
+<td>Alibaba</td>
+<td>8B</td>
+<td>Apache 2.0</td>
+<td>Top MTEB</td>
+<td>Leads MTEB-multilingual open-source category</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/nomic-ai"><strong>Nomic Embed Text v2</strong></a></td>
+<td>Nomic AI</td>
+<td>MoE</td>
+<td>Apache 2.0</td>
+<td>Multilingual retrieval</td>
+<td><strong>First MoE embedding model</strong>; 100 languages</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Alibaba-NLP/gte-multilingual-base"><strong>gte-multilingual-base</strong></a></td>
+<td>Alibaba</td>
+<td>305M</td>
+<td>Apache 2.0</td>
+<td>Balanced quality/size</td>
+<td>Strong multilingual; efficient</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/jinaai/jina-embeddings-v3"><strong>Jina Embeddings v3</strong></a></td>
+<td>Jina AI</td>
+<td>570M</td>
+<td>CC-BY-NC 4.0</td>
+<td>Long documents</td>
+<td><strong>8192 ctx + late chunking</strong></td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1"><strong>mxbai-embed-large-v1</strong></a></td>
+<td>Mixedbread</td>
+<td>335M</td>
+<td>Apache 2.0</td>
+<td>English MRL</td>
+<td>Matryoshka Representation Learning</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/nomic-ai/nomic-embed-text-v1.5"><strong>nomic-embed-text-v1.5</strong></a></td>
+<td>Nomic AI</td>
+<td>137M</td>
+<td>Apache 2.0</td>
+<td>Tiny embedder</td>
+<td>8K context; efficient CPU inference</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="9-speech-to-text-asr">9. Speech-to-Text (ASR) / 语音识别</h2>
+<p>Transcription, captioning, voice-interface STT.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/nvidia/canary-qwen-2.5b"><strong>NVIDIA Canary Qwen 2.5B</strong></a></td>
+<td>NVIDIA</td>
+<td>2.5B</td>
+<td>CC-BY 4.0</td>
+<td>English + Q&amp;A</td>
+<td><strong>#1 on HF Open ASR Leaderboard</strong> — 5.63% WER; dual transcribe/analyze</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/nvidia/parakeet-rnnt-1.1b"><strong>NVIDIA Parakeet RNNT 1.1B</strong></a></td>
+<td>NVIDIA</td>
+<td>1.1B</td>
+<td>CC-BY 4.0</td>
+<td>English streaming</td>
+<td><strong>LibriSpeech 1.8% WER</strong> — lowest of any open model</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/openai/whisper-large-v3-turbo"><strong>Whisper Large V3 Turbo</strong></a></td>
+<td>OpenAI</td>
+<td>809M</td>
+<td>MIT</td>
+<td><strong>99 languages</strong></td>
+<td>Best multilingual; real-time capable</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/ibm-granite/granite-speech-3.3-8b"><strong>IBM Granite Speech 3.3</strong></a></td>
+<td>IBM</td>
+<td>8B</td>
+<td>Apache 2.0</td>
+<td>Enterprise</td>
+<td>~5.85% WER; commercial-friendly license</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Qwen"><strong>Qwen3-ASR</strong></a></td>
+<td>Alibaba</td>
+<td>1.7B / 0.6B</td>
+<td>Apache 2.0</td>
+<td>Multilingual + dialects</td>
+<td><strong>52 languages &amp; dialects</strong>; Jan 2026</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/distil-whisper"><strong>Distil-Whisper</strong></a></td>
+<td>HF / Whisper</td>
+<td>—</td>
+<td>MIT</td>
+<td>Streaming</td>
+<td>Low-latency distilled Whisper</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="10-text-to-speech-tts-voice-cloning">10. Text-to-Speech (TTS) &amp; Voice Cloning / 语音合成与克隆</h2>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/fishaudio"><strong>Fish Audio S2 Pro</strong></a></td>
+<td>Fish Audio</td>
+<td>—</td>
+<td>Apache 2.0</td>
+<td>Multilingual + cloning</td>
+<td><strong>Beats Google/OpenAI on Seed-TTS Eval</strong>; 80+ languages zero-shot</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/fishaudio/fish-speech-1.5"><strong>Fish Speech V1.5</strong></a></td>
+<td>Fish Audio</td>
+<td>—</td>
+<td>Apache 2.0</td>
+<td>Proven multilingual</td>
+<td>Stable previous generation, huge ecosystem</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/FunAudioLLM/CosyVoice2-0.5B"><strong>CosyVoice2-0.5B</strong></a></td>
+<td>Alibaba</td>
+<td>0.5B</td>
+<td>Apache 2.0</td>
+<td><strong>Streaming</strong></td>
+<td><strong>150ms latency</strong> for real-time voice UX</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/IndexTeam"><strong>IndexTTS-2</strong></a></td>
+<td>Bilibili Index</td>
+<td>—</td>
+<td>Apache 2.0</td>
+<td>Video dubbing</td>
+<td>SOTA zero-shot; precise duration &amp; emotion control</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/hexgrad/Kokoro-82M"><strong>Kokoro-82M</strong></a></td>
+<td>hexgrad</td>
+<td>82M</td>
+<td>Apache 2.0</td>
+<td>Efficiency</td>
+<td><strong>MOS 4.2 at 82M</strong> — best quality/size ratio</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="11-image-generation">11. Image Generation / 图像生成</h2>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/black-forest-labs"><strong>FLUX.2 [dev]</strong></a></td>
+<td>Black Forest Labs</td>
+<td>FLUX-1 Dev Non-Commercial</td>
+<td>Photorealism + text rendering</td>
+<td><strong>Production-grade</strong> (Nov 2025); best text-in-image of open models</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/black-forest-labs/FLUX.1-dev"><strong>FLUX.1 [dev]</strong></a></td>
+<td>Black Forest Labs</td>
+<td>FLUX-1 Dev</td>
+<td>Photorealism</td>
+<td>Still the go-to for photoreal single images</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/stabilityai/stable-diffusion-3.5-large"><strong>Stable Diffusion 3.5 Large</strong></a></td>
+<td>Stability AI</td>
+<td>Stability Non-Commercial</td>
+<td>Quality improvement over SDXL</td>
+<td>Quality leap over SDXL</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0"><strong>SDXL</strong></a></td>
+<td>Stability AI</td>
+<td>CreativeML Open RAIL++-M</td>
+<td><strong>LoRA ecosystem, custom fine-tunes</strong></td>
+<td>Battle-tested since 2023; huge community</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/HiDream-ai"><strong>HiDream</strong></a></td>
+<td>HiDream.ai</td>
+<td>Open weight</td>
+<td>High-res output</td>
+<td>Strong on anime / illustration</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="12-video-generation">12. Video Generation / 视频生成</h2>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Params</th>
+<th>License</th>
+<th>Best For</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://huggingface.co/Wan-AI"><strong>Wan 2.2 T2V-A14B</strong></a></td>
+<td>Alibaba</td>
+<td>14B active MoE</td>
+<td>Apache 2.0</td>
+<td>T2V 480P/720P 5s</td>
+<td><strong>First open-source MoE video model</strong>; cinematic quality</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/tencent/HunyuanVideo"><strong>HunyuanVideo</strong></a></td>
+<td>Tencent</td>
+<td>13B</td>
+<td>Tencent License</td>
+<td>Professional T2V</td>
+<td><strong>Beats Runway Gen-3</strong> on benchmarks; mature ecosystem</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/genmo/mochi-1-preview"><strong>Mochi 1</strong></a></td>
+<td>Genmo</td>
+<td>—</td>
+<td>Apache 2.0</td>
+<td>Best T2V quality/license</td>
+<td>Apache 2.0 gives full commercial freedom</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/THUDM/CogVideoX-5b"><strong>CogVideoX-5B</strong></a></td>
+<td>Zhipu</td>
+<td>5B</td>
+<td>Apache 2.0</td>
+<td><strong>Image-to-Video</strong></td>
+<td>Best I2V; runs on 1× 3090</td>
+</tr>
+<tr>
+<td><a href="https://huggingface.co/Lightricks/LTX-Video"><strong>LTX-Video</strong></a></td>
+<td>Lightricks</td>
+<td>—</td>
+<td>OpenRAIL</td>
+<td>Real-time</td>
+<td>First DiT-based real-time video model</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a name="中文"></a></p>
+<h2 id="quick-selection">选型速查 / Quick Selection</h2>
+<h3 id="by-scenario">按场景推荐 / By Scenario</h3>
+<table>
+<thead>
+<tr>
+<th>场景 Scenario</th>
+<th>推荐方案 Recommendation</th>
+<th>为什么 Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>智能客服 Customer Support</strong></td>
+<td>Qwen3.5 + BGE-M3</td>
+<td>多语言 + 成熟的嵌入检索</td>
+</tr>
+<tr>
+<td><strong>代码助手 (云端) Coding (Cloud)</strong></td>
+<td>GLM-5.1 或 Kimi K2.5</td>
+<td>SWE-bench 顶级开源模型</td>
+</tr>
+<tr>
+<td><strong>代码助手 (自建) Coding (Self-host)</strong></td>
+<td>GLM-4.7 或 Qwen3-Coder-30B-A3B</td>
+<td>可在消费级显卡跑</td>
+</tr>
+<tr>
+<td><strong>文档/图表 Document &amp; Chart</strong></td>
+<td>InternVL3-78B 或 Qwen3-VL-235B</td>
+<td>MMMU 顶级，表格/图表强</td>
+</tr>
+<tr>
+<td><strong>移动端 App Mobile</strong></td>
+<td>Phi-4-mini 或 Gemma 3 4B</td>
+<td>4GB RAM 可跑；M-系列友好</td>
+</tr>
+<tr>
+<td><strong>RAG 系统 RAG</strong></td>
+<td>DeepSeek-V3.2 + BGE-M3</td>
+<td>推理 + 检索双强，价格极低</td>
+</tr>
+<tr>
+<td><strong>数学教育 Math Tutor</strong></td>
+<td>QwQ-32B 或 Step-3.5-Flash</td>
+<td>32B 自建 / 196B 顶尖</td>
+</tr>
+<tr>
+<td><strong>语音交互 Voice UX</strong></td>
+<td>Whisper-V3-Turbo + CosyVoice2</td>
+<td>99 语言识别 + 150ms 合成</td>
+</tr>
+<tr>
+<td><strong>语音转录企业 Enterprise ASR</strong></td>
+<td>Canary Qwen 2.5B (英文) 或 IBM Granite Speech 3.3</td>
+<td>低 WER + 商用许可</td>
+</tr>
+<tr>
+<td><strong>Agent 系统 Agent</strong></td>
+<td>GLM-4.5-Air 或 MiniMax-M2.7</td>
+<td>工具调用 + 长任务</td>
+</tr>
+<tr>
+<td><strong>超长上下文 Long Context</strong></td>
+<td>Llama 4 Scout (10M) 或 Qwen2.5-1M</td>
+<td>整个代码库一次喂</td>
+</tr>
+<tr>
+<td><strong>文生图 T2I</strong></td>
+<td>FLUX.2 [dev] (质量) 或 SDXL (生态)</td>
+<td>需要二次微调选 SDXL</td>
+</tr>
+<tr>
+<td><strong>文生视频 T2V</strong></td>
+<td>Wan 2.2 (质量) 或 Mochi 1 (许可宽松)</td>
+<td>商用选 Mochi</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hardware-quick-reference">硬件要求速查 / Hardware Quick Reference</h3>
+<table>
+<thead>
+<tr>
+<th>模型规模 Scale</th>
+<th>最低显存 (4-bit 量化)</th>
+<th>适合硬件 Hardware</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0.8B – 3B</strong></td>
+<td>2 – 4 GB</td>
+<td>手机 · Raspberry Pi · Mac Mini · 树莓派</td>
+</tr>
+<tr>
+<td><strong>7B – 8B</strong></td>
+<td>6 – 8 GB</td>
+<td>RTX 3060 · M1/M2/M3 Mac · GTX 1080</td>
+</tr>
+<tr>
+<td><strong>14B – 32B</strong></td>
+<td>16 – 24 GB</td>
+<td>RTX 4090 · A5000 · M3/M4 Max (64GB)</td>
+</tr>
+<tr>
+<td><strong>70B dense</strong></td>
+<td>40 – 48 GB</td>
+<td>A6000 · 2×4090 · M3 Ultra (128GB)</td>
+</tr>
+<tr>
+<td><strong>MoE 30B-A3B</strong></td>
+<td>16 – 24 GB (总权重 ~60GB 但活跃 3B)</td>
+<td>RTX 4090 (权重需快速存储)</td>
+</tr>
+<tr>
+<td><strong>MoE 400B-A17B</strong></td>
+<td>80 – 160 GB 显存或 512 GB 统一内存</td>
+<td>多卡 A100/H100 · M3 Ultra (512GB)</td>
+</tr>
+<tr>
+<td><strong>MoE 600B+</strong></td>
+<td>8× H100 80GB 或等价</td>
+<td>企业级部署</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="changelog">重要变更记录 / Changelog</h2>
+<ul>
+<li><strong>2026-04-19</strong> — Full rewrite: added GLM-5/5.1, Kimi K2.5, Step-3.5-Flash, Qwen3-VL-235B, Wan 2.2, FLUX.2, Canary Qwen 2.5B, Qwen3-ASR, Fish Audio S2 Pro, Hermes-4. Added two new categories: <strong>Agent/Tool Use</strong> and <strong>Video Generation</strong>. Removed stale entries (Qwen-QwQ-32B renamed to QwQ-32B, etc.).</li>
+<li><strong>2026-03</strong> — Initial version with 7 categories.</li>
+</ul>
+<hr>
+<h2 id="how-to-add-a-model">How to Add a Model / 如何添加模型</h2>
+<p>See <a href="../CONTRIBUTING.md#model-entry-template">CONTRIBUTING.md</a> for the full template.</p>
+<p>Hard criteria:</p>
+<ul>
+<li>Must be <strong>open-source or open-weight</strong> with a clear license (commercial-use status noted if restricted)</li>
+<li>Must have <strong>verifiable benchmark</strong> or well-documented real-world capability</li>
+<li>Must be <strong>practically usable</strong> (weights on HF, runs on consumer or affordable cloud hardware)</li>
+<li>Must be <strong>not vaporware</strong> — released and downloadable at time of listing</li>
+<li>Include a <strong>Last verified</strong> date in the row; readers must know the nutrient freshness</li>
+</ul>
+<hr>
+<p><a name="sources--参考来源"></a></p>
+<h2 id="sources">Sources / 参考来源</h2>
+<p>Cross-referenced at the 2026-04-19 verification pass:</p>
+<ul>
+<li><a href="https://benchlm.ai/blog/posts/best-open-source-llm">BenchLM.ai Open-Weight Leaderboard</a> — real-time rankings</li>
+<li><a href="https://onyx.app/open-llm-leaderboard">Onyx Open-Source LLM Leaderboard 2026</a></li>
+<li><a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">HF Open ASR Leaderboard</a></li>
+<li><a href="https://artificialanalysis.ai/">Artificial Analysis open-weight comparison</a></li>
+<li><a href="https://www.bentoml.com/blog/navigating-the-world-of-open-source-large-language-models">bentoml.com — Best Open-Source LLMs in 2026</a></li>
+<li><a href="https://www.bentoml.com/blog/a-guide-to-open-source-embedding-models">bentoml.com — Best Open-Source Embedding Models</a></li>
+<li><a href="https://www.bentoml.com/blog/the-best-open-source-small-language-models">bentoml.com — Best Open-Source Small Language Models</a></li>
+<li><a href="https://www.bentoml.com/blog/multimodal-ai-a-guide-to-open-source-vision-language-models">bentoml.com — Multimodal VLMs in 2026</a></li>
+<li><a href="https://bentoml.com/blog/exploring-the-world-of-open-source-text-to-speech-models">bentoml.com — Open-Source TTS Models</a></li>
+<li><a href="https://www.siliconflow.com/articles/en/best-open-source-LLM-for-Agent-Workflow">SiliconFlow — LLM for Agent Workflow</a></li>
+<li><a href="https://www.siliconflow.com/articles/en/best-open-source-LLMs-for-coding">SiliconFlow — Best Open-Source Coding LLMs</a></li>
+<li><a href="https://northflank.com/blog/best-open-source-speech-to-text-stt-model-in-2026-benchmarks">Northflank — Best STT 2026</a></li>
+<li><a href="https://wavespeed.ai/landing/models/best-open-source-image-models-2026">Wavespeed — Best Open Source Image Models 2026</a></li>
+<li><a href="https://www.hyperstack.cloud/blog/case-study/best-open-source-video-generation-models">Hyperstack — Best Open-Source Video Generation Models</a></li>
+<li><a href="https://swe-rebench.com">SWE-rebench Leaderboard</a></li>
+<li><a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB Leaderboard</a></li>
+</ul>
+<p>Last tool-verified at 2026-04-19 (Hong Kong / Beijing timezone). Model benchmarks and releases move weekly — re-verify before any critical production selection.</p>
+          </article>
         </div>
       </section>
 

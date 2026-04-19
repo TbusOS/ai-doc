@@ -291,16 +291,22 @@ CATEGORIES: list[Category] = [
 OPEN_SOURCE_MODELS = {
     "en_title": "Open-Source Model Directory",
     "zh_title": "开源模型目录",
-    "en_desc": "A curated guide to the best open-source models by capability domain — for project selection, not exhaustive listing.",
-    "zh_desc": "按能力域精选的最佳开源模型指南——用于项目选型，非穷举列表。",
-    "rows": [
-        ("General Reasoning", "通用推理", "DeepSeek-V3.2, Qwen3.5", "GPT-5 level reasoning, MIT/Apache", "GPT-5 级推理，MIT/Apache 许可"),
-        ("Coding", "代码", "GLM-4.7, Kimi K2.5", "91%+ SWE-bench, real bug fixing", "SWE-bench 91%+，真实 bug 修复"),
-        ("Math", "数学", "Qwen3-Max, DeepSeek-V3.2-Speciale", "97.8% MATH-500, AIME-level", "MATH-500 97.8%，AIME 级别"),
-        ("Multimodal", "多模态", "GLM-4.6V, Qwen2.5-VL", "Native tool use, 128K context", "原生工具调用，128K 上下文"),
-        ("Edge / Mobile", "边缘/移动", "Phi-4-mini, Gemma-3n, Qwen3.5-0.8B", "4GB RAM, mobile-ready", "4GB RAM 可用，移动端就绪"),
-        ("Long Context", "长上下文", "Llama 4 Scout", "10M token context window", "1000 万 token 上下文"),
-        ("Multilingual", "多语言", "Qwen3", "119 languages", "119 种语言"),
+    "en_tagline": "Pick the right open-source model for your domain",
+    "zh_tagline": "为你的领域选对开源模型",
+    "en_desc": "Curated guide to the best open-source models across 12 capability domains — benchmark-verified, hardware-aware, license-annotated. Content is rendered from the live source-of-truth at open-source-models/README.md.",
+    "zh_desc": "跨 12 个能力域的最佳开源模型精选指南——基于 benchmark 核验、标注硬件要求与许可证。内容直接渲染自 open-source-models/README.md（单一真相源）。",
+    # Categories for the navigation/TOC — matches headings in the README source
+    "categories_en": [
+        "Frontier Reasoning", "Coding", "Math & Reasoning", "Multimodal / Vision",
+        "Long Context", "Agent / Tool Use", "Edge & Mobile",
+        "Embedding & Retrieval", "Speech-to-Text", "Text-to-Speech",
+        "Image Generation", "Video Generation",
+    ],
+    "categories_zh": [
+        "前沿推理", "代码", "数学与推理", "多模态与视觉",
+        "长上下文", "Agent 与工具调用", "边缘与移动端",
+        "嵌入与检索", "语音识别", "语音合成",
+        "图像生成", "视频生成",
     ],
 }
 
@@ -569,38 +575,88 @@ def render_category_page(lang: str, category: Category) -> str:
 
 
 def render_open_source_models_page(lang: str) -> str:
+    """Render the full open-source-models/README.md as a rich Anthropic-styled page.
+
+    The README is the single source of truth — this function just wraps it in a
+    hero + TOC + article-body layout so content updates flow through to the site
+    automatically.
+    """
     is_en = lang == "en"
     title = (OPEN_SOURCE_MODELS["en_title"] if is_en else OPEN_SOURCE_MODELS["zh_title"]) + " — AI Doc"
+    tagline = OPEN_SOURCE_MODELS["en_tagline"] if is_en else OPEN_SOURCE_MODELS["zh_tagline"]
     desc = OPEN_SOURCE_MODELS["en_desc"] if is_en else OPEN_SOURCE_MODELS["zh_desc"]
-    th_domain = "Domain" if is_en else "领域"
-    th_picks = "Top picks" if is_en else "推荐"
-    th_why = "Why" if is_en else "理由"
 
-    rows = "\n".join(
-        f"<tr><td><strong>{html.escape(en_d if is_en else zh_d)}</strong></td><td>{html.escape(picks)}</td><td>{html.escape(why_en if is_en else why_zh)}</td></tr>"
-        for en_d, zh_d, picks, why_en, why_zh in OPEN_SOURCE_MODELS["rows"]
+    # Load the README and render to HTML
+    readme_path = REPO_ROOT / "open-source-models" / "README.md"
+    readme_raw = readme_path.read_text(encoding="utf-8")
+    # Drop the top heading + the EN/CN selector since the site page has its own hero
+    readme_raw = re.sub(r"^# Open-Source Model Directory.*?\n", "", readme_raw)
+    readme_raw = re.sub(r"^\[English\].*?\n", "", readme_raw, flags=re.MULTILINE)
+    rendered = markdown.markdown(readme_raw, extensions=MD_EXTENSIONS, output_format="html5")
+
+    # Build a table-of-contents strip from the category list
+    cats = OPEN_SOURCE_MODELS["categories_en"] if is_en else OPEN_SOURCE_MODELS["categories_zh"]
+    # Match the auto-generated anchor format python-markdown produces
+    def slugify(s: str) -> str:
+        s = s.lower()
+        s = re.sub(r"[^\w\s-]", "", s)
+        s = re.sub(r"[-\s]+", "-", s).strip("-")
+        return s
+
+    toc_items = "".join(
+        f'<a href="#{i+1}-{slugify(c).replace(" ", "-")}" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">{html.escape(c)}</a>'
+        for i, c in enumerate(cats)
     )
+
+    stats_label_cats = "Categories" if is_en else "类别"
+    stats_label_models = "Models listed" if is_en else "模型条目"
+    stats_label_verified = "Last verified" if is_en else "最后核验"
+    stats_label_license = "License transparency" if is_en else "许可透明度"
 
     body = f"""      <section class="anth-hero" style="padding-block: var(--space-9);">
         <div class="anth-container">
-          <span class="anth-badge badge-models">{"Directory" if is_en else "目录"}</span>
-          <h1 style="margin-top:var(--space-4);">{html.escape(OPEN_SOURCE_MODELS["en_title"] if is_en else OPEN_SOURCE_MODELS["zh_title"])}</h1>
-          <p style="font-size:20px; line-height:1.55; color:var(--anth-text-secondary); max-width:680px; margin:var(--space-5) auto;">{html.escape(desc)}</p>
+          <span class="anth-badge badge-models">{"Directory · 目录" if is_en else "目录 · Directory"}</span>
+          <h1 style="margin-top:var(--space-4); max-width:800px; margin-left:auto; margin-right:auto;">{html.escape(OPEN_SOURCE_MODELS["en_title"] if is_en else OPEN_SOURCE_MODELS["zh_title"])}</h1>
+          <p style="font-family:var(--font-body); font-size:22px; line-height:1.5; color:var(--anth-text-secondary); max-width:640px; margin:var(--space-5) auto var(--space-4);">{html.escape(tagline)}</p>
+          <p style="font-size:16px; line-height:1.6; color:var(--anth-text-secondary); max-width:680px; margin:0 auto var(--space-7);">{html.escape(desc)}</p>
+
+          <div class="stat-grid" style="max-width:880px; margin:var(--space-7) auto 0;">
+            <div class="stat">
+              <div class="stat-number">12</div>
+              <div class="stat-label">{stats_label_cats}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">60+</div>
+              <div class="stat-label">{stats_label_models}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number" style="font-size:28px;">2026-04-19</div>
+              <div class="stat-label">{stats_label_verified}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number" style="font-size:28px;">100%</div>
+              <div class="stat-label">{stats_label_license}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="anth-section anth-section--subtle">
+        <div class="anth-container anth-container--wide">
+          <div style="text-align:center; max-width:820px; margin:0 auto;">
+            <p class="anth-caption" style="letter-spacing:0.08em; text-transform:uppercase; font-family:var(--font-heading); font-weight:600;">{"Jump to category" if is_en else "快速跳转"}</p>
+            <div style="margin-top:var(--space-4); display:flex; flex-wrap:wrap; justify-content:center; gap:var(--space-2);">
+              {toc_items}
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="anth-section">
         <div class="anth-container anth-container--wide">
-          <div class="article-body" style="background:#ffffff; padding:var(--space-6); border-radius:var(--radius-lg); box-shadow: var(--shadow-card);">
-            <table>
-              <thead>
-                <tr><th>{th_domain}</th><th>{th_picks}</th><th>{th_why}</th></tr>
-              </thead>
-              <tbody>
-                {rows}
-              </tbody>
-            </table>
-          </div>
+          <article class="article-body" style="background:#ffffff; padding:var(--space-7) var(--space-7); border-radius:var(--radius-lg); box-shadow: var(--shadow-card);">
+{rendered}
+          </article>
         </div>
       </section>
 """
