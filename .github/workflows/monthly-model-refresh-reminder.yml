@@ -1,0 +1,92 @@
+name: Monthly model directory refresh reminder
+
+# Opens an issue on the 1st of every month reminding maintainers to re-verify
+# open-source-models/README.md. Model leaderboards move weekly, so a stale
+# directory loses trust fast.
+#
+# Also supports manual trigger via workflow_dispatch for ad-hoc refreshes.
+
+on:
+  schedule:
+    # 01:00 UTC on the 1st of each month = 09:00 Beijing time
+    - cron: '0 1 1 * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  open-reminder-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create refresh-reminder issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const now = new Date();
+            const yyyy = now.getUTCFullYear();
+            const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+            const title = `🔄 Refresh open-source model directory — ${yyyy}-${mm}`;
+
+            const body = [
+              `The open-source model landscape (LLMs, VLMs, TTS, video, embeddings, ASR) moves weekly.`,
+              `This is the scheduled monthly prompt to re-verify \`open-source-models/README.md\`.`,
+              ``,
+              `## How to refresh`,
+              ``,
+              `Open the repo in Claude Code and say something like:`,
+              ``,
+              `> 再跑一次开源模型的实时搜索更新 (re-run the open-source model refresh)`,
+              ``,
+              `Claude will:`,
+              `1. Run WebSearch across all 12 categories for the latest state.`,
+              `2. Diff against the current \`open-source-models/README.md\`.`,
+              `3. Rewrite model entries, update the \`Last verified\` date, and append a Changelog row.`,
+              `4. Run \`python3 docs/scripts/build.py\` to regenerate the site.`,
+              `5. Run \`anthropic-design/scripts/verify.py\` to confirm no structural regressions.`,
+              `6. Commit & push.`,
+              ``,
+              `## Category checklist`,
+              ``,
+              `Verify at least these landed correctly:`,
+              ``,
+              `- [ ] Frontier reasoning (GLM / DeepSeek / Qwen / Llama / MiniMax flagships)`,
+              `- [ ] Coding (SWE-bench Verified leaderboard)`,
+              `- [ ] Math (AIME / HMMT 2026 leaderboards)`,
+              `- [ ] Multimodal VLMs (MMMU, long-ctx VLMs)`,
+              `- [ ] Long context (≥1M tokens)`,
+              `- [ ] Agent / tool use`,
+              `- [ ] Edge & mobile (≤7B)`,
+              `- [ ] Embedding & retrieval (MTEB)`,
+              `- [ ] Speech-to-text (HF Open ASR Leaderboard)`,
+              `- [ ] Text-to-speech (Seed-TTS Eval)`,
+              `- [ ] Image generation`,
+              `- [ ] Video generation`,
+              ``,
+              `## Primary sources to re-check`,
+              ``,
+              `- [BenchLM.ai open-weight leaderboard](https://benchlm.ai/blog/posts/best-open-source-llm)`,
+              `- [Onyx open-source LLM leaderboard](https://onyx.app/open-llm-leaderboard)`,
+              `- [HF Open ASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard)`,
+              `- [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)`,
+              `- [SWE-rebench](https://swe-rebench.com)`,
+              `- [Artificial Analysis](https://artificialanalysis.ai/)`,
+              ``,
+              `## Signals that require an ad-hoc refresh (don't wait for next month)`,
+              ``,
+              `- Major flagship release (GLM-X, DeepSeek-VX, Qwen-X, Kimi K3, Llama 5, etc.)`,
+              `- SWE-bench Verified top-3 changes`,
+              `- New open-source category crossing a frontier-proprietary threshold`,
+              ``,
+              `Close this issue after the refresh PR merges.`,
+            ].join('\n');
+
+            const { data: issue } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+            });
+
+            core.info(`Opened reminder issue #${issue.number}: ${issue.html_url}`);
