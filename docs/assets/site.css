@@ -528,20 +528,43 @@
   position: absolute;
   top: 100%;
   left: 0;
-  margin-top: 6px;
   background: #ffffff;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-pop);
   padding: var(--space-3);
   min-width: 320px;
-  display: none;
   z-index: 100;
   border: 1px solid var(--anth-light-gray);
+  /* show/hide with opacity so we can transition + add a small close delay
+   * (rather than display:none which can't transition). */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 160ms var(--ease-anth),
+              transform 160ms var(--ease-anth),
+              visibility 160ms;
+  transition-delay: 150ms; /* small close delay — mouse can reach the panel */
+}
+
+/* Transparent bridge that fills the 8px visual gap between button and panel,
+ * so the mouse path "button → panel" stays inside .nav-dropdown's hover area. */
+.nav-dropdown-panel::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
 }
 
 .nav-dropdown:hover .nav-dropdown-panel,
 .nav-dropdown:focus-within .nav-dropdown-panel {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(6px); /* the 6px visible drop below the button */
+  transition-delay: 0ms;      /* open instantly */
 }
 
 .nav-dropdown-panel a {
