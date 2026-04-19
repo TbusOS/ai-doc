@@ -13,7 +13,7 @@ A curated, **living** guide to the best open-source models across capability dom
 
 <a name="english"></a>
 
-## 1. Frontier Reasoning / 前沿推理
+## 1. Frontier Reasoning / 前沿推理 {#1-frontier-reasoning}
 
 For agentic workflows, multi-step planning, and general-purpose high-quality reasoning.
 
@@ -30,7 +30,7 @@ For agentic workflows, multi-step planning, and general-purpose high-quality rea
 
 ---
 
-## 2. Coding / 代码
+## 2. Coding / 代码 {#2-coding}
 
 Bug fixing, feature implementation, SWE-bench. Ranked by SWE-bench Verified.
 
@@ -46,7 +46,7 @@ Bug fixing, feature implementation, SWE-bench. Ranked by SWE-bench Verified.
 
 ---
 
-## 3. Math & Reasoning / 数学与推理
+## 3. Math & Reasoning / 数学与推理 {#3-math-reasoning}
 
 Competition math (AIME, HMMT), chain-of-thought, self-correction.
 
@@ -63,7 +63,7 @@ Competition math (AIME, HMMT), chain-of-thought, self-correction.
 
 ---
 
-## 4. Multimodal / Vision / 多模态与视觉
+## 4. Multimodal / Vision / 多模态与视觉 {#4-multimodal-vision}
 
 Vision-language models (VLMs): image understanding, document / chart parsing, visual agents.
 
@@ -78,7 +78,7 @@ Vision-language models (VLMs): image understanding, document / chart parsing, vi
 
 ---
 
-## 5. Long Context / 长上下文
+## 5. Long Context / 长上下文 {#5-long-context}
 
 When you need to ingest full books, codebases, or document archives in one shot.
 
@@ -93,7 +93,7 @@ When you need to ingest full books, codebases, or document archives in one shot.
 
 ---
 
-## 6. Agent / Tool Use / Agent 与工具调用
+## 6. Agent / Tool Use / Agent 与工具调用 {#6-agent-tool-use}
 
 Optimized for function calling, multi-tool orchestration, browser use.
 
@@ -108,7 +108,7 @@ Optimized for function calling, multi-tool orchestration, browser use.
 
 ---
 
-## 7. Edge & Mobile (≤7B) / 边缘与移动端
+## 7. Edge & Mobile (≤7B) / 边缘与移动端 {#7-edge-mobile}
 
 Under 7B params, runs on phones / laptops / Jetson-class hardware.
 
@@ -124,7 +124,7 @@ Under 7B params, runs on phones / laptops / Jetson-class hardware.
 
 ---
 
-## 8. Embedding & Retrieval / 嵌入与检索
+## 8. Embedding & Retrieval / 嵌入与检索 {#8-embedding-retrieval}
 
 Semantic search, RAG retrieval. Ranked for production RAG.
 
@@ -140,7 +140,7 @@ Semantic search, RAG retrieval. Ranked for production RAG.
 
 ---
 
-## 9. Speech-to-Text (ASR) / 语音识别
+## 9. Speech-to-Text (ASR) / 语音识别 {#9-speech-to-text}
 
 Transcription, captioning, voice-interface STT.
 
@@ -155,7 +155,7 @@ Transcription, captioning, voice-interface STT.
 
 ---
 
-## 10. Text-to-Speech (TTS) & Voice Cloning / 语音合成与克隆
+## 10. Text-to-Speech (TTS) & Voice Cloning / 语音合成与克隆 {#10-text-to-speech}
 
 | Model | Provider | Params | License | Best For | Highlights |
 |-------|----------|--------|---------|----------|------------|
@@ -167,7 +167,7 @@ Transcription, captioning, voice-interface STT.
 
 ---
 
-## 11. Image Generation / 图像生成
+## 11. Image Generation / 图像生成 {#11-image-generation}
 
 | Model | Provider | License | Best For | Highlights |
 |-------|----------|---------|----------|------------|
@@ -179,7 +179,7 @@ Transcription, captioning, voice-interface STT.
 
 ---
 
-## 12. Video Generation / 视频生成
+## 12. Video Generation / 视频生成 {#12-video-generation}
 
 | Model | Provider | Params | License | Best For | Highlights |
 |-------|----------|--------|---------|----------|------------|

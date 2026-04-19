@@ -852,18 +852,29 @@ def render_open_source_models_page(lang: str) -> str:
     readme_raw = re.sub(r"^\[English\].*?\n", "", readme_raw, flags=re.MULTILINE)
     rendered = markdown.markdown(readme_raw, extensions=MD_EXTENSIONS, output_format="html5")
 
-    # Build a table-of-contents strip from the category list
-    cats = OPEN_SOURCE_MODELS["categories_en"] if is_en else OPEN_SOURCE_MODELS["categories_zh"]
-    # Match the auto-generated anchor format python-markdown produces
+    # Build a table-of-contents strip from the category list.
+    #
+    # Important: python-markdown's `toc` extension slugs headings by stripping
+    # non-ASCII — so `## 1. Frontier Reasoning / 前沿推理` becomes the anchor
+    # `#1-frontier-reasoning`. The visible label can be in either language but
+    # the href MUST always use the English slug to match those IDs.
+    cats_en = OPEN_SOURCE_MODELS["categories_en"]
+    cats_label = OPEN_SOURCE_MODELS["categories_en"] if is_en else OPEN_SOURCE_MODELS["categories_zh"]
+
     def slugify(s: str) -> str:
+        """Mirror python-markdown toc's ASCII-only slug:
+        lowercase, drop punctuation (&, /, ., etc), collapse whitespace+dashes."""
         s = s.lower()
-        s = re.sub(r"[^\w\s-]", "", s)
+        s = re.sub(r"[^\w\s-]", "", s, flags=re.ASCII)  # ASCII only, like python-markdown
         s = re.sub(r"[-\s]+", "-", s).strip("-")
         return s
 
     toc_items = "".join(
-        f'<a href="#{i+1}-{slugify(c).replace(" ", "-")}" class="anth-badge" style="background:#ffffff; color:var(--anth-text); border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">{html.escape(c)}</a>'
-        for i, c in enumerate(cats)
+        f'<a href="#{i+1}-{slugify(en)}" class="anth-badge" '
+        f'style="background:#ffffff; color:var(--anth-text); '
+        f'border:1px solid var(--anth-light-gray); margin:var(--space-1); font-weight:500;">'
+        f'{html.escape(label)}</a>'
+        for i, (en, label) in enumerate(zip(cats_en, cats_label))
     )
 
     stats_label_cats = "Categories" if is_en else "类别"

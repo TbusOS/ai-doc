@@ -2,6 +2,12 @@
  * Keep additions small — prefer anth-* classes for all visual grammar.
  */
 
+/* Smooth anchor scrolling + room under sticky nav so hashes land visibly */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
 /* Language picker buttons on landing */
 .lang-picker {
   display: flex;
