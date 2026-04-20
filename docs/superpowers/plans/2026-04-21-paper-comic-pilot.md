@@ -217,7 +217,7 @@ huggingface-cli login
 
 Expected: `Login successful`
 
-- [ ] **Step 3: 下载 FLUX.1-dev GGUF Q8_0**
+- [ ] **Step 3: 下载 FLUX.1-dev GGUF Q6_K**
 
 ```bash
 cd ~/ComfyUI/models/unet
@@ -225,7 +225,7 @@ huggingface-cli download city96/FLUX.1-dev-gguf flux1-dev-Q6_K.gguf --local-dir 
 ls -lh flux1-dev-Q6_K.gguf
 ```
 
-Expected: ~12 GB 文件存在。
+Expected: ~9.5 GB 文件存在。
 
 - [ ] **Step 4: 下载 T5-XXL FP8**
 
