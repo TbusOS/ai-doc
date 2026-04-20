@@ -9,12 +9,28 @@
 **Tech Stack:**
 - Python 3.12（via Homebrew，隔离于系统 Python 3.14）
 - ComfyUI（latest main）+ ComfyUI-Manager + ComfyUI-GGUF
-- FLUX.1-dev GGUF **Q6_K** · T5-XXL FP8 · CLIP-L · ae.safetensors
+- FLUX.1-dev GGUF **Q6_K**（24GB Mac）或 **Q8_0 / FP16**（64GB+ Mac）· T5-XXL FP8 · CLIP-L · ae.safetensors
 - Ink Wash Fusion LoRA（Civitai）
 - artokun/comfyui-mcp · Claude Code
 - HTML/CSS 纯静态（no build step），嵌入现有 GitHub Pages
 
 **Scope:** 仅 Pilot。大规模铺量 + Qwen-Image 集成 + FLUX.1 Kontext 角色一致性，另起 plan。
+
+---
+
+## 开工前提 · 硬件检查
+
+**当前机器（2026-04-21）**：MacBook Air M3 · 24GB · 勉强可跑 Q6_K，Qwen-Image/Kontext 不能并行。
+
+**等待中的机器**：64GB Mac。到货后：
+- FLUX 升级到 **Q8_0**（质量 +2%，RAM 余量充足）或 **FP16**（质量 +5%，RAM 也够）
+- 同时常驻 **Qwen-Image 2.0**（书法、印章、题画诗入画，不再靠 HTML/CSS 伪造）
+- 同时常驻 **FLUX.1 Kontext-dev**（跨论文角色一致性）
+- 生成速度 5-10 min/张 → 2-3 min/张
+
+**策略**：暂停执行本计划，等 64GB Mac 到货再开工。到时候 Task 4 下载 Q8_0 版本即可，其他步骤不变。
+
+---
 
 ---
 
