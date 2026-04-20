@@ -307,6 +307,15 @@ CATEGORIES: list[Category] = [
                 "\"独立评判\"思想在 RLHF、自博弈、2026 agent harness 里持续复活。",
             ),
             Paper(
+                "scaling-laws",
+                "training-techniques/scaling-laws.md",
+                "Scaling Laws for Neural Language Models",
+                "Kaplan et al. (OpenAI)",
+                "2020",
+                "Loss as a power law of params × data × compute — spans 7 orders of magnitude. Turned training budget from art into calculation. Enabled GPT-3/4 investment.",
+                "把 Loss 拆成参数×数据×算力三变量的幂律，跨 7 个数量级成立。让训练预算从艺术变成可计算问题，GPT-3/4 的投资决定都建立在它之上。",
+            ),
+            Paper(
                 "lora",
                 "training-techniques/lora.md",
                 "LoRA",
@@ -314,6 +323,15 @@ CATEGORIES: list[Category] = [
                 "2021",
                 "Low-rank adaptation — trains ~10,000× fewer parameters, no inference overhead, matches full fine-tune quality. The PEFT default.",
                 "低秩适配微调：可训练参数减少万倍、推理无额外开销、效果持平全量微调。PEFT 事实标准。",
+            ),
+            Paper(
+                "chinchilla",
+                "training-techniques/chinchilla.md",
+                "Chinchilla (Compute-Optimal LLMs)",
+                "Hoffmann et al. (DeepMind)",
+                "2022",
+                "Overturned Kaplan: params and tokens should scale equally (not params faster). Chinchilla 70B/1.4T beats Gopher 280B/300B at the same compute. Rule of thumb: tokens ≈ 20× params.",
+                "推翻 Kaplan：参数和数据应同比例扩展。Chinchilla 70B/1.4T 同算力打赢 Gopher 280B/300B。经验法则：tokens ≈ 参数量 × 20。",
             ),
             Paper(
                 "dpo",
@@ -337,12 +355,12 @@ CATEGORIES: list[Category] = [
     ),
     Category(
         key="ai-thinking",
-        en_title="AI Thinking",
-        zh_title="AI 思维范式",
-        en_tagline="Paradigm-defining essays that shape how engineers build AI",
-        zh_tagline="定义范式的短文——塑造工程师构建 AI 的思维方式",
-        en_desc="Short, dense essays from frontier practitioners that give you the mental models driving modern AI engineering decisions — from Sutton's scaling philosophy to Karpathy's Software 2.0.",
-        zh_desc="前沿实践者的简短、高密度 essay——提供理解现代 AI 工程决策的心智模型。从 Sutton 的 scaling 哲学到 Karpathy 的 Software 2.0。",
+        en_title="Thinking Patterns",
+        zh_title="思维范式",
+        en_tagline="Mental models frontier engineers use to make AI and systems decisions",
+        zh_tagline="前沿工程师做 AI 与系统决策时使用的思维工具",
+        en_desc="Short, dense essays and case studies from frontier practitioners — the mental models actively driving modern engineering decisions. AI-specific paradigms sit alongside general engineering philosophy that applies to AI work.",
+        zh_desc="前沿实践者的简短、高密度 essay 与案例研究——2026 年工程决策里仍被频繁引用的思维工具。AI 专属的范式与能直接应用于 AI 工程的通用工程哲学并列。",
         badge_class="badge-thinking",
         accent_color="#6b8e3c",
         papers=[
@@ -364,6 +382,15 @@ CATEGORIES: list[Category] = [
                 "2019",
                 "70 years of AI research in 800 words: general methods that leverage computation win. The North Star of modern AI engineering.",
                 "70 年 AI 研究浓缩成 800 字：能从算力扩展中获益的通用方法最终胜出。现代 AI 工程的北极星。",
+            ),
+            Paper(
+                "first-principles-engineering",
+                "ai-thinking/first-principles-engineering.md",
+                "First Principles in Engineering",
+                "Case study · Musk / Kaplan / Chinchilla",
+                "2024",
+                "First-principles thinking as a repeatable operation — not a mindset. Three cross-domain cases: SpaceX rocket economics (30× cost gap), Tesla cell-to-pack (55% cost cut), AI scaling laws (budget → calculable result).",
+                "把第一性原理做成可重复操作流程——不是态度。三个跨领域案例：SpaceX 火箭 30 倍成本差、Tesla 电池 55% 降本、AI Scaling Laws 把预算变成可计算问题。",
             ),
         ],
     ),
@@ -623,10 +650,10 @@ def render_topic_svg_for_home(is_en: bool) -> str:
     <text x="30" y="500" font-family="Poppins, sans-serif" font-size="10" font-weight="600"
           fill="{C_TEXT_SEC}" letter-spacing="2">{layer_labels[3]}</text>
 
-    <!-- L0: AI Thinking (single full-width block) -->
+    <!-- L0: Thinking Patterns (single full-width block) -->
     <rect x="180" y="100" width="720" height="60" rx="14" fill="{C_OLIVE}"/>
     <text x="540" y="130" text-anchor="middle" font-family="Poppins, sans-serif"
-          font-size="17" font-weight="600" fill="#ffffff">{t("AI Thinking", "AI 思维范式")}</text>
+          font-size="17" font-weight="600" fill="#ffffff">{t("Thinking Patterns", "思维范式")}</text>
     <text x="540" y="150" text-anchor="middle" font-family="Lora, serif"
           font-size="12" fill="#ffffff" opacity="0.9">
       {t("Sutton · Karpathy · the mental models", "Sutton · Karpathy · 工程师心智模型")}

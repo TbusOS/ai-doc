@@ -22,8 +22,8 @@
           <a href="../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
           <a href="../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
           <a href="../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">6 篇</span></span></a>
-          <a href="../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">4 篇</span></span></a>
-          <a href="../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">AI 思维范式</span><br><span class="sub">2 篇</span></span></a>
+          <a href="../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">6 篇</span></span></a>
+          <a href="../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">思维范式</span><br><span class="sub">3 篇</span></span></a>
           <a href="../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
             </div>
           </div>
@@ -58,12 +58,30 @@
               </div>
               <span class="paper-arrow">→</span>
             </a>
+<a class="paper-row" href="articles/scaling-laws.html">
+              <span class="paper-year">2020</span>
+              <div>
+                <div class="paper-meta">Kaplan et al. (OpenAI)</div>
+                <h3>Scaling Laws for Neural Language Models</h3>
+                <p>把 Loss 拆成参数×数据×算力三变量的幂律，跨 7 个数量级成立。让训练预算从艺术变成可计算问题，GPT-3/4 的投资决定都建立在它之上。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
 <a class="paper-row" href="articles/lora.html">
               <span class="paper-year">2021</span>
               <div>
                 <div class="paper-meta">Edward Hu et al. (Microsoft)</div>
                 <h3>LoRA</h3>
                 <p>低秩适配微调：可训练参数减少万倍、推理无额外开销、效果持平全量微调。PEFT 事实标准。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/chinchilla.html">
+              <span class="paper-year">2022</span>
+              <div>
+                <div class="paper-meta">Hoffmann et al. (DeepMind)</div>
+                <h3>Chinchilla (Compute-Optimal LLMs)</h3>
+                <p>推翻 Kaplan：参数和数据应同比例扩展。Chinchilla 70B/1.4T 同算力打赢 Gopher 280B/300B。经验法则：tokens ≈ 参数量 × 20。</p>
               </div>
               <span class="paper-arrow">→</span>
             </a>

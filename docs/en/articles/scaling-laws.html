@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scaling Laws for Neural Language Models — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../en/">Home</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">6 papers</span></span></a>
+          <a href="../../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">6 papers</span></span></a>
+          <a href="../../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">Thinking Patterns</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../training-techniques.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Training Techniques</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-training">Training Techniques</span>
+            <span class="anth-caption">2020 · Kaplan et al. (OpenAI)</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="scaling-laws-for-neural-language-models">Scaling Laws for Neural Language Models</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2001.08361">arXiv:2001.08361</a></p>
+<p><strong>作者:</strong> Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, Dario Amodei（OpenAI）</p>
+<p><strong>发表:</strong> 2020-01-23</p>
+<p><strong>主题:</strong> 用<strong>第一性原理</strong>把 LLM 性能拆成三个可独立测量的变量——<strong>模型参数量 N、数据量 D、算力 C</strong>——并推出三条幂律,把"怎么花训练预算"从<strong>玄学变成可计算的问题</strong>。没有这篇就没有 GPT-3/4/5 的投入决定。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>2020 年前大模型训练的核心问题是<strong>黑箱决策</strong>:给你 1000 张 V100 和 1 个月,要不要堆参数?加数据?多训几个 epoch?全靠试错和直觉。</p>
+<p>Kaplan 这篇用<strong>纯经验主义第一性分析</strong>把性能预测变成了可计算问题:</p>
+<blockquote>
+<p><strong>Loss = f(N, D, C)</strong>——只取决于参数量、数据量、算力,和具体架构选择<strong>几乎无关</strong>。</p>
+</blockquote>
+<p>这是一个惊人且深远的结论:</p>
+<ul>
+<li>如果 loss 只和 N/D/C 有关,你就可以<strong>在小模型上跑实验,外推到大模型</strong></li>
+<li>你可以<strong>精确算出 1 亿美金预算该怎么分</strong>(多少给参数、多少给数据、多少给训练步数)</li>
+<li>你可以<strong>预先知道"下一代模型"的性能</strong>,不用等它训完</li>
+<li>OpenAI 的 GPT-3(2020 6 月)、GPT-4(2023)就是基于这套方法<strong>提前知道能 work</strong> 才决定投入的</li>
+</ul>
+<p><strong>这是深度学习从"手艺"过渡到"工程"的一个分水岭</strong>。没有 Scaling Laws,frontier lab 不敢做几亿美金级别的 bet。</p>
+<hr>
+<h2 id="1-the-three-power-laws">1. 三条核心幂律 / The Three Power Laws</h2>
+<p>Kaplan 的核心贡献是三条<strong>幂律关系(power laws)</strong>:</p>
+<h3 id="11-loss-vs-n">1.1 Loss vs 模型参数量 N</h3>
+<p>保持数据 D 和训练步数充足:</p>
+<p>$$
+L(N) = \left(\frac{N_c}{N}\right)^{\alpha_N}
+$$</p>
+<p>其中 N 是非嵌入参数量(non-embedding),α_N ≈ 0.076。</p>
+<p><strong>这意味着:</strong> 每把参数量放大 10 倍,loss 减少一个固定百分比(大约 17%)。这个规律<strong>跨越 7 个数量级</strong>成立——从 ~10^3 参数到 ~10^10 参数。</p>
+<h3 id="12-loss-vs-d">1.2 Loss vs 数据量 D</h3>
+<p>保持参数 N 足够大、训练充分:</p>
+<p>$$
+L(D) = \left(\frac{D_c}{D}\right)^{\alpha_D}
+$$</p>
+<p>α_D ≈ 0.095。同样的幂律,跨越 6 个数量级。</p>
+<h3 id="13-loss-vs-c">1.3 Loss vs 算力 C (最优分配)</h3>
+<p>在<strong>最优分配 N 和 D</strong> 的前提下:</p>
+<p>$$
+L(C) = \left(\frac{C_c}{C}\right)^{\alpha_C}
+$$</p>
+<p>α_C ≈ 0.050。</p>
+<p><strong>关键推论:</strong> 给你 10 倍算力,<strong>不是把算力全砸给 N、也不是全砸给 D</strong>——有一个<strong>最优配比</strong>让 loss 最低。</p>
+<hr>
+<h2 id="2-first-principles-analysis">2. 第一性原理的体现 / First-Principles Analysis</h2>
+<p>Kaplan 这篇<strong>之所以被视为"第一性原理驱动"的典范</strong>,是因为:</p>
+<h3 id="21">2.1 拆解到最基本的变量</h3>
+<p>他没有研究"某个特定架构怎么训"——而是<strong>把变量拆到最底层</strong>:</p>
+<ul>
+<li>N(模型参数量)—— 代表<strong>表达能力</strong></li>
+<li>D(训练数据量)—— 代表<strong>学习到的信息量</strong></li>
+<li>C(算力)—— 代表<strong>优化过程的深度</strong></li>
+</ul>
+<p>这三个是独立可测的物理量。所有其他因素(架构细节、超参、优化器、数据集构成)都是<strong>二阶效应</strong>。</p>
+<h3 id="22">2.2 架构无关性</h3>
+<p>论文惊人的一个发现:<strong>Transformer 架构里,宽度 vs 深度 vs 注意力头数的具体选择几乎不影响 loss</strong>——只要参数总量 N 一样。</p>
+<p>这极大地简化了训练决策——<strong>你不用在 50 种架构组合里 grid search,只用专注一个数:N</strong>。</p>
+<h3 id="23">2.3 用小模型预测大模型</h3>
+<p>三条幂律拟合后,你可以:</p>
+<ol>
+<li>用 0.1B 参数训练 + 测 loss</li>
+<li>用 1B 参数训练 + 测 loss</li>
+<li><strong>外推</strong>到 100B、1T 参数会什么 loss——<strong>精度在 1% 以内</strong></li>
+</ol>
+<p>这就是 OpenAI 能在 GPT-3(175B)训练前<strong>提前知道它会比 GPT-2 强多少</strong>的原因。</p>
+<h3 id="24-vs">2.4 数据量 vs 参数量的分配</h3>
+<p>论文给了具体公式:</p>
+<p>$$
+N_{\text{opt}} \propto C^{0.73}, \quad D_{\text{opt}} \propto C^{0.27}
+$$</p>
+<p><strong>解读:</strong> 算力增加 10 倍,最优参数量增加 ~5.4 倍、最优数据量增加 ~1.9 倍。</p>
+<p><strong>这是 GPT-3 175B + 300B tokens 配比的理论依据</strong>——比 GPT-2(1.5B)参数大 100 倍,数据只大 5 倍,完全符合 Kaplan 公式。</p>
+<hr>
+<h2 id="3-key-findings">3. 关键图表 / Key Findings</h2>
+<h3 id="1-7">图 1:三条幂律的跨 7 数量级对齐</h3>
+<p>Kaplan 原论文最著名的一张图是 <strong>N、D、C 各自的 loss 曲线在 log-log 坐标下完美呈直线</strong>——这就是"幂律"的视觉签名。</p>
+<p>三条线跨越 <strong>7 个数量级</strong>都保持线性(R² &gt; 0.99)——这种规律性在深度学习里<strong>极其罕见</strong>,过往大多数现象只在 2-3 个数量级内成立。</p>
+<h3 id="2-collapse">图 2:训练曲线的 collapse</h3>
+<p>不同大小模型的训练 loss 曲线,经过恰当归一化后<strong>坍缩成同一条曲线</strong>——证明这些是<strong>单一规律在不同参数下的显现</strong>,不是独立的现象。</p>
+<h3 id="3">图 3:最优预算分配</h3>
+<p>给定总算力 C,画出"应该训多大模型"的曲线——这张图是过去 5 年 OpenAI / DeepMind / Anthropic 决定训练规模的<strong>操作手册</strong>。</p>
+<hr>
+<h2 id="4-key-takeaways">4. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="41">4.1 训练预算不是"多多益善",是可计算的配比</h3>
+<p>有了 Scaling Laws,你面对一个训练任务应该这样想:</p>
+<ol>
+<li>估算你的总算力预算 C</li>
+<li>查 Kaplan 公式得出最优 N 和 D</li>
+<li>训练</li>
+</ol>
+<p><strong>不要</strong>凭直觉"加参数"或"加数据"。每一边都有<strong>最优点</strong>,过了就边际效益递减。</p>
+<h3 id="42">4.2 小模型实验 → 大模型决策</h3>
+<p>做任何训练决策(换优化器、换数据集、换架构)时,<strong>先在 100M 参数级别跑</strong>,测出 loss 曲线,然后用 Scaling Law 外推。外推精度通常 3-5% 以内。</p>
+<p><strong>这让"要不要花 100 万美金训这个"从赌博变成工程预算计算</strong>。</p>
+<h3 id="43">4.3 架构细节是二阶的</h3>
+<p>2020 年以后,做新架构如果 claim "比 Transformer 好",<strong>必须做 scaling law 对比</strong>——只证明"在 1B 参数下好"没用,要证明"随 N 增大,Loss 曲线比 Transformer 更陡(更快下降)"。</p>
+<p><strong>大多数号称"超越 Transformer"的新架构都在这一步现原形</strong>——它们在小规模上 work,在 10B+ 规模上 scaling exponent 还不如 Transformer。</p>
+<h3 id="44-loss">4.4 Loss 不是最终目标,但非常有用的代理</h3>
+<p>Kaplan 的 loss 预测不等于下游任务性能。GSM8K、MMLU、coding 这些具体能力和 loss 是<strong>强相关</strong>的,但不是<strong>确定性</strong>的。</p>
+<p>2024 年后的实践:<strong>用 Kaplan 预测训练 loss + 用小规模 eval 预测下游能力,两者结合做预算决策</strong>。</p>
+<h3 id="45-kaplan-chinchilla">4.5 Kaplan 的计算会被 Chinchilla 修正</h3>
+<p>2022 年 DeepMind 的 <a href="chinchilla.md">Chinchilla 论文</a> 指出 Kaplan 的数据配比<strong>低估了数据的重要性</strong>。2025 年的主流做法是 <strong>Chinchilla 配比,不是 Kaplan 配比</strong>。</p>
+<p>但 Kaplan 的<strong>方法论</strong>(用幂律拟合 + 外推)<strong>依然是正确的</strong>——只是系数被重新校准。<strong>读 Chinchilla 的前提是先读懂 Kaplan</strong>。</p>
+<hr>
+<h2 id="5-ai-how-this-changed-the-industry">5. 对 AI 行业的改变 / How This Changed the Industry</h2>
+<h3 id="2020-vs-2020">2020 前 vs 2020 后</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>2020 前</th>
+<th>2020 后</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>训练规模决策</td>
+<td>直觉 + 勉强够就行</td>
+<td><strong>Scaling Law 外推计算</strong></td>
+</tr>
+<tr>
+<td>新架构验证</td>
+<td>单点性能对比</td>
+<td><strong>Scaling exponent 对比</strong></td>
+</tr>
+<tr>
+<td>投资决定</td>
+<td>"感觉会 work"</td>
+<td><strong>预算 → 预期 loss → 预期能力</strong></td>
+</tr>
+<tr>
+<td>研究优先级</td>
+<td>架构创新</td>
+<td><strong>数据质量 + 算力效率</strong>(因为 scaling law 说 architecture 是二阶)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frontier-lab">对其他 frontier lab 的影响</h3>
+<ul>
+<li><strong>Anthropic</strong> 成立(2021)直接建立在 scaling laws 之上——Dario Amodei 是 Kaplan 论文作者之一</li>
+<li><strong>Chinchilla (2022)</strong> 直接回应并修正</li>
+<li><strong>Llama 系列</strong> 的 175B、70B、8B 配比都参考了这个框架</li>
+<li><strong>DeepSeek-V3</strong> 的 685B MoE + 37B 激活的 trade-off 也依据 scaling law 推演</li>
+</ul>
+<hr>
+<h2 id="6-relation-to-other-papers">6. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="chinchilla.md">Chinchilla</a></strong></td>
+<td><strong>直接后续</strong> — 修正 Kaplan 的数据配比,必读对照</td>
+</tr>
+<tr>
+<td><a href="../ai-thinking/bitter-lesson.md">Sutton — Bitter Lesson</a></td>
+<td>Sutton 说"scaling 胜出",Kaplan 说"<strong>该怎么 scale</strong>"——互补</td>
+</tr>
+<tr>
+<td><a href="../ai-thinking/software-2-0.md">Karpathy — Software 2.0</a></td>
+<td>Kaplan 告诉你 Software 2.0 的<strong>训练投资回报曲线</strong>长什么样</td>
+</tr>
+<tr>
+<td><a href="../ai-thinking/first-principles-engineering.md">First Principles in Engineering</a></td>
+<td>Scaling Laws 是 AI 工程里<strong>第一性原理</strong>最成功的案例</td>
+</tr>
+<tr>
+<td><a href="lora.md">LoRA</a></td>
+<td>LoRA 节约 finetuning 成本,但<strong>基础模型预训练仍由 Scaling Law 决定</strong></td>
+</tr>
+<tr>
+<td><a href="deepseek-r1.md">DeepSeek-R1</a></td>
+<td>R1 的训练配方也受 Kaplan-Chinchilla 曲线影响</td>
+</tr>
+<tr>
+<td><a href="../open-source-models/README.md">开源模型目录</a></td>
+<td>GLM-5、Qwen3.5、Llama 4 的参数/数据比都在 Kaplan-Chinchilla 框架内</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>改变了整个行业的投资决策方式</strong> — 从直觉到公式</li>
+<li><strong>是第一性原理分析的教科书案例</strong> — 拆到最基础变量,找出规律</li>
+<li><strong>可验证可外推</strong> — 跨 7 数量级成立</li>
+<li><strong>作者后续影响:</strong> Dario Amodei 创立 Anthropic、Kaplan 去 Anthropic,这套方法论内化为前沿 lab 的标准决策框架</li>
+<li><strong>直接可用</strong> — 任何做大模型训练的团队都能套这套方法算自己的预算</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>论文:</strong> <a href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models (arXiv:2001.08361)</a></li>
+<li><strong>作者:</strong></li>
+<li>Jared Kaplan — 现在 Anthropic 联合创始人</li>
+<li>Dario Amodei — Anthropic CEO</li>
+<li><strong>关键后续论文:</strong></li>
+<li><a href="https://arxiv.org/abs/2203.15556">Chinchilla — Training Compute-Optimal Large Language Models (Hoffmann et al. 2022)</a> —— 修正 Kaplan</li>
+<li><a href="https://arxiv.org/abs/2005.14165">GPT-3 paper (Brown et al. 2020)</a> —— 直接应用 Kaplan 结论的第一个 frontier 模型</li>
+<li><a href="https://arxiv.org/abs/2010.14701">Kaplan's follow-up: Scaling Laws for Autoregressive Generative Modeling (2020)</a></li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="chinchilla.md">Chinchilla</a> · <a href="lora.md">LoRA</a> · <a href="dpo.md">DPO</a> · <a href="deepseek-r1.md">DeepSeek-R1</a></li>
+<li><a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a> · <a href="../ai-thinking/first-principles-engineering.md">First Principles in Engineering</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="gan.html"><div class="nav-label">← Previous</div><div class="nav-title">Generative Adversarial Networks</div></a><a class="nav-right" href="lora.html"><div class="nav-label">Next →</div><div class="nav-title">LoRA</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

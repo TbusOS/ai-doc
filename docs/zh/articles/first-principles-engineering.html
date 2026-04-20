@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>First Principles in Engineering — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../zh/">首页</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">6 篇</span></span></a>
+          <a href="../../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">6 篇</span></span></a>
+          <a href="../../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">思维范式</span><br><span class="sub">3 篇</span></span></a>
+          <a href="../../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../ai-thinking.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 思维范式</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-thinking">思维范式</span>
+            <span class="anth-caption">2024 · Case study · Musk / Kaplan / Chinchilla</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="first-principles-in-engineering-a-case-study">First Principles in Engineering — A Case Study</h1>
+<blockquote>
+<p><strong>来源:</strong> 本文是基于多方公开资料的<strong>原创综合案例研究</strong>(case study),不是对单一论文的翻译。</p>
+<p><strong>主要参考:</strong>
+- Elon Musk 2013 TED Talk("The mind behind Tesla, SpaceX, SolarCity")
+- Musk 在 MIT 2014 年 AeroAstro 访谈
+- Sandy Munro 的 Tesla Model 3 / Model Y 拆解报告(Munro &amp; Associates)
+- SpaceX 公开火箭成本数据 + 行业对比
+- <a href="../training-techniques/scaling-laws.md">Kaplan Scaling Laws (2020)</a> 作为 AI 工程侧的第一性原理案例</p>
+<p><strong>主题:</strong> "第一性原理"作为一个思维模式,如何在三个完全不同的工程领域——<strong>火箭、电池、神经网络训练</strong>——驱动数量级的成本 / 性能跳变。这不是泛泛的哲学讨论,而是<strong>把抽象的思维工具绑定到可验证的工程决策</strong>。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-essay">为什么要写这篇 / Why This Essay</h2>
+<p>当工程师说"第一性原理思考",一般有两种语境:</p>
+<ul>
+<li><strong>含义 1(空洞):</strong> 等于"深入思考" / "抛开成见",一种漂亮的形容词</li>
+<li><strong>含义 2(可操作):</strong> <strong>从物理 / 数学 / 成本的最底层不可分割单元出发,重建整个推理链条</strong></li>
+</ul>
+<p>本文只讲含义 2。三个案例展示:<strong>第一性原理不是思维态度,是一种可传授、可验证、有方法论的工程操作</strong>。</p>
+<hr>
+<h2 id="1-the-definition">1. 定义 / The Definition</h2>
+<p><strong>Aristotle</strong> (公元前 4 世纪《Metaphysics》) 的原义:<strong>"第一性原理"是不能从其他命题推导出来的基础命题</strong>——思考的起点。</p>
+<p><strong>现代工程语境下的可操作定义(Musk 2013 TED 原话):</strong></p>
+<blockquote>
+<p><em>"I think it's important to reason from first principles rather than by analogy. The normal way we conduct our lives is we reason by analogy. With analogy, we are doing this because it's like something else that was done or it is like what other people are doing—with slight iterations on a theme. It's mentally easier to reason by analogy rather than from first principles. First principles is kind of a physics way of looking at the world. You boil things down to the most fundamental truths and then reason up from there."</em></p>
+<p><em>"我认为应该从第一性原理推理,而不是靠类比。我们正常过日子的方式是靠类比——"我们这么做,因为它像别人做过的事,或者别人正在这么做,只做微小改动"。按类比推理在心理上更省力。第一性原理是一种物理学看世界的方式——</em><em>你把事情归结到最基础的真相,然后从那里往上推</em><em>。"</em></p>
+</blockquote>
+<p><strong>操作拆解:</strong></p>
+<ol>
+<li><strong>识别"不可再分"的基本单元</strong> — 物理量、成本、物理约束</li>
+<li><strong>构建从基本单元 → 期望产出的推导链</strong></li>
+<li><strong>找出推导链中被"行业共识"省略或扭曲的步骤</strong></li>
+<li><strong>重新计算期望产出的理论下限 / 上限</strong></li>
+<li><strong>理论值 vs 现实值的差距 = 工程机会</strong></li>
+</ol>
+<hr>
+<h2 id="2-1spacex-spacex-rocket-economics">2. 案例 1:SpaceX 火箭成本 / SpaceX Rocket Economics</h2>
+<h3 id="21">2.1 类比推理会得出什么</h3>
+<p>2002 年 Musk 想发射卫星时面对的"行业共识":</p>
+<ul>
+<li>运载火箭单次发射 6000 万 - 1 亿美元</li>
+<li>全世界只有 NASA / Boeing / Lockheed / 俄罗斯航天能做</li>
+<li>"你要买火箭,排队 + 掏钱"</li>
+<li>类比推理:<strong>既然 60 年都是这个价,那就是这个价</strong></li>
+</ul>
+<h3 id="22">2.2 第一性原理推理</h3>
+<p>Musk 问的问题:<strong>火箭本身的物理原材料值多少钱?</strong></p>
+<p>拆解一颗运载火箭:</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>主要材料</th>
+<th>类比推理价格</th>
+<th>材料成本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>外壳</td>
+<td>铝合金</td>
+<td>-</td>
+<td>~$30,000 / 吨</td>
+</tr>
+<tr>
+<td>推进剂罐</td>
+<td>钛 / 复合材料</td>
+<td>-</td>
+<td>~$100,000 / 吨</td>
+</tr>
+<tr>
+<td>推进剂</td>
+<td>液氧 + 液态煤油(RP-1)</td>
+<td>-</td>
+<td><strong>&lt; $200,000 / 整颗火箭</strong></td>
+</tr>
+<tr>
+<td>发动机</td>
+<td>不锈钢 + 高温合金</td>
+<td>-</td>
+<td>主要是 machining 成本</td>
+</tr>
+<tr>
+<td>电子仪器</td>
+<td>消费级 chip(很多可用非航天级)</td>
+<td>-</td>
+<td>百万级</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Musk 团队算出的总原材料成本 ≈ 200 万美元 /颗</strong>。</p>
+<p><strong>对比现价:6000 万美元 / 颗。</strong></p>
+<p><strong>差距:30x。</strong> 这 30x 被什么吃掉了?</p>
+<ul>
+<li>航天承包商的成本加成</li>
+<li>极保守的工程选择(fair enough,成本敏感性)</li>
+<li>每次重新制造火箭(非重用)</li>
+<li>手工装配,低产量</li>
+<li>监管和文档繁琐</li>
+</ul>
+<p><strong>这 30x 就是工程机会。</strong></p>
+<h3 id="23">2.3 结果</h3>
+<p>SpaceX 2020 年代:</p>
+<ul>
+<li>Falcon 9 单次发射成本降到 <strong>~$2800 / kg</strong>(vs 旧 Atlas V 的 ~$13,000 / kg)</li>
+<li>火箭<strong>可重用</strong> —— 打破"每次重新造"的循环</li>
+<li>Falcon Heavy:$90M / 次发射(vs 同载重 Delta IV Heavy $350M+)</li>
+<li>Starship 目标:<strong>&lt; $100 / kg</strong></li>
+</ul>
+<p><strong>数量级的改进,不是百分比。</strong> 这就是第一性原理推理 vs 类比推理的区别——类比推理让你<strong>优化 10-20%</strong>,第一性原理让你<strong>重算根本可能性</strong>。</p>
+<hr>
+<h2 id="3-2tesla-cell-to-pack-tesla-battery">3. 案例 2:Tesla 电池 Cell-to-Pack / Tesla Battery</h2>
+<h3 id="31">3.1 类比推理</h3>
+<p>2020 年前电动车电池包结构的行业共识:</p>
+<pre><code>电池包 (Pack)
+  └── 模组 (Module) × N
+        └── 电芯 (Cell) × M
+</code></pre>
+<p><strong>三层嵌套</strong>——每个 Cell 装进 Module,多个 Module 装进 Pack。
+原因?车企习惯——<strong>类比笔记本电池包的结构</strong>。</p>
+<h3 id="32">3.2 第一性原理推理</h3>
+<p>Musk 团队(包括电池工程师)问:<strong>Module 这一层为什么存在?</strong></p>
+<p>答案:<strong>历史原因</strong>。早期电池需要独立热管理、换电池方便——所以独立封装成 Module。</p>
+<p><strong>但 Model 3 这种紧耦合电池包,真的需要 Module 吗?</strong></p>
+<p>拆解每个 Module 的成本:
+- 额外的外壳(钢 / 铝)
+- 额外的冷却管路
+- 额外的线束连接器
+- 额外的 BMS(电池管理系统)接口
+- 装配工时</p>
+<p><strong>这一层全是"冗余结构"</strong>——它的存在理由是便利性,不是电池化学或工程必需。</p>
+<h3 id="33-cell-to-pack">3.3 结果:Cell-to-Pack</h3>
+<p>Sandy Munro 的拆解分析 2022 年 Tesla Model Y Structural Battery Pack:</p>
+<ul>
+<li><strong>跳过 Module 层</strong> —— 电芯直接装进 Pack</li>
+<li>电池包作为<strong>车身结构件</strong>的一部分(bonded to the floor)</li>
+<li><strong>减少 370 个零件</strong></li>
+<li><strong>降低 55% 的成本 per kWh</strong>(Munro 估算)</li>
+<li><strong>能量密度提升 ~10%</strong>(空间省出来给更多电芯)</li>
+</ul>
+<p><strong>对比类比推理的"优化 Module":</strong> 过去 10 年所有其他车企都在<strong>"让 Module 更轻、更紧凑"</strong> —— Tesla 直接<strong>删掉了 Module</strong>。</p>
+<p>2024 年宁德时代、比亚迪、SK On 都在跟进 cell-to-pack / cell-to-body 架构——<strong>第一性原理的结论一旦被工程验证,所有其他玩家会跟进</strong>。</p>
+<hr>
+<h2 id="4-3ai-ai-training-budgets">4. 案例 3:AI 训练预算 / AI Training Budgets</h2>
+<h3 id="41">4.1 类比推理</h3>
+<p>2018-2019 年大模型训练决策:</p>
+<ul>
+<li>"GPT-2 用了 48 张 V100,我们用 100 张"</li>
+<li>"BERT 用了 320 GB 数据,我们用 640 GB"</li>
+<li><strong>基于别人的决定做微小加码</strong></li>
+</ul>
+<h3 id="42-kaplan-scaling-laws">4.2 第一性原理推理 = Kaplan Scaling Laws</h3>
+<p><a href="../training-techniques/scaling-laws.md">Jared Kaplan (2020)</a> 的工作就是把 AI 训练从类比推理变成第一性原理:</p>
+<ol>
+<li><strong>拆解到最底层不可再分变量:</strong>
+   - 模型参数量 N
+   - 数据量 D
+   - 算力 C</li>
+<li><strong>构建推导链:</strong> Loss = f(N, D, C)</li>
+<li><strong>实证拟合出幂律:</strong> 跨 7 数量级都是直线</li>
+<li><strong>得出可计算的最优分配公式:</strong> 给定 C,N 和 D 该是多少</li>
+</ol>
+<p><strong>这套方法第一次让 AI 训练的"要花多少钱、能得到什么"可被预先计算</strong>。GPT-3 175B 的 billion-dollar bet 就是基于这套预测做的。</p>
+<p><strong>类比推理得不到这个</strong> —— 没有前例可类比。</p>
+<h3 id="43">4.3 第一性原理会被下一轮第一性原理修正</h3>
+<p><a href="../training-techniques/chinchilla.md">Chinchilla (2022)</a> 用<strong>更严格的第一性原理实验设计</strong>(正确 tune 超参、多方法交叉)发现 Kaplan 错了——<strong>模型严重 undertrained</strong>,数据被低估。</p>
+<p><strong>这证明第一性原理不是一劳永逸的真理</strong>——是<strong>当前最好推理链</strong>。新数据进来,上一代"第一性原理"会被修正。</p>
+<p><strong>但方法论不变:拆到最底层 + 实证 + 外推</strong>。</p>
+<hr>
+<h2 id="5-common-structure">5. 三个案例的共同结构 / Common Structure</h2>
+<p>提取出 Musk / Kaplan / Chinchilla 的共同操作:</p>
+<pre><code>Step 1: 列出&quot;行业共识&quot; / &quot;类比推理&quot;给出的现状
+        (火箭 $60M · 电池包三层结构 · 训练按别人的规模)
+
+Step 2: 拆到物理 / 数学 / 算力上不可再分的单元
+        (材料成本 · Module 物理必要性 · N×D×C 三个独立变量)
+
+Step 3: 识别推导链中&quot;被类比省略的步骤&quot;
+        (制造 overhead · Module 历史惯性 · N/D 分配凭感觉)
+
+Step 4: 重算理论最优 / 下限
+        ($2M vs $60M · 无 Module · 最优 N/D 公式)
+
+Step 5: 理论 vs 现实的差距 → 工程机会
+        (30x · 55% 成本降 · 精确预算计算)
+</code></pre>
+<p><strong>这个 5 步流程是可重复的</strong>——不仅 Musk 可以用,任何工程师面对自己领域都可以用。</p>
+<hr>
+<h2 id="6-key-takeaways">6. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="61">6.1 第一性原理 ≠ 通过"深思熟虑"得到灵感</h3>
+<p>常见误解:"第一性原理就是多想想" —— <strong>错</strong>。</p>
+<p><strong>第一性原理是把问题拆到不可再分的物理 / 数学 / 成本单元,然后实打实计算</strong>。它是<strong>计算过程</strong>,不是<strong>沉思过程</strong>。</p>
+<p><strong>坏例子:</strong> "我们要从第一性原理重新设计整个产品" (说了等于没说)
+<strong>好例子:</strong> "<strong>每个 API 调用的物理成本是 $0.00012 的 GPU 时间 + $0.00003 的网络 + $0.00008 的内存</strong>。我们当前收费 $0.05——那 $0.0484 去哪了?" (可以开始推导)</p>
+<h3 id="62">6.2 每个领域都有"类比惯性" — 找到它</h3>
+<p>每个成熟行业都有一堆"因为一直这么做"的决定——它们都是<strong>第一性原理的机会矿</strong>。</p>
+<p>实操清单:</p>
+<ul>
+<li>列出你的系统里"因为 X 就是这么做"的决定</li>
+<li>对每一个问:<strong>如果我从零设计,会这么做吗?</strong></li>
+<li>如果答案是"不会",但团队说"这样做因为成熟",那是 hot zone</li>
+</ul>
+<h3 id="63">6.3 第一性原理推理需要"算"而不是"想"</h3>
+<p>Musk 团队不是<strong>想</strong>出火箭该 $2M——他们<strong>把原材料单价 × 重量算出来</strong>。
+Kaplan 不是<strong>想</strong>出 loss 能外推——他<strong>把 loss 和 N/D/C 拟合出来</strong>。</p>
+<p><strong>没有具体数字,第一性原理只是修辞</strong>。做决策前问自己:<strong>我的推导链上每一步有具体数字吗?</strong></p>
+<h3 id="64">6.4 第一性原理会让你看起来"天真",这是正常信号</h3>
+<p>当你从第一性原理推出的结论和行业共识<strong>差一个数量级</strong>,你会被告诉"你不懂这个行业"。</p>
+<p>Musk 被告诉过:"火箭不可能便宜"
+Kaplan / Chinchilla 这种"小实验外推大决策"2019 年被大多数 lab 看不起</p>
+<p><strong>"你不懂" = 这就是第一性原理在 work 的信号</strong>。如果你的结论和行业共识一致,你可能根本没用第一性原理——只是换了个漂亮措辞的类比推理。</p>
+<h3 id="65">6.5 第一性原理也会被下一轮第一性原理推翻</h3>
+<p>Chinchilla 推翻 Kaplan 是范例。</p>
+<p><strong>推论:</strong> 不要把<strong>当前</strong>的第一性原理分析神圣化。<strong>方法论</strong>永恒,<strong>结论</strong>可迭代。每 1-2 年重做你最关键的第一性原理分析。</p>
+<h3 id="66-ai-3">6.6 在 AI 工程里:当前最该做第一性原理分析的 3 个领域</h3>
+<p>基于 2026 年的状况,以下领域"类比惯性"最强,第一性原理机会最大:</p>
+<ol>
+<li><strong>Agent 架构</strong> — 行业在盲目抄 Anthropic 的 5 个 pattern,但每个具体任务的最优架构可能不同</li>
+<li><strong>Inference 成本</strong> — 大多数公司"按 token 定价",但每次调用的真实 GPU 成本结构(prefill vs decode、cache hit vs miss)可以精确算</li>
+<li><strong>Data quality</strong> — "数据越多越好" vs 实际"每条数据的边际 loss 降低"——大多数团队没算过</li>
+</ol>
+<hr>
+<h2 id="7-relation-to-other-papers">7. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="../training-techniques/scaling-laws.md">Kaplan Scaling Laws</a></strong></td>
+<td><strong>AI 工程里第一性原理的最成功案例</strong></td>
+</tr>
+<tr>
+<td><strong><a href="../training-techniques/chinchilla.md">Chinchilla</a></strong></td>
+<td>第一性原理被<strong>下一轮更严格的第一性原理</strong>推翻的范例</td>
+</tr>
+<tr>
+<td><a href="bitter-lesson.md">Bitter Lesson</a></td>
+<td>Sutton 的主张(scaling 胜出)是第一性原理得出的 —— "算力是不可再分的 resource,所以方法必须从算力扩展性出发"</td>
+</tr>
+<tr>
+<td><a href="software-2-0.md">Software 2.0</a></td>
+<td>Karpathy 从"代码的本质是什么"出发重新定义编程 —— 第一性原理重塑概念</td>
+</tr>
+<tr>
+<td><a href="../agent-patterns/anthropic-building-effective-agents.md">Building Effective Agents</a></td>
+<td>Anthropic 从"单 agent 的极限是什么"出发,构建 5 个 workflow pattern —— 第一性原理驱动的 agent 工程</td>
+</tr>
+<tr>
+<td><a href="../agent-patterns/harness-design-long-running-apps.md">Harness Design</a></td>
+<td>从"generator 不能评价自己"这个基础原理推出 harness 架构</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="8-how-to-apply-this">8. 怎么在自己的项目里实操 / How to Apply This</h2>
+<h3 id="_1">周例会问题清单(适合团队用)</h3>
+<p>每周问团队一次:</p>
+<ol>
+<li><strong>我们的产品 X 的根本物理 / 数学约束是什么?</strong> 我们离这个约束还有多远?</li>
+<li><strong>我们做 X 的方式,有多少是"行业惯例"?</strong> 如果从零再设计,会这么做吗?</li>
+<li><strong>我们的成本结构里,哪一项最大?</strong> 这一项的第一性原理下限是什么?我们离这个下限多远?</li>
+</ol>
+<h3 id="musk">一个具体模板(Musk 风格)</h3>
+<pre><code>领域: [例:我们的 API 定价]
+行业共识: [例:$0.05 / 1K tokens,因为其他 LLM 公司差不多这价格]
+
+拆解到不可再分单元:
+  - GPU 时间成本: ...
+  - 内存 (cache) 成本: ...
+  - 网络 I/O 成本: ...
+  - 人工运维分摊: ...
+
+理论下限: [例:$0.003 / 1K tokens]
+
+当前实际: $0.05
+差距: 16x
+
+这 16x 去哪了?
+  - [ ] 毛利
+  - [ ] 空闲 GPU 的 fixed cost
+  - [ ] 客户服务
+  - [ ] 研发分摊
+  - ...
+
+工程机会: [基于这个拆解,哪些项可以被优化?]
+</code></pre>
+<p>这个模板比"我们要第一性原理思考"有用<strong>一个数量级</strong>。</p>
+<hr>
+<h2 id="why-this-belongs-here">为什么收录进这个仓库 / Why This Belongs Here</h2>
+<ul>
+<li><strong>第一性原理是一个真实的工程工具</strong>,不是哲学空谈</li>
+<li><strong>但没有一篇公开论文系统讲它</strong> —— Musk 的访谈零散、Aristotle 的《Metaphysics》太古老</li>
+<li><strong>本文是一次把"第一性原理"落实到可验证工程决策上的尝试</strong>——对比三个完全不同领域的案例(火箭 / 电池 / AI 训练),提取共同结构</li>
+<li><strong>和本仓库其他两篇 AI thinking 形成组合:</strong> Bitter Lesson 给"scale 的哲学",Software 2.0 给"代码的重新定义",First Principles 给"如何推出那些范式"</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<h3 id="musk_1">Musk 公开资料</h3>
+<ul>
+<li><strong><a href="https://www.ted.com/talks/elon_musk_the_mind_behind_tesla_spacex_solarcity">TED 2013 Talk — The mind behind Tesla, SpaceX, SolarCity</a></strong> (定义第一性原理)</li>
+<li><strong><a href="https://www.youtube.com/watch?v=e9HbQVWvj6E">MIT AeroAstro Centennial Interview 2014</a></strong> (详细讲火箭成本推理)</li>
+<li><strong><a href="https://www.youtube.com/@joerogan">Joe Rogan Podcast 多次访谈</a></strong> (Starship 开发讨论)</li>
+</ul>
+<h3 id="teardown-reports">拆解分析 / Teardown Reports</h3>
+<ul>
+<li><strong><a href="https://www.leandesign.com/">Munro &amp; Associates — Tesla Model Y Teardown (2022)</a></strong> — Model Y structural battery pack 完整拆解</li>
+<li><strong><a href="https://www.youtube.com/@MunroLive">Sandy Munro YouTube</a></strong> — Tesla / Rivian / 各品牌电动车拆解系列</li>
+<li><strong><a href="https://www.ark-invest.com/">ARK Investment — Tesla Cost Analysis</a></strong> — Tesla 成本结构的外部分析</li>
+</ul>
+<h3 id="_2">火箭经济学</h3>
+<ul>
+<li><strong><a href="https://www.spacex.com/media/Capabilities&amp;Services.pdf">SpaceX 官方成本数据</a></strong></li>
+<li><strong><a href="https://www.nasa.gov/humans-in-space/commercial-space/commercial-resupply-services/">NASA — Commercial Resupply Contract 数据</a></strong></li>
+<li><strong><a href="https://link.springer.com/chapter/10.1007/978-3-030-79516-6_10">"The Role of SpaceX" (Sheehan, 2021)</a></strong> 学术分析</li>
+</ul>
+<h3 id="_3">哲学源头</h3>
+<ul>
+<li><strong>Aristotle — Metaphysics Book V</strong> (第一性原理的原初定义)</li>
+<li><strong>Duncan Watts — Everything Is Obvious</strong> (对"类比推理"的系统批评)</li>
+</ul>
+<h3 id="_4">本仓库相关</h3>
+<ul>
+<li><strong><a href="../training-techniques/scaling-laws.md">Kaplan Scaling Laws</a></strong> — AI 工程第一性原理的最成功案例</li>
+<li><strong><a href="../training-techniques/chinchilla.md">Chinchilla</a></strong> — 第一性原理的迭代修正</li>
+<li><strong><a href="bitter-lesson.md">Bitter Lesson</a></strong> · <strong><a href="software-2-0.md">Software 2.0</a></strong> — 本目录下其他范式文章</li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="bitter-lesson.html"><div class="nav-label">← 上一篇</div><div class="nav-title">The Bitter Lesson</div></a><span></span></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>
