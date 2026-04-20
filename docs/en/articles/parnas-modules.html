@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Decomposing Systems into Modules — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../en/">Home</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">Topics</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">Browse 6 research streams</p>
+          <a href="../../en/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">Inference Optimization</span><br><span class="sub">5 papers</span></span></a>
+          <a href="../../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
+          <a href="../../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">6 papers</span></span></a>
+          <a href="../../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">6 papers</span></span></a>
+          <a href="../../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">Thinking Patterns</span><br><span class="sub">8 papers</span></span></a>
+          <a href="../../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
+            </div>
+          </div>
+          <a href="../../en/open-source-models.html">Models</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="active">EN</a>
+          <a href="../../zh/" class="">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../ai-thinking.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← Back to Thinking Patterns</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-thinking">Thinking Patterns</span>
+            <span class="anth-caption">1972 · David L. Parnas</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="on-the-criteria-to-be-used-in-decomposing-systems-into-modules">On the Criteria to Be Used in Decomposing Systems into Modules</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://dl.acm.org/doi/10.1145/361598.361623">ACM Digital Library (paywalled)</a> · <a href="https://www.cs.umd.edu/class/spring2003/cmsc838p/Design/criteria.pdf">PDF (开放版本)</a></p>
+<p><strong>作者:</strong> David L. Parnas（卡内基梅隆大学,后任职于麦克马斯特大学）</p>
+<p><strong>发表:</strong> Communications of the ACM, Vol. 15, No. 12, December 1972</p>
+<p><strong>主题:</strong> <strong>"信息隐藏" (Information Hiding) 的原始论文。</strong> 过去 50 年每一次你决定"这个函数要不要暴露"、"两个模块的 contract 是什么"、"服务之间传什么"——都在用 Parnas 1972 年定下的框架。与其他只给"原则"的软件工程论文不同,Parnas 用<strong>同一个程序的两种分解</strong>做对比,实证证明了他的观点。</p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>在 Parnas 之前,软件设计有一条<strong>被当作常识的规则</strong>:</p>
+<blockquote>
+<p>"按程序执行的<strong>时间顺序/流程</strong>分解系统"——比如"先 parse 输入 → 然后 transform → 然后 output"。</p>
+</blockquote>
+<p>这被视为自然的,也是当时教科书的标准做法。</p>
+<p>Parnas 用一个 KWIC(key-word-in-context)索引程序做实验:</p>
+<ul>
+<li><strong>方法 1:</strong> 按传统(流程)分解成 5 个模块</li>
+<li><strong>方法 2:</strong> 按"<strong>每个模块隐藏一个设计决策</strong>"分解成 5 个模块</li>
+</ul>
+<p>然后提出一组 test:<strong>如果某个需求变了(输入格式、内存约束、字符集),哪种分解需要改动多少模块?</strong></p>
+<p>结果:</p>
+<table>
+<thead>
+<tr>
+<th>变更类型</th>
+<th>方法 1(流程分解)需要改的模块数</th>
+<th>方法 2(信息隐藏)需要改的模块数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入格式改变</td>
+<td>多个</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>内存约束改变</td>
+<td>多个</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>排序算法改变</td>
+<td>多个</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>字符集改变</td>
+<td>多个</td>
+<td><strong>1</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>这是第一次有人用</strong>经验证据<strong>证明"按信息隐藏分解"优于"按流程分解"。</strong> 这篇论文把模块化从<strong>艺术</strong>升级为<strong>工程</strong>。</p>
+<p>1972 年之后 50 多年,<strong>OOP 的封装、微服务的边界、REST API 的 contract、函数式语言的 module system、Rust 的 trait / impl、Haskell 的 typeclass</strong>——本质都是 Parnas 这个框架的再次演绎。</p>
+<hr>
+<h2 id="1-the-core-thesis">1. 核心命题 / The Core Thesis</h2>
+<blockquote>
+<p><strong>"Every module in the 'information hiding' decomposition hides a single design decision from the rest of the system."</strong></p>
+<p><strong>"信息隐藏分解中的每个模块都隐藏一个</strong>设计决策<strong>,不让系统的其他部分看到。"</strong></p>
+</blockquote>
+<p><strong>拆解三个关键点:</strong></p>
+<h3 id="11">1.1 "设计决策"是模块的单位,不是"过程"</h3>
+<p>Parnas 改变了模块的<strong>目的论定义</strong>:</p>
+<ul>
+<li>❌ 旧观点:模块 = 执行某个<strong>过程</strong>的代码块</li>
+<li>✅ 新观点:模块 = 封装一个<strong>可能变化的设计决策</strong>的代码块</li>
+</ul>
+<p><strong>每个模块的存在理由 = 它保护的决策</strong>。如果这个决策不变,模块的<strong>接口</strong>不变。</p>
+<h3 id="12">1.2 模块的接口 ≠ 模块内部</h3>
+<p>Parnas 非常强调这个区分:</p>
+<ul>
+<li><strong>接口(Interface):</strong> 其他模块<strong>必须知道</strong>的部分(函数签名、返回类型、语义 contract)</li>
+<li><strong>内部(Internal):</strong> 其他模块<strong>不能知道</strong>的部分(数据结构选择、算法、中间状态)</li>
+</ul>
+<p><strong>"不能知道"比"不必知道"强得多。</strong> Parnas 说:<strong>让模块之间物理上看不到彼此的内部</strong>——这样才能强制信息隐藏。</p>
+<p>2026 年的现代实现:
+- Java/C# 的 <code>private</code> / <code>protected</code> / <code>public</code> 修饰符
+- Rust 的 <code>pub</code> 和 <code>pub(crate)</code>
+- TypeScript 的 <code>interface</code> 和内部 class
+- Python 的 <code>__name_mangling</code> (虽然弱)
+- 微服务架构的 "接口是 OpenAPI schema,内部实现隐藏在 container 内"</p>
+<h3 id="13">1.3 "可能变化"是模块划分的启发式</h3>
+<p>Parnas 的具体操作方法:</p>
+<ol>
+<li>列出系统中<strong>最可能变化的决策</strong>(数据格式、存储方式、算法、UI 风格、外部 API)</li>
+<li><strong>每一个可能变化的决策 → 一个模块</strong></li>
+<li>这个模块的接口应该<strong>对这个决策变化免疫</strong></li>
+</ol>
+<p><strong>这个启发式 50 年没有过时。</strong> 每次你做架构决策时都该问自己:<strong>"我们 1 年后最可能改什么?那就应该是一个模块的内部。"</strong></p>
+<hr>
+<h2 id="2-kwic-the-kwic-experiment">2. KWIC 实验的细节 / The KWIC Experiment</h2>
+<p>Parnas 用一个具体的程序作为对照实验——<strong>KWIC index</strong>(key-word-in-context 索引):</p>
+<h3 id="21">2.1 问题描述</h3>
+<p>输入:一系列"行"(每行是若干 word)
+输出:每一个 word 轮转作为第一个 word 的全部 rotation,按字母排序</p>
+<p>例如输入 <code>"The quick brown fox"</code>:
+- 输出所有 rotations:<code>"The quick brown fox" / "quick brown fox The" / "brown fox The quick" / "fox The quick brown"</code>
+- 排序后输出</p>
+<h3 id="22-1">2.2 方法 1:按流程分解</h3>
+<pre><code>Module 1: Input        — 读输入
+Module 2: Circular Shift — 生成所有 rotations
+Module 3: Alphabetize    — 排序
+Module 4: Output         — 输出结果
+Module 5: Master Control — 协调前 4 个
+</code></pre>
+<p><strong>这看起来"干净"、"对应流程"。</strong> 但 Parnas 指出它的<strong>致命缺陷</strong>:每个模块都<strong>共享相同的底层数据结构</strong>(一个装字符的数组)。</p>
+<p>结果:
+- 若数据结构改(换 linked list、换 rope 数据结构),<strong>所有模块都要改</strong>
+- 若输入格式改(加 header),<strong>多个模块都要动</strong>
+- 若内存约束改(不能一次全放内存),<strong>几乎全部重写</strong></p>
+<h3 id="23-2">2.3 方法 2:按信息隐藏分解</h3>
+<pre><code>Module 1: Line Storage     — 隐藏&quot;行怎么存&quot;的决策
+Module 2: Input            — 隐藏&quot;如何从外部读入&quot;的决策
+Module 3: Circular Shifter — 隐藏&quot;rotations 怎么表示&quot;的决策
+Module 4: Alphabetizer     — 隐藏&quot;排序怎么做&quot;的决策
+Module 5: Output           — 隐藏&quot;如何写出&quot;的决策
+Module 6: Master Control   — 协调
+</code></pre>
+<p>表面上看模块名差不多,但<strong>每个模块有不同的接口</strong>:</p>
+<ul>
+<li>Line Storage 不再暴露"字符数组"——只暴露 <code>getChar(line, word, char)</code>、<code>addLine()</code></li>
+<li>Circular Shifter 不再暴露它<strong>实际产生了所有 rotation</strong>——可能它按需计算每一个,也可能全部 precompute。调用方无法区分。</li>
+</ul>
+<p><strong>每个模块内部可以独立重写</strong>——只要接口不变。</p>
+<h3 id="24">2.4 实际效果:同一变更下两种分解的成本</h3>
+<p>Parnas 列出 6 种可能的系统变更,统计每种分解需要改多少模块:</p>
+<table>
+<thead>
+<tr>
+<th>变更</th>
+<th>方法 1 改动</th>
+<th>方法 2 改动</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>行以字符流 vs 字符数组存</td>
+<td>全部 5 个</td>
+<td><strong>1 个(Line Storage)</strong></td>
+</tr>
+<tr>
+<td>不一次性 rotate 全部,按需产生</td>
+<td>多个</td>
+<td><strong>1 个(Circular Shifter)</strong></td>
+</tr>
+<tr>
+<td>排序算法改</td>
+<td>1-2 个</td>
+<td><strong>1 个(Alphabetizer)</strong></td>
+</tr>
+<tr>
+<td>支持 Unicode</td>
+<td>全部</td>
+<td><strong>1 个(Line Storage)</strong></td>
+</tr>
+<tr>
+<td>不整体排序,先 partial</td>
+<td>多个</td>
+<td><strong>1 个(Alphabetizer)</strong></td>
+</tr>
+<tr>
+<td>输入加 header 信息</td>
+<td>多个</td>
+<td><strong>1 个(Input)</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>结论:信息隐藏分解的"变更局部性"比流程分解高一个数量级</strong>。</p>
+<hr>
+<h2 id="3-key-takeaways">3. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="31">3.1 每次写新模块前,问"我在隐藏什么决策?"</h3>
+<p>这是 Parnas 流程最重要的一条应用:</p>
+<p><strong>坏例子:</strong> 写一个 <code>DataLoader</code> 模块 — 因为"数据加载是一个步骤"
+<strong>好例子:</strong> 写一个 <code>DataLoader</code> 模块 — 因为它<strong>隐藏"数据从哪里来、什么格式、缓存多少"的决策</strong>。未来换数据源(本地 → S3 → Kafka)只改这里。</p>
+<p><strong>如果你写完一个模块说不出"我在隐藏什么决策",它可能不是一个好模块。</strong></p>
+<h3 id="32">3.2 接口的稳定性 &gt; 内部的清晰</h3>
+<p>Parnas 强调:<strong>模块的接口是一个 promise</strong>。改接口的成本是<strong>全部调用方</strong>;改内部的成本是<strong>自己</strong>。</p>
+<p>这解释了为什么:
+- 公共 API 应该<strong>尽量小</strong>(暴露得越多、未来改动成本越大)
+- <code>private</code> / <code>internal</code> 比 <code>public</code> 更自由
+- 版本控制语义(semver)里<strong>major version</strong> 对应接口破坏</p>
+<h3 id="33">3.3 不要暴露"实现的痕迹"</h3>
+<p>Parnas 警告:<strong>模块接口不应该泄漏内部数据结构</strong>。</p>
+<ul>
+<li>❌ <code>getUserList()</code> 返回一个 <code>ArrayList&lt;User&gt;</code> — 泄漏了"内部用 ArrayList"</li>
+<li>✅ <code>iterateUsers()</code> 返回 <code>Iterator&lt;User&gt;</code> — 调用方不知道底层是 Array / List / DB cursor</li>
+</ul>
+<p><strong>2026 实例:</strong> 这直接决定了 "REST vs GraphQL vs gRPC" 的选择—— GraphQL 的 schema 暴露了太多内部字段,切换存储会破坏客户端;REST 资源抽象得好,内部实现更可替换。</p>
+<h3 id="34">3.4 "变化"是核心启发式,不是技术细节</h3>
+<p>Parnas 的核心操作:<strong>先预测哪些决策会变化,再按变化点画模块边界</strong>。</p>
+<p><strong>对于任何新项目:</strong> 一开始花 30 分钟列出"未来 1 年最可能变化的 10 件事"——<strong>这 10 件事每一件都值得一个独立模块</strong>。</p>
+<p><strong>AI 工程中的应用(2026 年):</strong></p>
+<ul>
+<li>模型 provider(OpenAI → Anthropic → 自建)—— 应该是一个模块</li>
+<li>Prompt template —— 应该被一个 Prompt Manager 模块隐藏</li>
+<li>Retrieval backend (向量 DB → BM25 → hybrid)—— 一个 Retriever 模块</li>
+<li>Safety filter (规则 → LLM-as-judge)—— 一个独立 layer</li>
+<li>Logging / tracing sink(stdout → OpenTelemetry → CloudWatch)—— 一个模块</li>
+</ul>
+<p>每一项都在现实中被替换过。如果你没有信息隐藏,<strong>每次替换都是全局改动</strong>。</p>
+<h3 id="35-parnas">3.5 Parnas 的批评依然在被忽视</h3>
+<p>50 年后,2026 年仍有大量代码库是<strong>按流程分解的</strong>:</p>
+<ul>
+<li>"我们的架构是 input → processing → output,每层一个目录" ← 这是 Parnas 批评的 Method 1</li>
+<li>"这个服务按步骤 1/2/3 分 package" ← 同上</li>
+</ul>
+<p><strong>Parnas 正确的。</strong> 这些分解在变更到来时会痛。</p>
+<h3 id="36">3.6 信息隐藏 ≠ 访问控制关键字</h3>
+<p><strong>最后的关键区分:</strong> 把所有字段设成 <code>private</code>,不代表你做了信息隐藏。</p>
+<p>信息隐藏是<strong>语义</strong>的——<strong>调用方通过你的接口能推断出多少内部信息?</strong></p>
+<p><code>getArrayOfUsers()</code> 是 public 的(access control 到位),但它<strong>还是泄漏了内部</strong>——"数组"这个决策被暴露了。</p>
+<p><strong>Parnas 问的是:调用方通过接口,能做哪些关于内部的推断?</strong></p>
+<hr>
+<h2 id="4-relation-to-other-papers">4. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></td>
+<td>每个子 agent 都是 Parnas 意义上的"信息隐藏模块"——接口是 docstring,内部是 Python 实现,可独立重写</td>
+</tr>
+<tr>
+<td><a href="../agent-patterns/anthropic-building-effective-agents.md">Anthropic Building Effective Agents</a></td>
+<td>5 个 pattern 本质是"哪些决策该被模块隐藏"的答案(routing 模块隐藏路由决策、evaluator 模块隐藏打分决策...)</td>
+</tr>
+<tr>
+<td><a href="simple-made-easy.md">Hickey — Simple Made Easy</a></td>
+<td>Hickey 的 "complect vs compose" 是 Parnas 思想的现代续写——"简单 = 每个组件只关心一件事"</td>
+</tr>
+<tr>
+<td><a href="no-silver-bullet.md">Brooks — No Silver Bullet</a></td>
+<td>Brooks 说软件有不可消除的本质复杂性,Parnas 说<strong>复杂性可以被模块边界隔离</strong>——两者互补</td>
+</tr>
+<tr>
+<td><a href="hoare-emperors-old-clothes.md">Hoare — Emperor's Old Clothes</a></td>
+<td>Hoare 设计 ALGOL 时就用 Parnas 思想分离 value 和 reference,后来 null 的发明违反了信息隐藏,成了亿万美元错误</td>
+</tr>
+<tr>
+<td><a href="software-2-0.md">Software 2.0</a></td>
+<td>Karpathy 的 1.0/2.0 分层 = Parnas 级的模块分解——传统代码 vs 神经网络权重各隐藏不同的决策</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>1972 年写,2026 年仍是每天在用的思维工具</strong> — 比 React 老 41 年,依然管用</li>
+<li><strong>不是抽象理论,是可操作方法论</strong> — KWIC 对比实验让论点可验证</li>
+<li><strong>影响了所有现代编程语言的模块系统</strong> — OOP、Rust trait、Haskell typeclass、Go interface 都是 Parnas 思想的衍生</li>
+<li><strong>在 AI 工程里</strong>越来越<strong>重要</strong> — 2026 年 agent 系统比传统软件<strong>更需要</strong>信息隐藏(模型 provider 每月换、retrieval backend 每周迭代、prompt 每天改)</li>
+<li><strong>作者持续输出</strong> — Parnas 后续还写了《Software Aging》等经典,是软件工程的持续贡献者</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>论文:</strong></li>
+<li><a href="https://dl.acm.org/doi/10.1145/361598.361623">On the Criteria to Be Used in Decomposing Systems into Modules (ACM CACM, 1972)</a></li>
+<li><a href="https://www.cs.umd.edu/class/spring2003/cmsc838p/Design/criteria.pdf">PDF 开放版(UMD 托管)</a></li>
+<li><strong>作者:</strong> David L. Parnas</li>
+<li><a href="https://www.mcmaster.ca/">Parnas 个人档案(McMaster University)</a></li>
+<li>他 1985 年的《Why software is unreliable》也值得读</li>
+<li><strong>后续相关论文:</strong></li>
+<li>Parnas, "A Technique for Software Module Specification with Examples" (1972)</li>
+<li>Parnas, "Designing Software for Ease of Extension and Contraction" (1979)</li>
+<li><a href="https://dl.acm.org/doi/10.1145/942572.807045">Liskov, "Programming with Abstract Data Types" (1974)</a> — 继承 Parnas 思想,推出抽象数据类型概念(后来的 LSP)</li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="no-silver-bullet.md">Brooks — No Silver Bullet</a></li>
+<li><a href="hoare-emperors-old-clothes.md">Hoare — Emperor's Old Clothes</a></li>
+<li><a href="simple-made-easy.md">Hickey — Simple Made Easy</a></li>
+<li><a href="software-2-0.md">Software 2.0</a></li>
+<li><a href="../self-improving-agents/agent-factory.md">AgentFactory</a> · <a href="../agent-patterns/anthropic-building-effective-agents.md">Anthropic Building Effective Agents</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><span></span><a class="nav-right" href="hoare-emperors-old-clothes.html"><div class="nav-label">Next →</div><div class="nav-title">The Emperor&#x27;s Old Clothes</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>

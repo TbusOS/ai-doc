@@ -23,7 +23,7 @@
           <a href="../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
           <a href="../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">6 篇</span></span></a>
           <a href="../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">6 篇</span></span></a>
-          <a href="../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">思维范式</span><br><span class="sub">3 篇</span></span></a>
+          <a href="../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">思维范式</span><br><span class="sub">8 篇</span></span></a>
           <a href="../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
             </div>
           </div>
@@ -49,7 +49,52 @@
       <section class="anth-section">
         <div class="anth-container anth-container--wide">
           <div class="paper-list">
-            <a class="paper-row" href="articles/software-2-0.html">
+            <a class="paper-row" href="articles/parnas-modules.html">
+              <span class="paper-year">1972</span>
+              <div>
+                <div class="paper-meta">David L. Parnas</div>
+                <h3>Decomposing Systems into Modules</h3>
+                <p>信息隐藏的原始论文。模块边界应该沿着「会变化的设计决策」切，而不是「执行流程」。OOP、Rust trait、Go interface、微服务——全部是这篇的后代。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/hoare-emperors-old-clothes.html">
+              <span class="paper-year">1980</span>
+              <div>
+                <div class="paper-meta">C.A.R. Hoare (Turing Award lecture)</div>
+                <h3>The Emperor&#x27;s Old Clothes</h3>
+                <p>Hoare 的 Turing 奖讲座。坦诚承认他 1965 年发明 null 是「亿万美元错误」，并提出「简单到显然没有缺陷，而不是复杂到没有显然的缺陷」——塑造了现代所有语言的 Option/Result 类型。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/no-silver-bullet.html">
+              <span class="paper-year">1986</span>
+              <div>
+                <div class="paper-meta">Fred Brooks</div>
+                <h3>No Silver Bullet</h3>
+                <p>Essence vs Accidental Complexity。「没有任何单一技术或管理方法能在 10 年内带来 10 倍产力提升」——40 年过去，LLM 编码产力数据（约 2 倍而非 10 倍）验证了这一论断。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/simple-made-easy.html">
+              <span class="paper-year">2011</span>
+              <div>
+                <div class="paper-meta">Rich Hickey (Clojure)</div>
+                <h3>Simple Made Easy</h3>
+                <p>Strange Loop 60 分钟演讲，给程序员奠定了一套词汇：simple vs easy、complect vs decomplect。15 年后仍是架构 review 讨论的默认框架。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/nn-manifolds-topology.html">
+              <span class="paper-year">2014</span>
+              <div>
+                <div class="paper-meta">Chris Olah</div>
+                <h3>Neural Networks, Manifolds, and Topology</h3>
+                <p>把神经网络重新解释为「流形的几何变形」的奠基博文。现代 LLM 可解释性使用的「embedding space / feature direction」词汇全部源于此，也是 Anthropic mechanistic interpretability 研究路线的种子。</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/software-2-0.html">
               <span class="paper-year">2017</span>
               <div>
                 <div class="paper-meta">Andrej Karpathy</div>

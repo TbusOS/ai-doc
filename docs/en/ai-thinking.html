@@ -23,7 +23,7 @@
           <a href="../en/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">Self-Improving Agents</span><br><span class="sub">10 papers</span></span></a>
           <a href="../en/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent Patterns</span><br><span class="sub">6 papers</span></span></a>
           <a href="../en/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">Training Techniques</span><br><span class="sub">6 papers</span></span></a>
-          <a href="../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">Thinking Patterns</span><br><span class="sub">3 papers</span></span></a>
+          <a href="../en/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">Thinking Patterns</span><br><span class="sub">8 papers</span></span></a>
           <a href="../en/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">Memory Systems</span><br><span class="sub">5 papers</span></span></a>
             </div>
           </div>
@@ -49,7 +49,52 @@
       <section class="anth-section">
         <div class="anth-container anth-container--wide">
           <div class="paper-list">
-            <a class="paper-row" href="articles/software-2-0.html">
+            <a class="paper-row" href="articles/parnas-modules.html">
+              <span class="paper-year">1972</span>
+              <div>
+                <div class="paper-meta">David L. Parnas</div>
+                <h3>Decomposing Systems into Modules</h3>
+                <p>The original information-hiding paper. Module boundaries should hide design decisions that might change — not mirror execution flow. Every modern module system (OOP, Rust traits, Go interfaces, microservices) descends from this.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/hoare-emperors-old-clothes.html">
+              <span class="paper-year">1980</span>
+              <div>
+                <div class="paper-meta">C.A.R. Hoare (Turing Award lecture)</div>
+                <h3>The Emperor&#x27;s Old Clothes</h3>
+                <p>Hoare&#x27;s Turing lecture. The &#x27;billion-dollar mistake&#x27; (inventing null reference) + &#x27;make it so simple there are obviously no deficiencies, not so complex there are no obvious deficiencies&#x27;. Shapes every modern language&#x27;s Option/Result types.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/no-silver-bullet.html">
+              <span class="paper-year">1986</span>
+              <div>
+                <div class="paper-meta">Fred Brooks</div>
+                <h3>No Silver Bullet</h3>
+                <p>Essence vs accidental complexity. &#x27;No single advance in technology or management will give a 10× improvement in a decade.&#x27; 40 years on, vindicated by LLM coding productivity data (~2× not 10×).</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/simple-made-easy.html">
+              <span class="paper-year">2011</span>
+              <div>
+                <div class="paper-meta">Rich Hickey (Clojure)</div>
+                <h3>Simple Made Easy</h3>
+                <p>The 60-min Strange Loop talk that gave engineers a vocabulary — simple vs easy, complect vs decomplect. 15 years later, still the default framework for architecture review arguments.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/nn-manifolds-topology.html">
+              <span class="paper-year">2014</span>
+              <div>
+                <div class="paper-meta">Chris Olah</div>
+                <h3>Neural Networks, Manifolds, and Topology</h3>
+                <p>The blog post that framed neural networks as geometric deformation of manifolds. Foundation of the &#x27;embedding space / feature direction&#x27; vocabulary used in all modern LLM interpretability — and seed of Anthropic&#x27;s mechanistic interpretability program.</p>
+              </div>
+              <span class="paper-arrow">→</span>
+            </a>
+<a class="paper-row" href="articles/software-2-0.html">
               <span class="paper-year">2017</span>
               <div>
                 <div class="paper-meta">Andrej Karpathy</div>

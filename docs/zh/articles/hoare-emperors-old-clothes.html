@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Emperor&#x27;s Old Clothes — AI Doc</title>
+    <link rel="stylesheet" href="../../assets/fonts.css">
+    <link rel="stylesheet" href="../../assets/anthropic.css">
+    <link rel="stylesheet" href="../../assets/site.css">
+    
+  </head>
+  <body>
+        <header class="anth-nav">
+      <div class="anth-nav-inner">
+        <a href="../../" class="site-brand" aria-label="AI Doc">AI Doc</a>
+        <nav aria-label="Primary" style="display:flex; align-items:center; gap: var(--space-6);">
+          <a href="../../zh/">首页</a>
+          <div class="nav-dropdown">
+            <button type="button" aria-haspopup="true">主题</button>
+            <div class="nav-dropdown-panel" role="menu">
+              <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
+          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
+          <a href="../../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">6 篇</span></span></a>
+          <a href="../../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">6 篇</span></span></a>
+          <a href="../../zh/ai-thinking.html"><span class="dot" style="background:#6b8e3c;"></span><span><span class="label">思维范式</span><br><span class="sub">8 篇</span></span></a>
+          <a href="../../zh/memory-systems.html"><span class="dot" style="background:var(--anth-text);"></span><span><span class="label">记忆系统</span><br><span class="sub">5 篇</span></span></a>
+            </div>
+          </div>
+          <a href="../../zh/open-source-models.html">开源模型</a>
+        </nav>
+        <div class="lang-toggle">
+          <a href="../../en/" class="">EN</a>
+          <a href="../../zh/" class="active">中文</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="anth-section">
+        <div class="anth-container anth-container--narrow">
+          <div class="article-meta-header">
+            <a href="../ai-thinking.html" class="anth-link anth-link--no-arrow" style="font-size:13px;">← 返回 思维范式</a>
+          </div>
+
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center; margin-bottom:var(--space-5);">
+            <span class="anth-badge badge-thinking">思维范式</span>
+            <span class="anth-caption">1980 · C.A.R. Hoare (Turing Award lecture)</span>
+          </div>
+
+          <article class="article-body">
+<h1 id="the-emperors-old-clothes">The Emperor's Old Clothes</h1>
+<blockquote>
+<p><strong>原文链接:</strong> <a href="https://dl.acm.org/doi/10.1145/358549.358561">ACM CACM 1981 PDF</a> · <a href="https://www.cs.fsu.edu/~engelen/courses/COP4610/hoare.pdf">Full text mirror</a></p>
+<p><strong>作者:</strong> C.A.R. (Tony) Hoare</p>
+<p><strong>发表:</strong> 1980 ACM Turing Award Lecture(1981 年在 CACM 发表书面版)</p>
+<p><strong>主题:</strong> 历史上最坦诚、最具教育意义的 Turing 奖获奖讲座之一。Hoare 回顾他设计 ALGOL 60、Quicksort、CSP 的经历——包括他<strong>发明 null reference 这件"亿万美元错误"</strong>,并提出了影响后世几代语言设计的品质标准:<strong>"任何新设计必须证明它的简洁性,否则就是借口。"</strong></p>
+</blockquote>
+<hr>
+<h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
+<p>一般 Turing 奖讲座是"讲讲我做过哪些伟大的事"。Hoare 1980 年的获奖讲座<strong>反其道而行</strong>——<strong>用一整篇讲自己的失败和教训</strong>。</p>
+<p>他自嘲式地承认:</p>
+<ol>
+<li><strong>他"发明" null reference(1965 年 ALGOL W)</strong> —— "我把它称为我的亿万美元错误(billion-dollar mistake)"</li>
+<li><strong>他参与的 ALGOL 68 变得过于复杂</strong> —— "这个语言被它自己的复杂性压垮了"</li>
+<li><strong>他开发的大型操作系统项目失败</strong> —— "皇帝的新衣" 隐喻就来自于此</li>
+</ol>
+<p>然后他提出后世语言设计的核心品质标准。这些标准后来被 <strong>Rust、Swift、Kotlin、TypeScript、Go</strong> 等现代语言奉为设计的北极星:<strong>每一个这些语言引入 <code>Option&lt;T&gt;</code> / <code>Maybe</code> / <code>?</code> 语法,都是对 Hoare 1980 演讲的回应</strong>。</p>
+<hr>
+<h2 id="1-the-emperors-new-clothes">1. 核心主题:设计的"皇帝新衣"现象 / The Emperor's New Clothes</h2>
+<p>Hoare 借用安徒生童话:"皇帝穿着'只有聪明人能看到'的新衣,其实是裸体,但所有人都不敢说"——隐喻<strong>软件行业中</strong>:</p>
+<blockquote>
+<p><em>"Many of us have experienced the following. A project goes forward, and everyone praises its progress. The manager says it's on schedule. The tech leads say the design is elegant. The engineers say the code is clean. Nobody says 'the emperor is naked'. Only much later, when the project collapses, everyone admits the problems were visible all along."</em></p>
+<p><em>我们很多人都经历过这种情况。一个项目推进,所有人都在赞美进度。经理说按计划,技术负责人说设计优雅,工程师说代码干净。没有人说"皇帝是裸着的"。直到项目崩塌,大家才承认问题一直都在,只是没人说。</em></p>
+</blockquote>
+<p>他指出自己参与的一个 1960 年代的<strong>大型操作系统项目</strong>完全就是这个故事:</p>
+<ul>
+<li>项目被承诺是"革命性的"</li>
+<li>几百个工程师投入</li>
+<li>没人敢说核心架构有问题</li>
+<li>项目最终被取消,几百万美元损失</li>
+</ul>
+<p><strong>Hoare 的教训:</strong> 这不是因为参与者愚蠢——<strong>所有人都能看到问题</strong>。问题是文化:<strong>说真话被视为不合群,沉默被视为专业</strong>。</p>
+<hr>
+<h2 id="2-null-reference-the-billion-dollar-mistake">2. 亿万美元错误:Null Reference / The Billion-Dollar Mistake</h2>
+<p>这是演讲里最被引用、最广为人知的一段:</p>
+<h3 id="21">2.1 原文</h3>
+<blockquote>
+<p><em>"I call it my billion-dollar mistake. It was the invention of the null reference in 1965. At that time, I was designing the first comprehensive type system for references in an object oriented language (ALGOL W). My goal was to ensure that all use of references should be absolutely safe, with checking performed automatically by the compiler. But I couldn't resist the temptation to put in a null reference, simply because it was so easy to implement. </em><em>This has led to innumerable errors, vulnerabilities, and system crashes, which have probably caused a billion dollars of pain and damage in the last forty years.</em><em>"</em></p>
+</blockquote>
+<h3 id="22">2.2 翻译</h3>
+<blockquote>
+<p><em>我称它为我的"亿万美元错误"。那是 1965 年,我正在为一个面向对象语言(ALGOL W)设计第一套完整的引用类型系统。目标是让所有引用使用</em><em>绝对安全</em><em>,编译器自动检查。但我</em><em>没能抵挡把 null 加进去的诱惑</em><em>——只是因为它实现起来太简单了。</em><em>这导致了数不清的错误、漏洞、系统崩溃,过去 40 年大概造成了 10 亿美元的痛苦和损失。</em>**</p>
+</blockquote>
+<h3 id="23">2.3 为什么是错误</h3>
+<p>Hoare 解释 null 的核心问题:</p>
+<ul>
+<li>它让<strong>每个引用类型都隐含两种状态</strong>——"有值"和"是 null"</li>
+<li>但编译器<strong>没有强制检查</strong>调用方处理这两种情况</li>
+<li>每一次 <code>x.foo()</code> 调用都<strong>可能</strong>crash,而语言不告诉你</li>
+</ul>
+<p><strong>他 1965 年做的选择非常便利</strong>(实现简单、和汇编友好)——但<strong>把一个复杂性永久地烙进了计算</strong>。每个后来的语言都要面对这个问题。</p>
+<h3 id="24-hoare">2.4 现代语言如何回应 Hoare</h3>
+<p>2026 年的主流语言<strong>全部在修正 Hoare 这个错误</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>语言</th>
+<th>修正方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rust</strong></td>
+<td>没有 null。用 <code>Option&lt;T&gt;</code> enum,编译器强制你 <code>match</code> 或 <code>?</code></td>
+</tr>
+<tr>
+<td><strong>Swift</strong></td>
+<td>Optional Types <code>T?</code> + <code>if let</code> + force-unwrap <code>!</code> 需显式</td>
+</tr>
+<tr>
+<td><strong>Kotlin</strong></td>
+<td><code>T?</code> 可空类型 vs <code>T</code> 非空,编译器分辨</td>
+</tr>
+<tr>
+<td><strong>TypeScript</strong></td>
+<td><code>strictNullChecks</code> 模式,<code>T \| null</code> 必须明确</td>
+</tr>
+<tr>
+<td><strong>Scala</strong></td>
+<td><code>Option[T]</code> 作为标准</td>
+</tr>
+<tr>
+<td><strong>Haskell</strong></td>
+<td><code>Maybe a</code> 从诞生就是</td>
+</tr>
+<tr>
+<td><strong>Go</strong></td>
+<td>接口的 nil 有部分 null 问题 —— 但 pointer 必须显式标记</td>
+</tr>
+<tr>
+<td><strong>C# 8+</strong></td>
+<td>Nullable reference types (<code>T?</code>) 选项</td>
+</tr>
+<tr>
+<td><strong>Java</strong></td>
+<td><code>Optional&lt;T&gt;</code>(2014)—— 迟到但在修</td>
+</tr>
+</tbody>
+</table>
+<p><strong>只有 C 和老 Java 仍在受伤</strong>。每周全球所有软件里 NullPointerException / segfault 的损失,都是在还 Hoare 1965 那个"便利"的债。</p>
+<hr>
+<h2 id="3-principles-for-designers">3. 对设计者的训诫 / Principles for Designers</h2>
+<p>Hoare 在演讲后半部分提出一组设计标准,这些话后来被无数语言设计者当作指南:</p>
+<h3 id="31">3.1 简洁性是对设计者的要求,不是结果</h3>
+<blockquote>
+<p><em>"There are two ways of constructing a software design: One way is to make it so simple that there are obviously no deficiencies, and the other way is to make it so complicated that there are no obvious deficiencies. </em><em>The first method is far more difficult.</em><em>"</em></p>
+<p><em>构建软件设计有两种方式:一种是把它做得</em><em>简单到显然没有缺陷</em><em>,另一种是做得</em><em>复杂到没有显然的缺陷</em><em>。</em><em>第一种方式难得多。</em>**</p>
+</blockquote>
+<p><strong>这是 Hoare 最被引用的话之一。</strong> 过去 40 年每一个"简单比复杂难"的声称都在引用他。</p>
+<p><strong>翻译到工程实践:</strong> 如果你的设计"复杂到别人看不出问题",那是一种<strong>失败</strong>,不是深度。</p>
+<h3 id="32">3.2 拒绝特性堆砌</h3>
+<p>Hoare 严厉批评 ALGOL 68 的失败:</p>
+<ul>
+<li>委员会为了让所有成员都满意,<strong>每个人想加的特性都加了</strong></li>
+<li>结果语言变成一个<strong>没有审美一致性</strong>的怪物</li>
+<li>最终被 ALGOL 60 / Pascal / C 打败——它们都<strong>做了取舍</strong></li>
+</ul>
+<p><strong>教训:</strong> <strong>伟大的语言是减法的结果,不是加法</strong>。Pascal、C、Go、Lua 这些成功的语言都极度克制。</p>
+<h3 id="33">3.3 标准应该基于经验,不是委员会投票</h3>
+<p>Hoare 质疑"委员会设计"——每一次有争议,多数投票通过。结果是<strong>一个没有内在一致性</strong>的系统。</p>
+<p><strong>他主张:</strong> 先做<strong>实现+实测</strong>,再写标准。</p>
+<p><strong>这影响了后续:</strong>
+- Unix 文化(先做工具、再讨论)
+- Rust 的 RFC 过程(每一条都有 working implementation)
+- WebAssembly 的渐进规范</p>
+<hr>
+<h2 id="4-hoare-other-contributions">4. Hoare 的其他贡献(被这篇提及) / Other Contributions</h2>
+<p>这篇讲座<strong>顺带</strong>回顾了 Hoare 的其他几项工作——每一项都足够拿 Turing 奖:</p>
+<h3 id="41-quicksort1959">4.1 Quicksort(1959)</h3>
+<p>当时 20 多岁的 Hoare 发明的排序算法——至今<strong>几乎每个标准库的默认排序</strong>(或其变种 Timsort / Introsort)都基于它。</p>
+<p>Hoare 自嘲:<strong>"这是我唯一真正原创且持续使用的贡献"</strong>。</p>
+<h3 id="42-hoare-logic1969">4.2 Hoare Logic(1969)</h3>
+<p>为程序正确性提供<strong>形式化证明体系</strong>:</p>
+<p>$$
+{P} \; C \; {Q}
+$$</p>
+<p>P 是前置条件、C 是代码、Q 是后置条件。这是<strong>程序验证(program verification)</strong>的数学基础——今天 Rust borrow checker、TLA+、F*、Coq 等工具都是 Hoare Logic 的后代。</p>
+<h3 id="43-csp-communicating-sequential-processes1978">4.3 CSP — Communicating Sequential Processes(1978)</h3>
+<p>一种并发编程理论,直接影响了:
+- <strong>Go 的 channels 和 goroutines</strong>
+- Erlang 的 actor model 的部分思想
+- Rust 的 sync primitives</p>
+<p><strong>"Don't communicate by sharing memory; share memory by communicating"</strong> 这句 Go 语言著名格言直接来自 CSP。</p>
+<hr>
+<h2 id="5-key-takeaways">5. 工程师视角的关键启示 / Key Takeaways</h2>
+<h3 id="51">5.1 "简单到没有缺陷" &gt; "复杂到没有明显缺陷"</h3>
+<p>每次你做设计 review 时,问自己:<strong>我的方案是哪一种?</strong></p>
+<p><strong>信号:</strong> 如果你无法用一张纸把整个架构讲给新同事听清楚,那是"复杂到没有明显缺陷"。</p>
+<p><strong>实操:</strong> 设计完写<strong>一段 summary</strong>(不超过 5 句话)。如果写不出来,设计本身就有问题。</p>
+<h3 id="52-null">5.2 Null / 隐式状态 / 魔法值 是同类毒</h3>
+<p>Hoare 的 null 教训<strong>推广到</strong>所有"隐式状态":</p>
+<ul>
+<li><strong>空字符串 vs null vs undefined</strong> —— JavaScript 的三态地狱</li>
+<li><strong>magic numbers</strong> —— <code>-1</code> 表示"没找到"、<code>0</code> 表示"默认"</li>
+<li><strong>exception as control flow</strong> —— 把错误处理藏进 exception stack</li>
+</ul>
+<p><strong>2026 年的工程原则:</strong> <strong>一切"可能缺失"的值都应该用明确的类型标记</strong>。用 <code>Result&lt;T, E&gt;</code>、<code>Option&lt;T&gt;</code>、<code>Either&lt;L, R&gt;</code>,不要用 null / exception / sentinel。</p>
+<h3 id="53-review">5.3 在 review 中敢说"皇帝裸着"</h3>
+<p>Hoare 的"皇帝新衣"比喻在 2026 年仍然精确:</p>
+<ul>
+<li>"这个 agent 架构其实有 bug,只是演示的时候绕过了" → 敢说</li>
+<li>"这段代码我不理解为什么需要 3 层间接" → 敢问</li>
+<li>"这个 benchmark 数字看起来可疑" → 敢质疑</li>
+</ul>
+<p><strong>这不是消极或不合作——是专业</strong>。Hoare 说的是:<strong>项目崩塌的原因从来不是"没人发现问题",是"没人敢说"</strong>。</p>
+<h3 id="54">5.4 便利性的诱惑要抵抗</h3>
+<p>Hoare 说:<strong>"因为实现简单"从来不是决策的理由</strong>。Null 的实现简单,但代价是 40 年。</p>
+<p><strong>每次面对"这个能简化我一天工作但给未来埋坑"的选择,记住 null</strong>。</p>
+<p><strong>AI 工程中的对应物:</strong>
+- "先不做 eval,直接上线" → 坑
+- "先不版本化 prompt,快"→ 坑
+- "agent 直接访问生产数据库,不走 API"→ 坑</p>
+<p><strong>表面便利的决策,往往最贵</strong>。</p>
+<h3 id="55">5.5 减法比加法难,也比加法重要</h3>
+<p>Hickey、Sutton、Parnas、Hoare 的共同观点:<strong>伟大的设计是减法</strong>。</p>
+<p><strong>每次 review 设计时问:什么可以删?</strong> 不是"还能加什么",而是"还能删什么"。</p>
+<hr>
+<h2 id="6-relation-to-other-papers">6. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
+<table>
+<thead>
+<tr>
+<th>文章</th>
+<th>关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="parnas-modules.md">Parnas — Decomposing Modules</a></td>
+<td>Parnas 的信息隐藏 + Hoare 的类型安全 = 模块化的两条腿。Null 违反了"模块该返回什么"的 contract</td>
+</tr>
+<tr>
+<td><a href="simple-made-easy.md">Hickey — Simple Made Easy</a></td>
+<td>Hickey "simple" 的完整论证,精确延续 Hoare "make it so simple"</td>
+</tr>
+<tr>
+<td><a href="no-silver-bullet.md">Brooks — No Silver Bullet</a></td>
+<td>Brooks 的 "essential complexity" 的源头之一就是 Hoare 这里讲的"真实的复杂性是不可消除的,但 accidental 的可以消除"</td>
+</tr>
+<tr>
+<td><a href="first-principles-engineering.md">First Principles in Engineering</a></td>
+<td>Hoare 拒绝 null 时的推理本应是"从引用类型的 safety 第一性原则出发"—— 他没有,酿成错误</td>
+</tr>
+<tr>
+<td><a href="bitter-lesson.md">Bitter Lesson</a></td>
+<td>Hoare 对 ALGOL 68 的批评 = Sutton 对"内建人类知识"的批评的语言层翻版</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="tier-s-why-this-is-tier-s">为什么是 Tier-S / Why This Is Tier-S</h2>
+<ul>
+<li><strong>历史上最坦诚的 Turing 奖讲座</strong>——完整提供教训,不只是胜利</li>
+<li><strong>Null 教训影响了后 40 年所有主要语言的设计</strong></li>
+<li><strong>"Simple obviously vs no obvious defects" 这句话本身</strong>是一个工程文化的基准</li>
+<li><strong>Hoare 本人是多领域奠基人</strong>——Quicksort / Hoare Logic / CSP / ALGOL 60 贡献者</li>
+<li><strong>2026 年仍然精确</strong>——AI 工程里每次选 <code>null</code> 返回值、每次沉默的架构决策,都是这个 1980 年讲座的再演绎</li>
+</ul>
+<hr>
+<h2 id="references">References / 参考</h2>
+<ul>
+<li><strong>原讲座书面版:</strong></li>
+<li><a href="https://dl.acm.org/doi/10.1145/358549.358561">The Emperor's Old Clothes (ACM CACM, Feb 1981)</a></li>
+<li><a href="https://www.cs.fsu.edu/~engelen/courses/COP4610/hoare.pdf">PDF 全文(FSU mirror)</a></li>
+<li><strong>Hoare 其他关键工作:</strong></li>
+<li><a href="https://dl.acm.org/doi/10.1145/359576.359585">Communicating Sequential Processes (1978)</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/363235.363259">An Axiomatic Basis for Computer Programming (1969, Hoare Logic)</a></li>
+<li>Quicksort (1961, "Algorithm 64: Quicksort")</li>
+<li><strong>Null 错误后续分析:</strong></li>
+<li><a href="https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare/">Hoare 2009 年的公开讲话 "Null References: The Billion Dollar Mistake"</a></li>
+<li><strong>被本论文影响的现代语言:</strong></li>
+<li><a href="https://doc.rust-lang.org/std/option/">Rust — Option<T></a> · <a href="https://developer.apple.com/swift/">Swift — Optionals</a> · <a href="https://kotlinlang.org/docs/null-safety.html">Kotlin — Null Safety</a></li>
+<li><strong>本仓库相关:</strong></li>
+<li><a href="parnas-modules.md">Parnas — Decomposing Modules</a></li>
+<li><a href="no-silver-bullet.md">Brooks — No Silver Bullet</a></li>
+<li><a href="simple-made-easy.md">Hickey — Simple Made Easy</a></li>
+<li><a href="first-principles-engineering.md">First Principles in Engineering</a> · <a href="bitter-lesson.md">Bitter Lesson</a></li>
+</ul>
+          </article>
+
+          <div class="article-nav"><a href="parnas-modules.html"><div class="nav-label">← 上一篇</div><div class="nav-title">Decomposing Systems into Modules</div></a><a class="nav-right" href="no-silver-bullet.html"><div class="nav-label">下一篇 →</div><div class="nav-title">No Silver Bullet</div></a></div>
+        </div>
+      </section>
+
+    </main>
+        <footer class="anth-footer">
+      <div class="anth-footer-legal" style="justify-content:center; flex-wrap:wrap; gap:var(--space-4);">
+        <span class="site-footer-brand">AI Doc</span>
+        <span>MIT License · Anthropic design vocabulary</span>
+        <span><a href="../../" style="color:inherit; text-decoration:underline;">Switch language</a></span>
+      </div>
+    </footer>
+
+  </body>
+</html>
