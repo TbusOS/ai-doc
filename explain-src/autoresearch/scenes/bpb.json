@@ -1,0 +1,153 @@
+{
+  "id": "bpb",
+  "chapter": "what",
+  "widget": "bpb",
+  "title": "认识分数 val_bpb",
+  "lead": "一次实验好不好，主要看一个分数：val_bpb。拿一段模型训练时没见过的文字，让它逐个往下猜，算出平均每个字节要多少比特才能猜中。越低，说明它越会猜。",
+  "body": [
+    "公式只有三样东西：每个 token 猜错的程度加起来（橙色），这些 token 一共占多少字节（蓝色），再除以 ln2 把单位从 nats 换成比特（紫色）。左边的图和右边的公式同色对应，把鼠标放上去或者点一下，两边一起亮。",
+    "为什么按字节算、不按 token 算？字节数跟文字怎么切成 token 无关，换了切法，分数照样能公平比较。第三章会专门讲。",
+    "开头标记这类特殊 token 的字节数是 0，分子和分母都不算它。"
+  ],
+  "stage_label": "val_bpb 计算图：左边一句话切成 6 个 token，每个 token 上方一根猜错程度的柱子、下方按字节数排的小格；右边是三种颜色的公式",
+  "first_caption": "拿一段模型训练时没见过的文字（验证集），让它一个 token 一个 token 往下猜。",
+  "captions": {
+    "sentence": "拿一段模型训练时没见过的文字（验证集），让它一个 token 一个 token 往下猜。",
+    "loss": "每猜一个 token，记下它猜错的程度，叫交叉熵：猜中的把握越小，柱子越高。单位是 nats。",
+    "bytes": "再数这些 token 一共占多少字节：英文字母和空格各占 1 个字节，这句一共 {bytes} 个。",
+    "ln2": "交叉熵用自然对数算，单位是 nats。除以 ln2（约 0.693）就换成比特：每条虚线是 1 比特。",
+    "result": "合起来：平均每个字节要 {bpb} 比特才能猜中。越低，说明模型越会猜。",
+    "token": "「{tok}」：猜中的把握 {p}，交叉熵 = −ln {pp} ≈ {loss} nats，占 {bytes} 个字节。",
+    "term_loss": "分子：每个 token 的交叉熵加起来，{nats} nats。模型越会猜，它越小。",
+    "term_bytes": "字节数在分母里，总交叉熵除以它，就平均到了每个字节。这句一共 {bytes} 个字节，不管模型猜得好不好，它都不变。",
+    "term_ln2": "ln2 ≈ 0.693：1 比特等于 0.693 nats，除以它就把 nats 换成比特。"
+  },
+  "labels": {
+    "sentence": "模型没见过的一句话（示意）",
+    "bars": "猜错程度（nats）",
+    "bytes": "字节",
+    "bit": "{n} 比特",
+    "name": "val_bpb",
+    "num": "Σ 交叉熵（nats）",
+    "ln2": "ln2",
+    "den": "Σ 字节数",
+    "unit": "比特 / 字节",
+    "lower": "越低越好",
+    "plain": "平均每个字节 {bpb} 比特",
+    "hint": "点 token 或公式看对应关系"
+  },
+  "controls": [
+    {
+      "type": "slider",
+      "option": "skill",
+      "label": "让模型猜得更准",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "value": 0,
+      "unit": "档",
+      "tag": "示意",
+      "note": "往右拖：每个 token 猜中的把握都变大（假设的数字）。柱子变矮，字节数不变，val_bpb 跟着变小。"
+    }
+  ],
+  "transcript": [
+    "拿一段模型训练时没见过的文字（验证集），让它一个 token 一个 token 往下猜。这里用的句子 The model learns while you sleep 切成 6 个 token（示意）。",
+    "每猜一个 token，记下它猜错的程度，叫交叉熵：猜中的把握越小，柱子越高。单位是 nats。6 个 token 加起来约 18.24 nats。",
+    "点一个 token 看它的账，比如「model」：猜中的把握 1%，交叉熵 = −ln 0.01 ≈ 4.61 nats，占 6 个字节。",
+    "再数这些 token 一共占多少字节：英文字母和空格各占 1 个字节，这句一共 32 个。",
+    "交叉熵用自然对数算，单位是 nats。除以 ln2（约 0.693）就换成比特：每条虚线是 1 比特。",
+    "合起来：平均每个字节要 0.822 比特才能猜中。越低，说明模型越会猜。算式是 val_bpb = 18.24 ÷（0.693 × 32）≈ 0.822。",
+    "点公式里的分子：每个 token 的交叉熵加起来，18.24 nats。模型越会猜，它越小。",
+    "点公式里的字节数：字节数在分母里，总交叉熵除以它，就平均到了每个字节。这句一共 32 个字节，不管模型猜得好不好，它都不变。",
+    "点公式里的 ln2：ln2 ≈ 0.693：1 比特等于 0.693 nats，除以它就把 nats 换成比特。",
+    "往右拖「让模型猜得更准」：每个 token 猜中的把握变大，柱子变矮，字节数不变，val_bpb 变小；拖到最右约 0.329。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "分数叫 val_bpb（验证集上每字节的比特数），越低越好。",
+      "quote": "The metric is **val_bpb** (validation bits per byte) — lower is better",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "AI 的目标就是让 val_bpb 尽量低。",
+      "quote": "**The goal is simple: get the lowest val_bpb.**",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "所以说「主要」看它：显存是软约束，分数明显变好时可以多用一些，但不能暴涨；另外还有「简单优先」的规则，第三章会讲。",
+      "quote": "**VRAM** is a soft constraint. Some increase is acceptable for meaningful val_bpb gains, but it should not blow up dramatically.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "算法：把每个 token 的交叉熵（nats）加起来，把这些 token 的字节数加起来，再把 nats/字节换成比特/字节。",
+      "quote": "Sums per-token cross-entropy (in nats), sums target byte lengths, then converts nats/byte to bits/byte.",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "evaluate_bpb 的最后一行就是这个公式：总 nats ÷（ln2 × 总字节数）。",
+      "quote": "return total_nats / (math.log(2) * total_bytes)",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "特殊 token（字节数为 0）分子分母都不算。",
+      "quote": "Special tokens (byte length 0) are excluded from both sums.",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "每个 token 的字节数，是它按 UTF-8 编码后的长度：英文字母和空格各占 1 个字节，一个汉字占 3 个。",
+      "quote": "token_bytes_list.append(len(token_str.encode(\"utf-8\")))",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "评估用验证集（val）的数据。",
+      "quote": "val_loader = make_dataloader(tokenizer, batch_size, MAX_SEQ_LEN, \"val\")",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "训练时把验证集那份数据排除在外，所以模型没见过它。",
+      "quote": "parquet_paths = [p for p in parquet_paths if p != val_path]",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "这个打分函数是标准答案，AI 不能改。",
+      "quote": "Modify the evaluation harness. The `evaluate_bpb` function in `prepare.py` is the ground truth metric.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "按字节算，分数就跟词表大小无关，改了模型结构也能公平比较。",
+      "quote": "and vocab-size-independent so architectural changes are fairly compared.",
+      "source": "README.md"
+    },
+    {
+      "tag": "解读",
+      "text": "交叉熵 = −ln（模型给正确 token 的概率）：猜中的把握是 1%，交叉熵就是 −ln 0.01 ≈ 4.61 nats。",
+      "basis": "train.py 用 F.cross_entropy 算每个 token 的损失；对只有一个正确答案的情况，交叉熵就是正确答案概率的负自然对数。"
+    },
+    {
+      "tag": "解读",
+      "text": "1 比特 = ln2 ≈ 0.693 nats，所以除以 ln2 就把 nats 换成比特。",
+      "basis": "对数换底：ln x = ln2 × log₂x。prepare.py 最后一行除的正是 math.log(2)。"
+    },
+    {
+      "tag": "解读",
+      "text": "「平均每个字节要多少比特才能猜中」是大白话：交叉熵换成以 2 为底，就是平均每个字节还需要多少比特的信息才能确定下来。",
+      "basis": "bits per byte 的字面意思，加上 prepare.py 文档串里 nats/byte 到 bits/byte 的换算。"
+    },
+    {
+      "tag": "示意",
+      "text": "这句话的切法、每个 token 猜中的把握、滑块的效果，都是演示用的假设数字，不是真实分词器和模型的输出。计算方法跟 evaluate_bpb 一致。"
+    }
+  ],
+  "original_anchor": "4-the-metric"
+}
