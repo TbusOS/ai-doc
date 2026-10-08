@@ -12,6 +12,14 @@ set -u
 cd "$(dirname "$0")/.."
 
 LOG="${LOG:-$(mktemp -t aidoc-check.XXXXXX)}"
+# Use the pinned Python environment when it exists (tools/requirements.txt):
+# another markdown version renders the original pages differently.
+[ -x .venv/bin/python3 ] && export PATH="$PWD/.venv/bin:$PATH"
+if [ -z "${SKY_SKILLS:-}" ]; then
+  for d in "$HOME/linux-kernel/github/sky-skills" "$HOME/claude-tools/sky-skills"; do
+    [ -d "$d" ] && SKY_SKILLS="$d" && break
+  done
+fi
 SKY="${SKY_SKILLS:-$HOME/linux-kernel/github/sky-skills}"
 GATE="${TECH_WRITING_GATE:-$HOME/.claude/skills/tech-writing-gate/scripts}"
 export PLAYWRIGHT="${PLAYWRIGHT:-$SKY/node_modules/playwright/index.mjs}"
@@ -25,6 +33,7 @@ run() {  # run <name> <command...>
 skip() { printf '  SKIP  %s (%s)\n' "$1" "$2"; }
 
 echo "aidoc checks — log: $LOG"
+echo "  python: $(command -v python3) ($(python3 -c 'import sys; print(sys.version.split()[0])'))"
 
 if [ "${1:-}" != "--no-build" ]; then
   run "build: original pages"   python3 docs/scripts/build.py
@@ -39,7 +48,7 @@ else skip "browser tests" "no Playwright at \$PLAYWRIGHT"; fi
 
 for d in explain-src/*/; do
   run "sources: ${d%/}" python3 tools/check_sources.py "${d%/}"
-  run "punctuation: ${d%/}/zh.json" python3 tools/fix_cjk_punct.py --check "${d}zh.json"
+  run "punctuation: ${d%/}" python3 tools/fix_cjk_punct.py --check "${d}zh.json" "${d}"scenes/*.json
 done
 run "original article text unchanged" python3 tools/check_articles_unchanged.py check
 

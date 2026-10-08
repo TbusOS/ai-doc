@@ -1,0 +1,6 @@
+# Python packages for building the site and running the tools.
+# Pinned: another markdown version renders the original pages differently,
+# and check_articles_unchanged.py then reports changed article text.
+#   uv venv --python 3.14 .venv && uv pip install --python .venv/bin/python -r tools/requirements.txt
+markdown==3.10.2
+numpy==2.4.4

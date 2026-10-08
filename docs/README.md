@@ -70,7 +70,14 @@ The script:
 4. Writes category index pages, article pages, landing, and models directory
    pages for both languages.
 
-Requires once: `pip3 install markdown`.
+Requires once — a Python environment with the pinned packages (another
+markdown version renders the original pages differently):
+
+```bash
+uv venv --python 3.14 .venv
+uv pip install --python .venv/bin/python -r tools/requirements.txt
+source .venv/bin/activate    # tools/check_all.sh picks up .venv by itself
+```
 
 ## Quality gates
 
