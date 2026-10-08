@@ -234,7 +234,7 @@ pyproject.toml  — 依赖
 <p><strong>选一个无法被走捷径的指标。</strong> val_bpb 的 vocab-independence 把一整类"刷指标"的失败模式提前排除了。设计任何自主优化器时，第一问：<strong>这个指标能被 agent 用无聊的方式骗过吗？</strong></p>
 </li>
 <li>
-<p><strong>固定预算 &gt;&gt; 固定步数。</strong> 固定 5 分钟 wall clock 让跨架构/跨 batch size 的对比变得公平；固定 step 数会让"改成小模型跑更多步"看起来像进步。把时间当做一等公民。</p>
+<p><strong>固定预算 &gt;&gt; 固定步数。</strong> 固定 5 分钟 wall clock 让跨架构/跨 batch size 的对比变得公平（README 原话：无论 agent 改了模型大小、batch size 还是架构，实验都直接可比）。反过来想：如果固定 step 数，加大模型或 batch 会让每一步更贵——等于多花算力换分数，比较就不公平了，单次实验耗时也变得不可预测，"每小时 12 次"的节奏随之失效（这一层是本文的推断，README 没有直接这么说）。把时间当做一等公民。</p>
 </li>
 <li>
 <p><strong>把 context 预算也当资源管。</strong> <code>program.md</code> 明确要求 agent <strong>不要</strong> <code>tee</code>、只用 <code>grep</code> 提取结果、崩溃时只看 <code>tail -n 50</code>。这是在帮 agent 保护自己的上下文窗口——让它不至于在第 20 次实验后被日志淹没。<strong>Agent 的自主性和它的 context 经济学是耦合的</strong>。</p>
@@ -260,7 +260,7 @@ pyproject.toml  — 依赖
 <hr>
 <h2 id="12-closing-thought">12. 结语 / Closing Thought</h2>
 <p>autoresearch 的工程意义远大于它当下的实用价值。它是一个<strong>存在性证明</strong>：给 AI agent 一个真实但受控的研究环境，用 Markdown skill 塑造它的行为，用 git 追踪它的决策，用一个作弊不了的指标校准它的优化方向——它就能在人类睡觉的时间跑 100 次实验。这个模式可以从 "5 分钟 GPT 训练" 推广到任何有快速、明确、便宜的评估循环的领域：kernel 调优、数据清洗流水线、SQL 查询优化、合约测试集通过率——任何可以在 5-10 分钟内产出一个"好/坏"信号的问题。</p>
-<p><strong>autoresearch 的 10,205 代前身今天开始了。它只是一个 ~200 行的 <code>train.py</code> 加一个 ~100 行的 <code>program.md</code>。这个大小是特性，不是缺陷——它让你能真正看懂、改造、并相信它。</strong></p>
+<p><strong>Karpathy 虚构的那个"第 10,205 代"代码库，起点就是这个仓库。它只是一个 630 行的 <code>train.py</code> 加一个 114 行的 <code>program.md</code>（karpathy/autoresearch commit <code>e6d79c1</code>，<code>wc -l</code> 实数）。这个大小是特性，不是缺陷——它让你能真正看懂、改造、并相信它。</strong></p>
 <hr>
 <h2 id="references">References / 参考</h2>
 <ul>
