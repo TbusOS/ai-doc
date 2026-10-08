@@ -117,19 +117,12 @@ html:not(.js) .stage, html:not(.js) .stage-controls, html:not(.js) .ex-toggle { 
 
 .to-original { display: inline-flex; margin-top: 22px; font-family: var(--font-head); font-weight: 650; font-size: 0.95rem; }
 
-/* ---------- illustrations inside a stage: one drawing per theme ---------- */
+/* ---------- illustrations inside a stage (theme switching: .illo-light / .illo-dark in theme.css) ---------- */
 /* --illo-screen: the flat screen colour measured in the autoresearch intro drawings
    (light #feb359, dark #fda847), so text drawn on the screen has a known background */
 :root { --illo-screen: #feb359; }
-.stage-svg .illo-dark { display: none; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --illo-screen: #fda847; }
-  :root:not([data-theme="light"]) .stage-svg .illo-light { display: none; }
-  :root:not([data-theme="light"]) .stage-svg .illo-dark { display: inline; }
-}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --illo-screen: #fda847; } }
 :root[data-theme="dark"] { --illo-screen: #fda847; }
-:root[data-theme="dark"] .stage-svg .illo-light { display: none; }
-:root[data-theme="dark"] .stage-svg .illo-dark { display: inline; }
 
 /* ---------- capture mode (GIF / MP4 export) ---------- */
 body.capture { background: var(--card); }

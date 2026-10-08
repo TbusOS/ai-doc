@@ -2,9 +2,8 @@
   "slug": "autoresearch",
   "kicker": "图解 · 自我改进 Agent",
   "title": "睡一觉，AI 替你跑完约 100 次实验",
-  "lead": "Karpathy 把一个小型 GPT 训练程序交给 AI 助手：它自己改代码、自己训练 5 分钟、自己判断留不留，一整夜循环下去。这一页用 12 个场景讲清楚它每个设计为什么这样做。",
-  "reading_minutes": 9,
-  "sample_note": "样张：目前只完成了第三章的场景 4「实验循环」",
+  "lead": "Karpathy 把一个小型 GPT 训练程序交给 AI 助手：它自己改代码、自己训练 5 分钟、自己判断留不留，一整夜循环下去。这一页用 13 个动画场景讲清楚它每个设计为什么这样做，最后附 program.md 逐段批注和 3 道自测题。",
+  "reading_minutes": 15,
   "paper": {
     "title": "autoresearch",
     "author": "Andrej Karpathy",
