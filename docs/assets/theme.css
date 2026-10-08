@@ -27,6 +27,12 @@
   --info: #3a6db3;
   --info-ink: #2d5a97;
 
+  /* terminal cards in diagrams stay dark in both themes */
+  --term-bg: #1e1a15;
+  --term-ink: #f3ece0;
+  --term-ok: #6fd09d;
+  --term-err: #f59287;
+
   --t-inference: #4f86bd;
   --t-self: #d0663f;
   --t-agent: #6a8150;
@@ -67,6 +73,7 @@
     --accent-soft: rgba(240, 138, 71, 0.16);
     --info: #74a0e3;
     --info-ink: #93b6ec;
+    --term-bg: #0a0d13;
     --t-inference: #7fb0e4;
     --t-self: #ee8a62;
     --t-agent: #9cb57e;
@@ -98,6 +105,7 @@
   --accent-soft: rgba(240, 138, 71, 0.16);
   --info: #74a0e3;
   --info-ink: #93b6ec;
+  --term-bg: #0a0d13;
   --t-inference: #7fb0e4;
   --t-self: #ee8a62;
   --t-agent: #9cb57e;

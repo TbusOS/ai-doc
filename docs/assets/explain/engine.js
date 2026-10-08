@@ -47,6 +47,8 @@
       caption: function (text) { if (capEl && capEl.textContent !== text) capEl.textContent = text; }
     };
     var w = factory(svg, ctx);
+    var transcript = section.querySelector('.stage-transcript');
+    if (transcript) transcript.open = false;  // the animation is running; the text version stays one click away
     var s = { t: 0, playing: false, played: false, pausedByView: false, speedIdx: 0, last: 0 };
 
     var ui = {
@@ -97,7 +99,10 @@
     if (ui.play) ui.play.addEventListener('click', function () { s.playing ? pause() : play(); });
     if (ui.prev) ui.prev.addEventListener('click', function () { pause(); seek(T.prevStop(w.stops, s.t)); });
     if (ui.next) ui.next.addEventListener('click', function () { pause(); seek(T.nextStop(w.stops, s.t)); });
-    if (ui.scrub) ui.scrub.addEventListener('input', function () { pause(); seek((+ui.scrub.value / 1000) * w.duration); });
+    if (ui.scrub) ui.scrub.addEventListener('input', function () {
+      var t = (+ui.scrub.value / 1000) * w.duration;  // read first: pause() repaints the slider
+      pause(); seek(t);
+    });
     if (ui.speed) ui.speed.addEventListener('click', function () {
       s.speedIdx = (s.speedIdx + 1) % SPEEDS.length;
       ui.speed.textContent = SPEEDS[s.speedIdx] + '×';

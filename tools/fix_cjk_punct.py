@@ -25,6 +25,8 @@ def fix(text: str) -> str:
     text = re.sub(rf"(?<={CJK})([,:;?!])(?!//)", lambda m: FULL[m.group(1)], text)
     # , with Chinese on the right, e.g. "4 轮,AI" stays ASCII but "baseline,看" -> fix
     text = re.sub(rf",(?={CJK})", "，", text)
+    # : with Chinese on the right, e.g. "reset:变差" (but not "https://")
+    text = re.sub(rf":(?!//)(?={CJK})", "：", text)
     # (...) whose content contains Chinese
     text = re.sub(rf"\(([^()\n]*{CJK}[^()\n]*)\)", r"（\1）", text)
     return text

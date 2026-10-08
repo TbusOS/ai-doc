@@ -20,9 +20,11 @@ FONTS_GOOGLE = (
 )
 FONTS_HAND = "https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/lxgwwenkaigbscreen.css"
 
-# Runs before first paint so a saved dark/light choice does not flash.
+# Runs before first paint: marks JS as available (CSS hides the stage without it)
+# and applies a saved dark/light choice so it does not flash.
 EARLY_THEME = (
-    "<script>try{var m=localStorage.getItem('aidoc-theme');"
+    "<script>document.documentElement.classList.add('js');"
+    "try{var m=localStorage.getItem('aidoc-theme');"
     "if(m&&m!=='auto')document.documentElement.setAttribute('data-theme',m)}catch(e){}</script>"
 )
 

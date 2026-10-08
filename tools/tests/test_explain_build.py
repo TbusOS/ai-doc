@@ -25,6 +25,20 @@ class RenderTest(unittest.TestCase):
                 if c["tag"] == "原文":
                     self.assertIn(h.escape(c["quote"]), self.html)
 
+    def test_transcript_has_every_caption(self):
+        start = self.html.index('class="stage-transcript"')
+        block = self.html[start:self.html.index("</details>", start)]
+        for sc in self.data["scenes"]:
+            texts = [st["caption"] for st in sc.get("stations", {}).values()]
+            texts += list(sc.get("special", {}).values())
+            texts += list(sc.get("verdicts", {}).values()) + list(sc.get("actions", {}).values())
+            for t in texts:
+                t = t.replace("{bpb}", "这轮的分数").replace("{best}", "目前最好的分数")
+                self.assertIn(h.escape(t), block)
+
+    def test_source_heading_does_not_overclaim(self):
+        self.assertNotIn("每句话", self.html)
+
     def test_toggle_rendered_with_option(self):
         for sc in self.data["scenes"]:
             if sc.get("toggle"):

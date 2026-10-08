@@ -21,6 +21,10 @@ class FixTest(unittest.TestCase):
         self.assertEqual(fix("(只记录,不提交)"), "（只记录，不提交）")
         self.assertEqual(fix("double model width (OOM)"), "double model width (OOM)")
 
+    def test_colon_before_chinese(self):
+        self.assertEqual(fix("没有 reset:变差"), "没有 reset：变差")
+        self.assertEqual(fix("https://例子.cn"), "https://例子.cn")
+
     def test_template_placeholder_kept(self):
         self.assertEqual(fix("{bpb} 比 {best} 低,变好了"), "{bpb} 比 {best} 低，变好了")
 

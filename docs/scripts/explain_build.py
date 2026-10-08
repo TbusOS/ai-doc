@@ -53,6 +53,36 @@ def render_toggle(scene: dict) -> str:
     )
 
 
+def _fill(template: str) -> str:
+    return template.replace("{bpb}", "这轮的分数").replace("{best}", "目前最好的分数")
+
+
+def render_transcript(scene: dict) -> str:
+    """Text version of the animation: shown when JS is off, and for screen readers."""
+    items = []
+    special = scene.get("special", {})
+    if special.get("intro"):
+        items.append(esc(special["intro"]))
+    for key, st in scene.get("stations", {}).items():
+        line = f'<b>{esc(st["label"])}</b>：{esc(st["caption"])}'
+        if key == "edit" and special.get("edit_baseline"):
+            line += f'<br>第一轮：{esc(special["edit_baseline"])}'
+        if key == "read" and special.get("read_crash"):
+            line += f'<br>崩溃时：{esc(special["read_crash"])}'
+        if key == "decide":
+            line += "".join(f"<br>{esc(_fill(v))}" for v in scene.get("verdicts", {}).values())
+        if key == "git":
+            line += "".join(f"<br>{esc(_fill(v))}" for v in scene.get("actions", {}).values())
+        items.append(line)
+    for key in ("outro", "outro_noreset"):
+        if special.get(key):
+            items.append(esc(special[key]))
+    if not items:
+        return ""
+    lis = "".join(f"<li>{i}</li>" for i in items)
+    return f'<details class="stage-transcript" open><summary>动画的文字版</summary><ol>{lis}</ol></details>'
+
+
 def render_scene(scene: dict, original_page: str) -> str:
     body = "".join(f"<p>{esc(p)}</p>" for p in scene["body"])
     claims = "".join(render_claim(c) for c in scene["claims"])
@@ -66,8 +96,8 @@ def render_scene(scene: dict, original_page: str) -> str:
   <figure class="stage grid-paper">
     <svg class="stage-svg" viewBox="0 0 1200 675" role="img" aria-label="{esc(scene["stage_label"])}"></svg>
     <figcaption class="stage-caption" aria-live="polite">{esc(first_caption)}</figcaption>
-    <noscript><p class="stage-caption">动画需要 JavaScript；文字说明和出处都在下面。</p></noscript>
   </figure>
+  {render_transcript(scene)}
   <div class="stage-controls" role="group" aria-label="动画控制">
     <button class="play" type="button" aria-label="播放">▶</button>
     <button class="prev" type="button" aria-label="上一步">‹ 上一步</button>
@@ -77,7 +107,7 @@ def render_scene(scene: dict, original_page: str) -> str:
     <span class="clock" aria-hidden="true"></span>
   </div>
   {render_toggle(scene)}
-  <p class="claims-title">这一节每句话的出处（点开看原句）</p>
+  <p class="claims-title">这一节关键说法的出处（点开看原句）</p>
   <ul class="claims">{claims}</ul>
   <a class="to-original" href="{esc(original_page)}#{esc(scene["original_anchor"])}">对照原文这一节 →</a>
 </section>

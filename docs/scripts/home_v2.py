@@ -112,7 +112,7 @@ def explainer_card() -> str:
   {mini}
   <div>
     <span class="kicker">自我改进 Agent · Karpathy · 2026</span>
-    <h3>autoresearch：睡一觉，AI 替你跑完 100 次实验</h3>
+    <h3>autoresearch：睡一觉，AI 替你跑完约 100 次实验</h3>
     <p class="muted">实验循环、为什么固定 5 分钟、为什么用 bpb 不用 loss……12 个场景讲清它每个设计为什么这样做。</p>
     <div class="ex-card-meta"><span class="chip">12 个场景 · 已完成 1 个</span><span class="chip">约 9 分钟</span></div>
   </div>
@@ -145,7 +145,7 @@ def render_home_sample() -> str:
     <div class="hero-text">
       <span class="kicker">AI Doc · 论文翻译 + 图解</span>
       <h1>把 AI 论文讲到你能<span class="hl">看懂<svg class="hl-line" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M4 14 C 50 4, 120 20, 196 8" style="fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round"/></svg></span></h1>
-      <p class="lead">{total} 篇论文和工程文章的逐段中英对照翻译。新增「图解」：用动画、交互图和彩色公式把原理讲清楚，每句话都标出处。</p>
+      <p class="lead">{total} 篇论文和工程文章的逐段中英对照翻译。新增「图解」：用动画、交互图和彩色公式把原理讲清楚，关键说法都标出处。</p>
       <div class="hero-actions">
         <a class="btn btn--primary" href="{PREFIX}zh/explain/autoresearch.html">看图解：autoresearch →</a>
         <a class="btn" href="#topics">按主题浏览</a>
