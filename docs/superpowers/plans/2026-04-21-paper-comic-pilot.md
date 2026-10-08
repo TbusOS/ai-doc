@@ -1,5 +1,7 @@
 # 论文漫画 · Pilot 实施计划 — Bitter Lesson
 
+> **2026-10-09 更新**:出图改用 GPT(Codex 出图,`codex exec -m gpt-6-astra -i <参考图>`)加参考图定画风,不再依赖本地 ComfyUI + FLUX + LoRA,也不再等 64GB Mac。下文里 ComfyUI / FLUX / LoRA / MCP 相关的步骤停用;叙事、角色、画风、格式的设计仍然有效。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 装好本地 ComfyUI + FLUX.1-dev + 水墨 LoRA，通过 MCP 接入 Claude Code，然后产出 Pilot 论文 Bitter Lesson 的水墨漫画（1 张海报 + 6 格短漫），发布到 GitHub Pages。

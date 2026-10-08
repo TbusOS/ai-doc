@@ -2,6 +2,8 @@
 
 - **日期**：2026-04-21
 - **状态**：待用户确认
+
+> **2026-10-09 更新**:出图改用 GPT(Codex 出图,`codex exec -m gpt-6-astra -i <参考图>`)加参考图定画风,不再依赖本地 ComfyUI + FLUX + LoRA,也不再等 64GB Mac。下文里 ComfyUI / FLUX / LoRA / MCP 相关的步骤停用;叙事、角色、画风、格式的设计仍然有效。
 - **目标仓库**：`$AI_DOC`（bilingual AI paper 知识库）
 
 ---
