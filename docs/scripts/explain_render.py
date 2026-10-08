@@ -154,12 +154,35 @@ def render_widget_scene(scene: dict, original_page: str, source_label: str) -> s
 """
 
 
+def _inline_code(text: str) -> str:
+    """Escape, then show `backtick` spans as <code> (the quote itself stays verbatim in the data)."""
+    parts = esc(text).split("`")
+    return "".join(f"<code>{part}</code>" if i % 2 else part for i, part in enumerate(parts))
+
+
+def _annotated_quote(pair: dict) -> str:
+    html = _inline_code(pair["quote"])
+    mark = pair.get("mark")
+    if mark:
+        target = esc(mark)
+        if target not in html:
+            raise ValueError(f'annotated: mark "{mark}" not found in quote "{pair["quote"][:40]}"')
+        html = html.replace(target, f"<mark>{target}</mark>", 1)
+    return html
+
+
 def render_annotated_scene(scene: dict, original_page: str, source_label: str) -> str:
-    rows = "".join(
-        f'<div class="ann-row"><blockquote lang="en">{esc(p["quote"])}</blockquote>'
-        f'<p class="ann-note">{esc(p["note"])}</p></div>'
-        for p in scene["pairs"]
-    )
+    rows, group = [], None
+    for p in scene["pairs"]:
+        if p.get("group") and p["group"] != group:
+            group = p["group"]
+            zh = f' <span class="ann-group-zh">{esc(p["group_zh"])}</span>' if p.get("group_zh") else ""
+            rows.append(f'<h3 class="ann-group"><span class="ann-md">## {esc(group)}</span>{zh}</h3>')
+        rows.append(
+            f'<div class="ann-row"><blockquote lang="en">{_annotated_quote(p)}</blockquote>'
+            f'<p class="ann-note">{esc(p["note"])}</p></div>'
+        )
+    rows = "".join(rows)
     return f"""<section class="scene scene--static" id="scene-{scene["id"]}" data-scene="{scene["id"]}">
   {_scene_text(scene)}
   <div class="annotated">{rows}</div>

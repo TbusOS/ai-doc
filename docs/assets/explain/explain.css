@@ -161,10 +161,19 @@ body.capture .stage-caption {
 .scene-broken .stage, .scene-broken .stage-controls { display: none; }
 
 /* ---------- program.md, paragraph by paragraph ---------- */
-.annotated { display: grid; gap: 12px; margin-top: 22px; }
-.ann-row { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; align-items: start;
-  padding: 14px; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--card); }
-.ann-row blockquote { margin: 0; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.65; white-space: pre-wrap; color: var(--ink); }
+.annotated { display: grid; gap: 10px; margin-top: 22px; }
+/* one heading per program.md section, written the way the file writes it */
+.ann-group { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin: 26px 0 2px; font-size: 1.05rem; }
+.ann-group:first-child { margin-top: 0; }
+.ann-md { font-family: var(--font-mono); font-size: 0.84rem; font-weight: 600; color: var(--ink-2); }
+.ann-row { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; align-items: start;
+  padding: 14px 16px; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--card); }
+/* the left column reads like the handbook itself: serif English, inline code, one key phrase marked */
+.ann-row blockquote { margin: 0; padding-left: 14px; border-left: 3px solid var(--line);
+  font-family: var(--font-body); font-size: 0.98rem; line-height: 1.6; color: var(--ink); }
+.ann-row blockquote code { font-size: 0.82em; }
+.ann-row blockquote mark { background: var(--accent-soft); color: inherit; padding: 0 3px; border-radius: 3px;
+  box-shadow: inset 0 -2px 0 var(--accent); }
 .ann-note { margin: 0; font-family: var(--font-hand); font-size: 1.08rem; line-height: 1.6; color: var(--ink); }
 .ann-note::before { content: "✎ "; color: var(--accent); }
 @media (max-width: 720px) { .ann-row { grid-template-columns: 1fr; } }
