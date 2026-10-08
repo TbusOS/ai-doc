@@ -4,7 +4,10 @@
  *   Explain.register('loop', function (svg, ctx) {
  *     return { duration, stops, render(t), setOption?(key, value), layout?(widthPx) };
  *   });
- * ctx = { copy: <this scene's object from zh.json>, data: <whole zh.json>, caption(text) }.
+ * ctx = { copy: <this scene's object from zh.json>, data: <whole zh.json>, caption(text),
+ *         redraw(), pause(), reduced }.
+ * pause(): a scene calls it when the reader picks something inside the picture (a card, a
+ * point, an answer) while it plays, so the next frame does not wipe the pick out.
  *
  * The engine owns time: play / pause / step / scrub / speed, pauses scenes that
  * leave the viewport, shows the final frame when the reader asked for reduced
@@ -59,6 +62,8 @@
       return null;
     }
     ctx.redraw = function () { paint(); };
+    ctx.pause = function () { if (s.playing) pause(); };
+    ctx.reduced = reduced;
     var transcript = section.querySelector('.stage-transcript');
     if (transcript) transcript.open = false;  // the animation is running; the text version stays one click away
     var s = { t: 0, playing: false, played: false, pausedByView: false, speedIdx: 0, last: 0 };

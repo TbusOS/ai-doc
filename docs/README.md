@@ -26,31 +26,33 @@ docs/
 └── .nojekyll                  # Tells GitHub Pages to serve files as-is
 ```
 
-## Illustrated explainers (2026-10 redesign, in progress)
+## Illustrated explainers
 
-A new section explains papers with animations, interactive diagrams and
-source-tagged plain-language copy. Design: `docs/superpowers/specs/2026-10-08-paper-explainers-design.md`.
+Papers explained with animations, interactive diagrams and source-tagged
+plain-language copy (each key statement is marked 原文 / 解读 / 示意, and every
+原文 quote is checked against a verbatim copy of the source). Done so far:
+**autoresearch** (`docs/zh/explain/autoresearch.html`): 13 animated scenes,
+a program.md walk-through and a 3-question quiz. Each paper gets its own
+visual style. Design: `docs/superpowers/specs/2026-10-08-paper-explainers-design.md`;
+how to make one: `.claude/skills/paper-explainer/SKILL.md`; setup and daily
+commands: [`MAINTENANCE.md`](../MAINTENANCE.md).
 
 ```
-explain-src/<slug>/zh.json        # all copy + the source of every claim (原文 / 解读 / 示意)
-explain-src/<slug>/sources/       # verbatim copies of the original files the claims quote
-docs/assets/theme.css             # new theme (light + dark)
-docs/assets/explain/              # scene engine (timeline.js, engine.js, explain.css)
-docs/assets/explain/<slug>/       # per-paper scene code: <scene>-model.js (pure stateAt(t)) + <scene>.js
-docs/scripts/explain_build.py     # zh.json -> docs/zh/explain/<slug>.html
-docs/scripts/home_v2.py           # new homepage preview -> docs/sample/index.html
+explain-src/<slug>/zh.json            # page copy: title, chapters, scene order
+explain-src/<slug>/scenes/<id>.json   # one scene's copy, controls, transcript and claims
+explain-src/<slug>/sources/           # verbatim copies of the original files the claims quote
+explain-src/<slug>/data/              # numbers read off the paper's figures (with error)
+explain-src/<slug>/illustrations/     # prompts, model and date for every generated drawing
+docs/assets/theme.css                 # theme (light + dark)
+docs/assets/explain/                  # scene engine (timeline.js, engine.js, draw.js, explain.css)
+docs/assets/explain/<slug>/           # per-scene code: <id>-model.js (pure stateAt(t)) + <id>.js, drawings
+docs/scripts/explain_build.py         # json -> docs/zh/explain/<slug>.html
+docs/scripts/home_v2.py               # new homepage preview -> docs/sample/index.html
+tools/export_scene.mjs                # scenes -> GIF / MP4 for use outside the site
 ```
 
-Build and check:
-
-```bash
-python3 docs/scripts/build.py && python3 docs/scripts/explain_build.py && python3 docs/scripts/home_v2.py
-python3 -m unittest discover -s tools/tests -p 'test_*.py'
-node --test 'tools/tests/*.test.js'
-node --test tools/tests/browser.test.mjs          # needs Playwright (PLAYWRIGHT=<path to index.mjs>)
-python3 tools/check_sources.py explain-src/autoresearch   # every 原文 quote must exist verbatim
-python3 tools/check_articles_unchanged.py check           # original article text must not change
-```
+Build and check everything: `bash tools/check_all.sh` (must end with
+`ALL CHECKS PASSED`; a SKIP is not a pass).
 
 ## Rebuild after content changes
 
