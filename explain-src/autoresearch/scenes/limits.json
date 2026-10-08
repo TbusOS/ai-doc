@@ -1,0 +1,173 @@
+{
+  "id": "limits",
+  "chapter": "limits",
+  "widget": "limits",
+  "title": "它做不到什么：四条边界",
+  "lead": "autoresearch 是一个刻意做小的原型。它有四条边界：只在附近小步试、只对 5 分钟负责、结果跟机器绑定、只支持一块 NVIDIA GPU。",
+  "body": [
+    "第一条最值得想。每一轮都从分支上现在的代码出发，只有分数马上变低才留下。把所有可能的 train.py 想成一片地形，它就像一个只往低处挪的小球，会停在离起点最近的谷里。program.md 也让它没点子时试更大胆的结构改动，但改得再大，留不留还是只看这一次分数有没有变低。这一段是我们的解读，地形是示意。",
+    "后三条是 README 和 program.md 自己写明的：固定 5 分钟的代价，以及平台限制。",
+    "用动画下面的按钮换个起点再看：小球停在哪，取决于从哪出发。"
+  ],
+  "stage_label": "示意地形动画：小球每轮只往左右各试一小步，变低才挪过去，停在附近的谷里，山那边更深的谷它到不了；旁边是四条边界卡片",
+  "first_caption": "把所有可能的 train.py 想成一片地形，越低分数越好。绿色小球是分支上现在的代码。",
+  "original_anchor": "11-limitations-and-boundaries",
+  "cards": [
+    { "title": "只在附近小步试", "body": "每次只改一点，变好才留下。要先变差、再变好的路，它走不通。", "tag": "解读", "basis": "由 program.md 循环第 8、9 步推出：只有分数变低才前进，否则退回。" },
+    { "title": "只对 5 分钟负责", "body": "它找的是 5 分钟内最好的模型。要训练很久才显出好处的改动，会被丢掉。", "tag": "解读", "basis": "README「Design choices」：固定 5 分钟，找的是这台机器上、这段时间内最好的模型。" },
+    { "title": "结果跟机器绑定", "body": "5 分钟能走多少步，看机器快慢。换台机器，结果就没法跟别人比。" },
+    { "title": "只支持一块 NVIDIA GPU", "body": "Mac、Windows、AMD 要用社区做的分支版本。" }
+  ],
+  "labels": {
+    "axis_y": "分数（越低越好）",
+    "axis_x": "train.py 的各种改法（示意）",
+    "ball": "分支上的代码",
+    "lower": "更低",
+    "higher": "更高",
+    "round": "第 {n} 轮",
+    "stuck": "两边都更高：停下",
+    "fog": "AI 看不到地形，只知道试过的点",
+    "deep": "更深的谷",
+    "hill": "要先变差",
+    "here_mark": "停在这里",
+    "card_num": ["①", "②", "③", "④"],
+    "time_axis_x": "训练时间",
+    "time_axis_y": "分数",
+    "time_a": "改动 A",
+    "time_b": "改动 B",
+    "time_cut": "5 分钟",
+    "time_keep": "这一刻 A 更低：留 A",
+    "time_later": "再训练久一点，B 可能更好",
+    "machine_fast": "快的机器",
+    "machine_slow": "慢的机器",
+    "machine_clock": "都是 5:00",
+    "machine_steps_fast": "953 步",
+    "machine_steps_note": "program.md 的示例输出",
+    "machine_steps_slow": "步数少得多",
+    "machine_result": "走的步数不同，找到的最好模型也不同",
+    "gpu_card": "NVIDIA GPU × 1",
+    "gpu_tested": "README：在 H100 上测过",
+    "gpu_forks": "社区分支",
+    "gpu_fork_names": ["macOS", "Windows", "AMD"]
+  },
+  "captions": {
+    "intro": "把所有可能的 train.py 想成一片地形，越低分数越好。绿色小球是分支上现在的代码。",
+    "try": "第 {n} 轮：往左、往右各试一小步。",
+    "move_left": "第 {n} 轮：左边更低，挪过去；右边更高，退回。",
+    "move_right": "第 {n} 轮：右边更低，挪过去；左边更高，退回。",
+    "stuck": "第 {n} 轮：两边都更高，停在这里。",
+    "reveal": "AI 看不到地形，只知道试过的点。更深的谷就在山那边，可要过去得先往上爬，而变差的每一步都会被退回。",
+    "reveal_far": "从山的另一边出发，它就落进了最深的谷。小球停在哪，取决于从哪出发。",
+    "reveal_left": "从更左边出发，它停在一个更浅的谷里，比默认起点的结果还差。小球停在哪，取决于从哪出发。",
+    "card1": "第二条：它找的是「5 分钟内」最好的模型。要训练很久才显出好处的改动，5 分钟时还落后，会被丢掉。",
+    "card2": "第三条：同样 5 分钟，不同机器走的步数不一样，找到的最好模型也可能不同。你的结果没法跟别的机器比。",
+    "card3": "第四条：代码只支持一块 NVIDIA GPU。Mac、Windows、AMD 要用社区做的分支版本。",
+    "outro": "四条边界：只在附近小步试；只对 5 分钟负责；结果跟机器绑定；只支持一块 NVIDIA GPU。"
+  },
+  "controls": [
+    {
+      "type": "choice",
+      "option": "start",
+      "label": "小球从哪儿出发",
+      "tag": "示意",
+      "value": "here",
+      "choices": [
+        { "value": "here", "label": "现在的代码" },
+        { "value": "left", "label": "更左边" },
+        { "value": "far", "label": "山的另一边" }
+      ],
+      "note": "换个起点再播一遍：小球停在哪，取决于从哪出发。"
+    }
+  ],
+  "transcript": [
+    "把所有可能的 train.py 想成一片地形，越低分数越好。绿色小球是分支上现在的代码。地形是示意。",
+    "每一轮，小球往左、往右各试一小步：哪边更低就挪过去，更高的那边退回。几轮之后两边都更高，它停在离起点最近的谷里。",
+    "AI 看不到地形，只知道试过的点。更深的谷就在山那边，可要过去得先往上爬，而变差的每一步都会被退回。换一个起点，小球会停在别的谷里：停在哪，取决于从哪出发。",
+    "第二条：它找的是「5 分钟内」最好的模型。要训练很久才显出好处的改动，5 分钟时还落后，会被丢掉。",
+    "第三条：同样 5 分钟，不同机器走的步数不一样（program.md 的示例输出是 953 步），找到的最好模型也可能不同。你的结果没法跟别的机器比。",
+    "第四条：代码只支持一块 NVIDIA GPU。Mac、Windows、AMD 要用社区做的分支版本。",
+    "四条边界：只在附近小步试；只对 5 分钟负责；结果跟机器绑定；只支持一块 NVIDIA GPU。"
+  ],
+  "claims": [
+    {
+      "tag": "示意",
+      "text": "地形、小球和每一轮的高低都是示意，不是实验数据；训练曲线和「慢的机器」也是示意。"
+    },
+    {
+      "tag": "原文",
+      "text": "只有分数变低，分支才往前走；持平或变差就退回。",
+      "quote": "If val_bpb is equal or worse, you git reset back to where you started",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "所以它像一个只往低处挪的小球：要先变差、再变好的路，它走不通；最后停在哪，取决于从哪出发。",
+      "basis": "由 program.md 循环第 8、9 步推出：每一轮都从分支上现在的代码出发，只接受马上变好的改动。"
+    },
+    {
+      "tag": "原文",
+      "text": "真实战绩里也有这种小步：RoPE base 连着三次朝同一个方向调，这是第三次。",
+      "quote": "RoPE base frequency 100000→200000",
+      "source": "progress-transcript.md"
+    },
+    {
+      "tag": "原文",
+      "text": "program.md 也让它想不出点子时，试更大胆的结构改动。",
+      "quote": "try more radical architectural changes",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "觉得卡住时可以往回退，但原文说要非常少用。",
+      "quote": "If you feel like you're getting stuck in some way, you can rewind but you should probably do this very very sparingly (if ever).",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "它找的是你这台机器上、5 分钟内最好的模型。",
+      "quote": "this means that autoresearch will find the most optimal model for your platform in that time budget.",
+      "source": "README.md"
+    },
+    {
+      "tag": "解读",
+      "text": "要训练很久才显出好处的改动，5 分钟时还落后，会被丢掉。",
+      "basis": "由固定 5 分钟的预算推出：比较只看 5 分钟时的 val_bpb。"
+    },
+    {
+      "tag": "原文",
+      "text": "代价：你的结果没法跟别的机器上跑的人比。",
+      "quote": "The downside is that your runs (and results) become not comparable to other people running on other compute platforms.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "同样停在 5 分钟，不同机器跑出来的数字不一样。",
+      "quote": "Note that the script is configured to always stop after 5 minutes, so depending on the computing platform of this computer the numbers might look different.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "program.md 的示例输出里，5 分钟走了 953 步。",
+      "quote": "num_steps:        953",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "代码只支持一块 NVIDIA GPU。",
+      "quote": "This code currently requires that you have a single NVIDIA GPU.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "README 写明在 H100 上测过。",
+      "quote": "A single NVIDIA GPU (tested on H100)",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "在 Mac 这类小机器上跑，karpathy 建议用社区的分支版本；README 列了 macOS、Windows、AMD 的。",
+      "quote": "If you're going to try running autoresearch on smaller computers (Macbooks etc.), I'd recommend one of the forks below.",
+      "source": "README.md"
+    }
+  ]
+}

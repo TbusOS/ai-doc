@@ -1,0 +1,300 @@
+{
+  "id": "progress",
+  "chapter": "where",
+  "widget": "progress",
+  "title": "真实战绩：83 次实验，留下 15 次",
+  "lead": "这是 karpathy 放在 README 最上面的那张图。我们把图里的点一个个读出来，按顺序重放：灰点是没留下的实验，绿点是留下的，绿线是到当时为止的最好分数。",
+  "body": [
+    "点的位置是从图片像素里读出来的，每个分数大约有 ±0.00003 的误差。横轴照原图写作「实验 #」。",
+    "这张图没有画全部实验。karpathy 的画图程序（analysis.ipynb）先去掉崩溃的实验，又只画分数不比基线差 0.0005 以上的点。所以没留下的 83 − 15 = 68 次里，图上只有 62 个灰点。",
+    "点一下任意一个绿点（电脑上把鼠标移上去也行），右边卡片会给出三样东西：图上的原标签、train.py 里原来的写法、一句大白话。最后一个绿点值得多看一眼：它只换了随机种子。"
+  ],
+  "stage_label": "实验进展图回放：横轴是实验序号，纵轴是 val_bpb，灰点是丢弃的实验，绿点是保留的实验，绿色阶梯线是目前最好的分数；旁边的卡片解释每次保留改了什么",
+  "first_caption": "这是 README 最上面那张图，我们按顺序重放。每个点是一次实验，分数越低越好。",
+  "original_anchor": "1-the-core-idea",
+  "captions": {
+    "intro": "这是 README 最上面那张图，我们按顺序重放。每个点是一次实验，分数越低越好。",
+    "baseline": "实验 #0：原样跑一遍，拿到基线分数 {bpb}。",
+    "keep": "实验 #{x}：{short}。分数又低了约 {drop}，留下。",
+    "sweep": "接着试。灰点是没变好的改动，都退回了。到实验 #{x}：{k} 个绿点，{d} 个灰点。",
+    "seed": "最后一个绿点只把随机种子从 42 换成 137，分数也低了约 {seed}，被记成「变好」。有 {n} 次留下的改动，进步比这还小：差距这么小，可能只是运气。",
+    "filter": "图上只有 {shown} 个点。没留下的 {notkept} 次里只画了 {grey} 个：崩溃的不画，比基线差 0.0005 以上的也不画，横轴上空着 {hidden} 个位置。",
+    "outro": "{total} 次实验，留下 {kept} 次：分数从 {first} 降到 {last}（读数）。大部分改动都没留下。"
+  },
+  "intro_title": "怎么看这张图",
+  "intro_rows": [
+    "这次改动没让分数变低，代码退回去了。",
+    "分数变低了，这次改动留在分支上。",
+    "到这一刻为止最低的分数。"
+  ],
+  "filter_code": [
+    { "quote": "# Filter out crashes for plotting", "source": "analysis.ipynb" },
+    { "quote": "<= baseline_bpb + 0.0005", "source": "analysis.ipynb" }
+  ],
+  "labels": {
+    "axis_x": "实验 #",
+    "axis_y": "val_bpb（越低越好）",
+    "legend_discard": "丢弃",
+    "legend_keep": "保留",
+    "legend_best": "目前最好",
+    "hint": "点任意绿点，看它改了什么",
+    "counter": "实验 #{x}",
+    "counter_sub": "绿 {k} · 灰 {d}",
+    "card_head": "实验 #{x} · 留下",
+    "card_score": "{bpb}（读数）",
+    "card_drop": "比之前最好的低约 {drop}",
+    "card_base": "这是起点",
+    "card_label": "图上的标签",
+    "card_truncated": "原图里就截断了",
+    "card_code": "train.py 里原来是",
+    "card_nocode": "（不改代码）",
+    "card_plain": "大白话",
+    "tag_quote": "原文",
+    "tag_interp": "解读",
+    "tip": "实验 #{x} · {status} · {bpb}",
+    "tip_keep": "留下",
+    "tip_discard": "丢弃",
+    "seed_title": "每次留下，分数低了多少",
+    "seed_line": "只换种子：约 {seed}",
+    "seed_note": "{n} 次比它还小",
+    "seed_clip": "↑ {v}",
+    "filter_title": "这张图少画了一些点",
+    "filter_notkept": "没留下：{total} − {kept} = {notkept} 次",
+    "filter_grey": "图上的灰点：{grey} 个",
+    "filter_hidden": "差的 {hidden} 次：横轴上的空位",
+    "filter_rule": "只画到「基线 + 0.0005」",
+    "filter_crash": "崩溃的实验不画",
+    "filter_error": "读数误差约 ±{err}",
+    "cut": "画图上限：基线 + 0.0005",
+    "cut_above": "这以上不画",
+    "outro_total": "{total} 次实验",
+    "outro_kept": "留下 {kept} 次",
+    "outro_scores": "{first} → {last}",
+    "outro_legend": "一格一次实验：绿 = 留下，灰 = 丢弃，虚线 = 图上没画",
+    "outro_note": "分数是从图上读的，误差约 ±0.00003"
+  },
+  "cards": [
+    {
+      "x": 0,
+      "short": "原样跑基线",
+      "label": { "quote": "baseline", "source": "progress-transcript.md" },
+      "code": [],
+      "plain": "第一轮什么都不改，原样跑一遍。后面每次都跟分支上当前最好的版本比。",
+      "tag": "解读",
+      "basis": "照图上的标签和 program.md「The first run」一段复述。"
+    },
+    {
+      "x": 2,
+      "short": "批大小减半",
+      "label": { "quote": "halve total batch 524K→262K (more steps)", "source": "progress-transcript.md" },
+      "code": [{ "quote": "TOTAL_BATCH_SIZE = 2**19", "source": "train.py" }],
+      "plain": "每更新一次参数要看的 token 数，从约 52 万减到约 26 万。5 分钟里能更新更多次（标签里写着 more steps）。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 里这一行的注释：~524K tokens per optimizer step。"
+    },
+    {
+      "x": 6,
+      "short": "收尾降速段拉长",
+      "label": { "quote": "warmdown 0.5→0.7 (more cooldown helps)", "source": "progress-transcript.md" },
+      "code": [{ "quote": "WARMDOWN_RATIO = 0.5", "source": "train.py" }],
+      "plain": "训练最后一段，学习率会逐渐降下来。这一段从占 5 分钟的一半拉长到 70%。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 里这一行的注释：fraction of time budget for LR warmdown。"
+    },
+    {
+      "x": 8,
+      "short": "加 5% 热身",
+      "label": { "quote": "add 5% warmup", "source": "progress-transcript.md" },
+      "code": [{ "quote": "WARMUP_RATIO = 0.0", "source": "train.py" }],
+      "plain": "原来一开始就用满学习率。改成在前 5% 的时间里，从 0 慢慢升上去。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 的学习率函数：progress < WARMUP_RATIO 时返回 progress / WARMUP_RATIO。"
+    },
+    {
+      "x": 14,
+      "short": "模型加深到 9 层",
+      "label": { "quote": "depth 9 aspect_ratio 57 (same dim 512 + ex...", "source": "progress-transcript.md" },
+      "truncated": true,
+      "code": [
+        { "quote": "DEPTH = 8", "source": "train.py" },
+        { "quote": "ASPECT_RATIO = 64", "source": "train.py" }
+      ],
+      "plain": "从 8 层加到 9 层，宽度系数从 64 调到 57。标签说宽度还是 512，后半句在原图里就被截断了。",
+      "tag": "解读",
+      "basis": "图上的标签（原图截断）和 train.py 里 DEPTH、ASPECT_RATIO 两行。"
+    },
+    {
+      "x": 23,
+      "short": "少掺一点最初的输入",
+      "label": { "quote": "x0_lambda init 0.1→0.05", "source": "progress-transcript.md" },
+      "code": [{ "quote": "self.x0_lambdas.fill_(0.1)", "source": "train.py" }],
+      "plain": "每一层都会掺进一点最初的输入（x0）。掺多少的起始值，从 0.1 调成 0.05。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 前向计算里的 x = self.resid_lambdas[i] * x + self.x0_lambdas[i] * x0。"
+    },
+    {
+      "x": 28,
+      "short": "输出层学习率翻倍",
+      "label": { "quote": "unembedding LR 0.004→0.008", "source": "progress-transcript.md" },
+      "code": [{ "quote": "UNEMBEDDING_LR = 0.004", "source": "train.py" }],
+      "plain": "最后把向量变回词的那一层（lm_head），学习率从 0.004 调到 0.008。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 里这一行的注释：learning rate for lm_head (Adam)。"
+    },
+    {
+      "x": 32,
+      "short": "多用一层短窗口",
+      "label": { "quote": "SSSSL window pattern (more sliding window)", "source": "progress-transcript.md" },
+      "code": [{ "quote": "WINDOW_PATTERN = \"SSSL\"", "source": "train.py" }],
+      "plain": "各层轮流用两种注意力：S 只看最近一段，L 看全部上文。SSSL 改成 SSSSL，只看最近一段的层更多了。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 里这一行的注释：L=full, S=half context。"
+    },
+    {
+      "x": 38,
+      "short": "短窗口缩到 1/4",
+      "label": { "quote": "short window 1/4 context instead of 1/2", "source": "progress-transcript.md" },
+      "code": [{ "quote": "short_window = long_window // 2", "source": "train.py" }],
+      "plain": "S 层能看的范围，从上文长度的一半缩到四分之一。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 里短窗口等于长窗口一半的这一行。"
+    },
+    {
+      "x": 39,
+      "short": "短窗口再缩到 1/8",
+      "label": { "quote": "short window 1/8 context (256 tokens)", "source": "progress-transcript.md" },
+      "code": [{ "quote": "short_window = long_window // 2", "source": "train.py" }],
+      "plain": "再缩到八分之一，也就是 256 个 token。",
+      "tag": "解读",
+      "basis": "图上的标签；上下文长度是 prepare.py 里的 MAX_SEQ_LEN = 2048，八分之一是 256。"
+    },
+    {
+      "x": 43,
+      "short": "输入层学习率调高",
+      "label": { "quote": "embedding LR 0.6→0.8", "source": "progress-transcript.md" },
+      "code": [{ "quote": "EMBEDDING_LR = 0.6", "source": "train.py" }],
+      "plain": "把词变成向量的那一层，学习率从 0.6 调到 0.8。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 里这一行的注释：learning rate for token embeddings (Adam)。"
+    },
+    {
+      "x": 64,
+      "short": "RoPE base 调到 5 万",
+      "label": { "quote": "RoPE base frequency 10000→50000", "source": "progress-transcript.md" },
+      "code": [{ "quote": "base=10000", "source": "train.py" }],
+      "plain": "RoPE 用一组快慢不同的旋转标记每个词的位置。base 从 10000 调到 50000，大部分旋转变慢了。",
+      "tag": "解读",
+      "basis": "图上的标签，加上 train.py 的 _precompute_rotary_embeddings：inv_freq = 1.0 / (base ** (channel_range / head_dim))，base 越大频率越低。"
+    },
+    {
+      "x": 65,
+      "short": "RoPE base 再调到 10 万",
+      "label": { "quote": "RoPE base frequency 50000→100000", "source": "progress-transcript.md" },
+      "code": [{ "quote": "base=10000", "source": "train.py" }],
+      "plain": "同一个方向再走一步：50000 调到 100000，分数又低了一点。",
+      "tag": "解读",
+      "basis": "图上的标签，以及它前后两个绿点的标签。"
+    },
+    {
+      "x": 67,
+      "short": "RoPE base 再调到 20 万",
+      "label": { "quote": "RoPE base frequency 100000→200000", "source": "progress-transcript.md" },
+      "code": [{ "quote": "base=10000", "source": "train.py" }],
+      "plain": "再翻一倍到 200000，还是变好。连着三次，朝同一个方向小步走。",
+      "tag": "解读",
+      "basis": "图上第 12、13、14 个绿点的标签。"
+    },
+    {
+      "x": 74,
+      "seed": true,
+      "short": "只换了随机种子",
+      "label": { "quote": "random seed 42→137", "source": "progress-transcript.md" },
+      "code": [{ "quote": "torch.manual_seed(42)", "source": "train.py" }],
+      "plain": "模型和训练方法都没改，只换了随机种子。这也被记成「变好」：差距这么小，可能只是运气。",
+      "tag": "解读",
+      "basis": "图上的标签；换随机种子只改变随机数，不改模型和训练方法。"
+    }
+  ],
+  "transcript": [
+    "这是 README 最上面那张图，我们按顺序重放。每个点是一次实验，分数越低越好；灰点是没留下的，绿点是留下的，绿线是到当时为止的最好分数。",
+    "实验 #0「baseline」：原样跑一遍，拿到基线分数。",
+    "实验 #2「halve total batch 524K→262K (more steps)」：批大小减半，5 分钟里能更新更多次。",
+    "实验 #6「warmdown 0.5→0.7 (more cooldown helps)」：学习率逐渐降下来的收尾段，从占一半拉长到 70%。",
+    "实验 #8「add 5% warmup」：前 5% 的时间里，学习率从 0 慢慢升上去。",
+    "实验 #14「depth 9 aspect_ratio 57 (same dim 512 + ex...」：从 8 层加到 9 层，宽度系数从 64 调到 57（原标签在图里就被截断了）。",
+    "实验 #23「x0_lambda init 0.1→0.05」：每层掺进的最初输入，起始比例从 0.1 调成 0.05。",
+    "实验 #28「unembedding LR 0.004→0.008」：输出层学习率翻倍。",
+    "实验 #32「SSSSL window pattern (more sliding window)」：只看最近一段的层更多了。",
+    "实验 #38「short window 1/4 context instead of 1/2」：短窗口从上文的一半缩到四分之一。",
+    "实验 #39「short window 1/8 context (256 tokens)」：再缩到八分之一，256 个 token。",
+    "实验 #43「embedding LR 0.6→0.8」：输入层学习率从 0.6 调到 0.8。",
+    "实验 #64、#65、#67「RoPE base frequency」：base 从 10000 调到 50000、100000、200000，连着三次朝同一个方向小步走。",
+    "实验 #74「random seed 42→137」：模型和训练方法都没改，只换了随机种子，分数也低了约 0.0004，被记成「变好」。有 3 次留下的改动（#39、#65、#67），进步比这还小：差距这么小，可能只是运气。",
+    "图上只有 77 个点。没留下的 83 − 15 = 68 次里只画了 62 个：崩溃的不画，比基线差 0.0005 以上的也不画，横轴上空着 6 个位置。",
+    "83 次实验，留下 15 次：分数从 0.9979 降到 0.9773（读数，误差约 ±0.00003）。大部分改动都没留下。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "这张图就是 README 最上面那张。",
+      "quote": "![teaser](progress.png)",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "图标题：83 次实验，15 次保留下来的改进。",
+      "quote": "Autoresearch Progress: 83 Experiments, 15 Kept Improvements",
+      "source": "progress-transcript.md"
+    },
+    {
+      "tag": "解读",
+      "text": "点的位置是我们从图片像素里读出来的，每个分数大约有 ±0.00003 的误差。",
+      "basis": "tools/digitize_progress.py 按颜色找出绿点和灰点，再按网格线把像素换算成分数；误差写在 data/progress.json 的 error 字段。"
+    },
+    {
+      "tag": "原文",
+      "text": "画图前先去掉了崩溃的实验。",
+      "quote": "# Filter out crashes for plotting",
+      "source": "analysis.ipynb"
+    },
+    {
+      "tag": "原文",
+      "text": "只画分数不高于「基线 + 0.0005」的点。",
+      "quote": "<= baseline_bpb + 0.0005",
+      "source": "analysis.ipynb"
+    },
+    {
+      "tag": "解读",
+      "text": "所以图上的灰点（62 个）少于没留下的 83 − 15 = 68 次。横轴上空着的 6 个位置，就是比基线差 0.0005 以上、没画出来的实验。",
+      "basis": "analysis.ipynb 去掉崩溃后用 valid.reset_index(drop=True) 重新编号，崩溃的实验不占横轴位置；data/progress.json 读出 15 个绿点、62 个灰点，横轴空位是 1、15、20、41、62、70。"
+    },
+    {
+      "tag": "原文",
+      "text": "绿点旁的标签是实验记录里的 description 列，超过 45 个字符就截断，所以第 5 个标签只剩半句。",
+      "quote": "if len(desc) > 45:",
+      "source": "analysis.ipynb"
+    },
+    {
+      "tag": "原文",
+      "text": "卡片里「train.py 里原来是」那几行，是 train.py 的默认写法。例如批大小：",
+      "quote": "TOTAL_BATCH_SIZE = 2**19 # ~524K tokens per optimizer step",
+      "source": "train.py"
+    },
+    {
+      "tag": "原文",
+      "text": "train.py 里的随机种子原来是 42。",
+      "quote": "torch.manual_seed(42)",
+      "source": "train.py"
+    },
+    {
+      "tag": "解读",
+      "text": "只换随机种子也被记成「变好」，说明这么小的差距可能只是噪声。",
+      "basis": "换随机种子只改变随机数，不改模型和训练方法；按 data/progress.json 的读数，这一次分数低了约 0.00043。"
+    },
+    {
+      "tag": "解读",
+      "text": "有 3 次留下的改动（实验 #39、#65、#67），进步比只换种子还小。",
+      "basis": "data/progress.json 的读数：这 3 次分别低了约 0.00028、0.00026、0.00031，换种子那次低了约 0.00043；每个读数误差约 ±0.00003。"
+    }
+  ]
+}
