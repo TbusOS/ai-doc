@@ -28,10 +28,10 @@ EARLY_THEME = (
 
 LOGO_SVG = (
     '<svg viewBox="0 0 32 32" aria-hidden="true">'
-    '<rect x="2" y="2" width="28" height="28" rx="8" fill="var(--ink)"/>'
-    '<path d="M9 22 L14.5 9 L20 22 M11.3 17 H17.7" fill="none" stroke="var(--paper)" stroke-width="2.6" '
+    '<rect x="2" y="2" width="28" height="28" rx="8" style="fill:var(--ink)"/>'
+    '<path d="M9 22 L14.5 9 L20 22 M11.3 17 H17.7" style="fill:none;stroke:var(--paper)" stroke-width="2.6" '
     'stroke-linecap="round" stroke-linejoin="round"/>'
-    '<circle cx="23" cy="21.5" r="2.6" fill="var(--accent)"/></svg>'
+    '<circle cx="23" cy="21.5" r="2.6" style="fill:var(--accent)"/></svg>'
 )
 
 
