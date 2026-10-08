@@ -176,7 +176,7 @@
     var btn = document.querySelector('.theme-btn');
     if (btn) {
       btn.innerHTML = THEME_ICONS[mode];
-      btn.setAttribute('aria-label', '切换主题(当前:' + THEME_NAMES[mode] + ')');
+      btn.setAttribute('aria-label', '切换主题（当前：' + THEME_NAMES[mode] + '）');
       btn.dataset.mode = mode;
     }
   }

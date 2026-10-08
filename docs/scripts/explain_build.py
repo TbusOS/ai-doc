@@ -29,12 +29,12 @@ def render_claim(c: dict) -> str:
     if tag == "原文":
         body = (
             f'<blockquote lang="en">{esc(c["quote"])}</blockquote>'
-            f'<p class="claim-src">出处:{esc(c["source"])}(karpathy/autoresearch 原文)</p>'
+            f'<p class="claim-src">出处：{esc(c["source"])}（karpathy/autoresearch 原文）</p>'
         )
     elif tag == "解读":
-        body = f'<p class="claim-src">依据:{esc(c["basis"])}</p>'
+        body = f'<p class="claim-src">依据：{esc(c["basis"])}</p>'
     else:
-        body = '<p class="claim-src">演示用的假设数字,不是实验数据。</p>'
+        body = '<p class="claim-src">演示用的假设数字，不是实验数据。</p>'
     return (
         f'<li><details class="claim"><summary><span class="tag {TAG_CLASS[tag]}">{tag}</span>'
         f'<span>{esc(c["text"])}</span></summary><div class="claim-body">{body}</div></details></li>'
@@ -66,7 +66,7 @@ def render_scene(scene: dict, original_page: str) -> str:
   <figure class="stage grid-paper">
     <svg class="stage-svg" viewBox="0 0 1200 675" role="img" aria-label="{esc(scene["stage_label"])}"></svg>
     <figcaption class="stage-caption" aria-live="polite">{esc(first_caption)}</figcaption>
-    <noscript><p class="stage-caption">动画需要 JavaScript;文字说明和出处都在下面。</p></noscript>
+    <noscript><p class="stage-caption">动画需要 JavaScript；文字说明和出处都在下面。</p></noscript>
   </figure>
   <div class="stage-controls" role="group" aria-label="动画控制">
     <button class="play" type="button" aria-label="播放">▶</button>
@@ -77,7 +77,7 @@ def render_scene(scene: dict, original_page: str) -> str:
     <span class="clock" aria-hidden="true"></span>
   </div>
   {render_toggle(scene)}
-  <p class="claims-title">这一节每句话的出处(点开看原句)</p>
+  <p class="claims-title">这一节每句话的出处（点开看原句）</p>
   <ul class="claims">{claims}</ul>
   <a class="to-original" href="{esc(original_page)}#{esc(scene["original_anchor"])}">对照原文这一节 →</a>
 </section>

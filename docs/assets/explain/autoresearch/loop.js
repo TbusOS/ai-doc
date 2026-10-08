@@ -160,7 +160,7 @@
       [52, 74].forEach(function (dy) {
         out += tag('rect', { x: left + 14, y: top + dy, width: W * (dy === 52 ? 0.55 : 0.4), height: 6, rx: 3, style: 'fill:var(--line)' });
       });
-      var line = s.round === 0 ? '(原样不改)' : '+ ' + row.desc;
+      var line = s.round === 0 ? '（原样不改）' : '+ ' + row.desc;
       out += tag('g', { style: appear },
         tag('rect', { x: left + 8, y: top + 92, width: W - 16, height: 28, rx: 6, style: 'fill:var(--accent-soft)' }) +
         text(left + 16, top + 111, line, fill('--accent-ink', 15, '--font-mono', 600)));
@@ -196,7 +196,7 @@
         if (s.local > 0.35) {
           if (s.readout) out += text(left + 12, tt + 62, s.readout, fill('--keep', 17, '--font-mono', 600));
           else {
-            out += text(left + 12, tt + 62, '(什么也没有)', fill('--crash', 17, '--font-mono', 600));
+            out += text(left + 12, tt + 62, '（什么也没有）', fill('--crash', 17, '--font-mono', 600));
             out += text(left + 12, tt + 92, copy.commands.tail, fill('--paper', 15, '--font-mono'));
           }
         }
@@ -223,7 +223,7 @@
       }
       return tag('g', { style: appear }, centerLines(g, [
         { t: '写进 results.tsv', style: fill('--ink', 22, '--font-hand', 700), gap: 22 },
-        { t: '(只记录,不提交)', style: fill('--ink-2', 17, '--font-hand'), gap: 34 }
+        { t: '（只记录，不提交）', style: fill('--ink-2', 17, '--font-hand'), gap: 34 }
       ]));
     }
     return out;
