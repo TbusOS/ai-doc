@@ -5,12 +5,13 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { resolve, dirname, join } from 'node:path';
+import { homedir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const PAGE = pathToFileURL(resolve(here, '../../docs/zh/explain/autoresearch.html')).href;
-const PW = process.env.PLAYWRIGHT || '/Users/sky/linux-kernel/github/sky-skills/node_modules/playwright/index.mjs';
+const PW = process.env.PLAYWRIGHT || join(homedir(), 'linux-kernel/github/sky-skills/node_modules/playwright/index.mjs');
 const skip = existsSync(PW) ? false : `playwright not found at ${PW}`;
 const { chromium } = skip ? {} : await import(PW);
 

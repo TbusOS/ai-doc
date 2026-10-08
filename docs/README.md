@@ -26,6 +26,32 @@ docs/
 └── .nojekyll                  # Tells GitHub Pages to serve files as-is
 ```
 
+## Illustrated explainers (2026-10 redesign, in progress)
+
+A new section explains papers with animations, interactive diagrams and
+source-tagged plain-language copy. Design: `docs/superpowers/specs/2026-10-08-paper-explainers-design.md`.
+
+```
+explain-src/<slug>/zh.json        # all copy + the source of every claim (原文 / 解读 / 示意)
+explain-src/<slug>/sources/       # verbatim copies of the original files the claims quote
+docs/assets/theme.css             # new theme (light + dark)
+docs/assets/explain/              # scene engine (timeline.js, engine.js, explain.css)
+docs/assets/explain/<slug>/       # per-paper scene code: <scene>-model.js (pure stateAt(t)) + <scene>.js
+docs/scripts/explain_build.py     # zh.json -> docs/zh/explain/<slug>.html
+docs/scripts/home_v2.py           # new homepage preview -> docs/sample/index.html
+```
+
+Build and check:
+
+```bash
+python3 docs/scripts/build.py && python3 docs/scripts/explain_build.py && python3 docs/scripts/home_v2.py
+python3 -m unittest discover -s tools/tests -p 'test_*.py'
+node --test 'tools/tests/*.test.js'
+node --test tools/tests/browser.test.mjs          # needs Playwright (PLAYWRIGHT=<path to index.mjs>)
+python3 tools/check_sources.py explain-src/autoresearch   # every 原文 quote must exist verbatim
+python3 tools/check_articles_unchanged.py check           # original article text must not change
+```
+
 ## Rebuild after content changes
 
 Whenever you add or update an article:

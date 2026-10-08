@@ -2,7 +2,7 @@
 
 - **日期**:2026-10-08
 - **状态**:三段设计已在对话中逐段确认,本文件待 user 审阅
-- **目标仓库**:`/Users/sky/linux-kernel/ai-doc`(GitHub Pages 发布目录 `docs/`)
+- **目标仓库**:本仓库(GitHub Pages 发布目录 `docs/`)
 - **分支**:`feat/site-redesign-explainers`
 - **首篇**:autoresearch(Karpathy,2026-03)
 

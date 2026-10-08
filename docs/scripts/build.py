@@ -786,6 +786,22 @@ def render_topic_svg_for_home(is_en: bool) -> str:
 </div>"""
 
 
+# Papers that have an illustrated explainer (docs/zh/explain/<slug>.html, built by explain_build.py).
+EXPLAINED = {p.parent.name for p in (REPO_ROOT / "explain-src").glob("*/zh.json")}
+
+
+def render_explainer_note(lang: str, slug: str, prefix: str) -> str:
+    """Link from an old-style page to the new explainer; phase 2 of the redesign replaces these pages."""
+    if slug not in EXPLAINED:
+        return ""
+    href = f"{prefix}explain/{slug}.html" if lang == "zh" else f"{prefix}../zh/explain/{slug}.html"
+    text = "这篇有图解：用动画和交互图讲清楚原理 →" if lang == "zh" else "Illustrated explainer (in Chinese) →"
+    return (
+        f'<p style="margin:0 0 var(--space-5);"><a class="anth-badge" href="{href}" '
+        f'style="text-decoration:none;">{text}</a></p>'
+    )
+
+
 def render_home(lang: str) -> str:
     is_en = lang == "en"
     title = "AI Doc — Bilingual AI Paper Knowledge Base" if is_en else "AI Doc — AI 论文中英双语知识库"
@@ -830,6 +846,7 @@ def render_home(lang: str) -> str:
             <a class="anth-button" href="#topics">{"Browse topics" if is_en else "开始浏览"}</a>
             <a class="anth-button anth-button--ghost" href="open-source-models.html" style="margin-left:var(--space-3);">{models_label}</a>
           </p>
+          {render_home_new_note(lang)}
         </div>
       </section>
 
@@ -863,6 +880,18 @@ def render_home(lang: str) -> str:
 """
 
     return page_shell(lang, title, body, asset_prefix="../")
+
+
+def render_home_new_note(lang: str) -> str:
+    if lang == "zh":
+        return (
+            '<p style="margin-top:var(--space-6);">新：<a class="anth-link" href="explain/autoresearch.html">论文图解 · autoresearch</a>'
+            ' · <a class="anth-link" href="../sample/index.html">新版首页预览</a></p>'
+        )
+    return (
+        '<p style="margin-top:var(--space-6);">New: <a class="anth-link" href="../zh/explain/autoresearch.html">'
+        "illustrated explainer · autoresearch (in Chinese)</a></p>"
+    )
 
 
 def render_category_page(lang: str, category: Category) -> str:
@@ -1048,6 +1077,9 @@ def render_article(lang: str, category: Category, paper: Paper, prev_next: tuple
         )
         nav_html = f'<div class="article-nav">{left}{right}</div>'
 
+    note = render_explainer_note(lang, paper.slug, "../")
+    note_line = f"          {note}\n" if note else ""  # pages without an explainer stay byte-identical
+
     body = f"""      <section class="anth-section">
         <div class="anth-container anth-container--narrow">
           <div class="article-meta-header">
@@ -1059,7 +1091,7 @@ def render_article(lang: str, category: Category, paper: Paper, prev_next: tuple
             <span class="anth-caption">{html.escape(paper.year)} · {html.escape(paper.authors)}</span>
           </div>
 
-          <article class="article-body">
+{note_line}          <article class="article-body">
 {body_html}
           </article>
 
