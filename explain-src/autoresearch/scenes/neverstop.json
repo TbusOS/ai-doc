@@ -1,0 +1,113 @@
+{
+  "id": "neverstop",
+  "chapter": "why",
+  "widget": "neverstop",
+  "title": "NEVER STOP：别停下来问「要继续吗」",
+  "lead": "program.md 用大写写着 NEVER STOP：循环一开始，就不准停下来问人「要继续吗？」。人可能正在睡觉，问了也没人回答，一晚可能就只跑了 1 次。",
+  "body": [
+    "写代码的 AI 平时是跟人对话的，拿不准就先问一句，这在对话里是好习惯。可在这里，问一句就等于停下来等，而人正睡着。",
+    "勾上「允许它问」：第 1 次跑完，它停下来问「要继续吗？」，一直等到早上，计数停在 1。不勾，就是原文的规定：它不问，一整夜跑下去。",
+    "没点子了也不准停。program.md 给了四个办法：读代码里引用的论文、重读那几个文件找新角度、把差一点成功的改动组合起来、试更大胆的结构改动。循环一直跑到人来打断为止。"
+  ],
+  "stage_label": "左边是卧室，人在睡觉；右边是屏幕，显示 AI 跑了几次实验；下方是 22:00 到 06:00 的时间轴",
+  "first_caption": "实验循环开始了。你交代好，去睡觉。",
+  "labels": {
+    "screen": "autoresearch · 实验",
+    "count": "第 {n} 次",
+    "running": "正在跑",
+    "stamp": "NEVER STOP",
+    "unit": "次",
+    "waiting": "等你回答",
+    "waited": "已经等了 {d}",
+    "hours": "{h} 小时 {m} 分",
+    "minutes": "{m} 分",
+    "night_runs": "一晚：{n} 次",
+    "wait_bar": "停下来等回答",
+    "ideas_title": "没点子了？想得更狠一点：",
+    "illus": "次数为示意"
+  },
+  "ask": { "cn": "要继续吗？", "quote": "should I keep going?", "source": "program.md" },
+  "ideas": [
+    { "cn": "读代码里引用的论文", "quote": "read papers referenced in the code", "source": "program.md" },
+    { "cn": "重读那几个文件，找新角度", "quote": "re-read the in-scope files for new angles", "source": "program.md" },
+    { "cn": "把差一点成功的改动组合起来", "quote": "try combining previous near-misses", "source": "program.md" },
+    { "cn": "试更大胆的结构改动", "quote": "try more radical architectural changes", "source": "program.md" }
+  ],
+  "captions": {
+    "intro": "实验循环开始了。你交代好，去睡觉。",
+    "first": "22:00 开跑，第 1 次实验要 5 分钟。",
+    "ask_never": "第 1 次跑完。它不问「要继续吗？」：program.md 写着 NEVER STOP，直接跑第 2 次。",
+    "ask_allow": "第 1 次跑完，它停下来问：「要继续吗？」可你在睡觉。",
+    "night_never": "一整夜不停，每 5 分钟一次。",
+    "night_allow": "没人回答，它就一直等。屏幕上的计数停在 1。",
+    "wake_never": "06:00 醒来：一晚跑了 {n} 次。",
+    "wake_allow": "06:00 醒来：只跑了 1 次，那个问题等了一整夜。",
+    "idea": "没点子了也不准停。program.md 给的第 {k} 个办法：{cn}。"
+  },
+  "controls": [
+    {
+      "type": "toggle",
+      "option": "allowAsk",
+      "label": "允许它问「要继续吗？」（去掉 NEVER STOP 会怎样）",
+      "tag": "解读",
+      "note": "勾上后重新播放：第 1 次跑完它就停下来问。你在睡觉，没人回答，计数停在 1。",
+      "basis": "由 program.md「NEVER STOP」反推：这条规定要防的，就是 AI 停下来等一个睡着的人回答。"
+    }
+  ],
+  "transcript": [
+    "实验循环开始了。你交代好，去睡觉。",
+    "22:00 开跑，第 1 次实验要 5 分钟。",
+    "22:05 第 1 次跑完。照原文的规定：它不问「要继续吗？」，直接跑第 2 次，一整夜每 5 分钟一次。06:00 醒来，一晚跑了 96 次。",
+    "如果允许它问：第 1 次跑完，它停下来问「要继续吗？」。你在睡觉，没人回答，它一直等到早上，计数停在 1。",
+    "没点子了也不准停。program.md 给了四个办法：读代码里引用的论文；重读那几个文件，找新角度；把差一点成功的改动组合起来；试更大胆的结构改动。",
+    "96 次和 1 次是按每 5 分钟一次、22:00 到 06:00 算的演示数字。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "循环一开始，就不准停下来问人要不要继续，也不准问「要继续吗？」「这里停是不是正好？」",
+      "quote": "Once the experiment loop has begun (after the initial setup), do NOT pause to ask the human if you should continue. Do NOT ask \"should I keep going?\" or \"is this a good stopping point?\".",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "人可能在睡觉，或者不在电脑前，希望它一直做下去，直到被手动叫停。它是自主的。",
+      "quote": "The human might be asleep, or gone from a computer and expects you to continue working *indefinitely* until you are manually stopped. You are autonomous.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "没点子了就想得更狠一点：读代码里引用的论文、重读那几个文件找新角度、把差一点成功的改动组合起来、试更大胆的结构改动。",
+      "quote": "If you run out of ideas, think harder — read papers referenced in the code, re-read the in-scope files for new angles, try combining previous near-misses, try more radical architectural changes.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "「那几个文件」指 program.md 开头让它读的 README.md、prepare.py、train.py。",
+      "quote": "Read these files for full context:\n   - `README.md` — repository context.\n   - `prepare.py` — fixed constants, data prep, tokenizer, dataloader, evaluation. Do not modify.\n   - `train.py` — the file you modify. Model architecture, optimizer, training loop.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "循环一直跑到人来打断为止。",
+      "quote": "The loop runs until the human interrupts you, period.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "原文举的例子正是：人睡觉时让它跑着。",
+      "quote": "As an example use case, a user might leave you running while they sleep.",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "写代码的 AI 在对话里习惯先征求确认，所以要专门写一条规定禁止它停下来问。",
+      "basis": "program.md 用大写专门写了 NEVER STOP，还点名不准问的两句话；如果 AI 本来就不会问，不需要这样写。"
+    },
+    {
+      "tag": "示意",
+      "text": "一晚 96 次（每 5 分钟一次、22:00 到 06:00）和「停在 1 次」是演示用的数字。"
+    }
+  ],
+  "original_anchor": "7-never-stop-the-autonomy-contract"
+}

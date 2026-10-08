@@ -1,0 +1,104 @@
+{
+  "id": "night",
+  "chapter": "without",
+  "widget": "night",
+  "title": "没有它：人一睡，GPU 也跟着歇了",
+  "lead": "自己做实验，得有人守在电脑前：改代码、等训练、看结果、再想下一个点子。人去睡觉，就没人启动下一次，GPU 整夜空着。autoresearch 把这段时间用上：每 5 分钟跑完一次，一小时约 12 次，睡一觉约 100 次。",
+  "body": [
+    "上面一条是你自己做。睡前一小时做了 2 次（这两次是我们假设的，演示用），大部分时间花在改代码和看结果上，GPU 真正在训练的只有两小段。睡着以后，那条线上再没有实验。",
+    "下面一条交给 autoresearch。每一格是一次完整实验，训练固定 5 分钟，所以一小时约 12 格。",
+    "拖动「睡几个小时」，早上的次数跟着变：每小时约 12 次乘上小时数。睡 8 小时是 96 次，接近 README 说的「睡一觉约 100 次」。你那条始终是睡前的 2 次。"
+  ],
+  "stage_label": "一晚的两条时间轴：上面是人自己做实验，睡着后没有实验；下面是 autoresearch，每 5 分钟一格",
+  "first_caption": "同一块 GPU，同一个晚上。上面你自己做，下面交给 autoresearch。",
+  "lanes": {
+    "human": "你自己做",
+    "ai": "autoresearch"
+  },
+  "labels": {
+    "before": "睡前",
+    "sleep": "睡 {h} 小时",
+    "wake": "醒",
+    "idle": "GPU 闲着",
+    "unit": "次",
+    "legend_soft": "改代码、看结果",
+    "legend_solid": "GPU 在训练",
+    "human_cell_title": "你自己做一次：约 30 分钟（示意）",
+    "human_cell_sub": "改代码 15 分钟 → 训练 5 分钟 → 看结果 10 分钟",
+    "cell_title": "一格 = 一次完整实验",
+    "cell_sub": "改代码 → 训练 5 分钟 → 留下或撤掉",
+    "per_hour": "12",
+    "formula": "每小时约 12 次 × {h} 小时 = {n} 次",
+    "readme": "README：睡一觉约 100 次",
+    "versus": "你 {a} 次 · autoresearch {b} 次"
+  },
+  "captions": {
+    "intro": "同一块 GPU，同一个晚上。上面你自己做，下面交给 autoresearch。",
+    "evening": "睡前一小时，你自己做了 2 次：改代码、训练 5 分钟、看结果。GPU 大半时间在等你。",
+    "first": "22:00 你去睡觉，它开始跑。一格 = 一次完整实验，训练 5 分钟。",
+    "night": "你睡着了，上面那条再没有实验。下面每 5 分钟多一格，一小时约 12 格。",
+    "wake": "{clock} 醒来：你 2 次，autoresearch {n} 次。每小时约 12 次 × {h} 小时。"
+  },
+  "controls": [
+    {
+      "type": "slider",
+      "option": "hours",
+      "label": "睡几个小时",
+      "min": 4,
+      "max": 10,
+      "step": 1,
+      "value": 8,
+      "unit": "小时",
+      "note": "拖动看早上的次数怎么变：每小时约 12 次，乘上睡的小时数。"
+    }
+  ],
+  "transcript": [
+    "同一块 GPU，同一个晚上。上面你自己做，下面交给 autoresearch。",
+    "睡前一小时，你自己做了 2 次：改代码、训练 5 分钟、看结果。GPU 大半时间在等你。按我们的假设，一次约 30 分钟：改代码 15 分钟、训练 5 分钟、看结果 10 分钟。",
+    "22:00 你去睡觉，它开始跑。一格 = 一次完整实验，训练 5 分钟。",
+    "你睡着了，上面那条再没有实验。下面每 5 分钟多一格，一小时约 12 格。",
+    "06:00 醒来：你 2 次，autoresearch 96 次。每小时约 12 次 × 8 小时，接近 README 说的「睡一觉约 100 次」。",
+    "拖动「睡几个小时」：睡 4 小时是 48 次，睡 10 小时是 120 次；你那条始终是睡前的 2 次。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "思路就是：给 AI 一套小而真实的训练程序，让它整夜自己做实验。",
+      "quote": "give an AI agent a small but real LLM training setup and let it experiment autonomously overnight.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "每次训练固定 5 分钟，所以一小时约 12 次，睡一觉约 100 次。",
+      "quote": "This means you can expect approx 12 experiments/hour and approx 100 experiments while you sleep.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "program.md 也这样算：每次约 5 分钟，一小时约 12 次，一般人睡一觉约 100 次。",
+      "quote": "As an example use case, a user might leave you running while they sleep. If each experiment takes you ~5 minutes then you can run approx 12/hour, for a total of about 100 over the duration of the average human sleep.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "早上醒来，拿到的是一份实验记录，运气好的话还有一个更好的模型。",
+      "quote": "You wake up in the morning to a log of experiments and (hopefully) a better model.",
+      "source": "README.md"
+    },
+    {
+      "tag": "解读",
+      "text": "自己做实验时，人睡着就没人改代码、启动下一次，GPU 只能空着。",
+      "basis": "README 说研究者平常要自己动手改 Python 文件（you're not touching any of the Python files like you normally would as a researcher）；人不在，下一次实验就没人开始。"
+    },
+    {
+      "tag": "示意",
+      "text": "人工那条的 2 次实验、每次约 30 分钟（改代码 15 分钟、训练 5 分钟、看结果 10 分钟），是演示用的假设。"
+    },
+    {
+      "tag": "解读",
+      "text": "睡 8 小时按每小时 12 次算是 96 次，对上原文的「约 100 次」。8 小时是我们取的例子，原文只说「一般人睡一觉」。",
+      "basis": "README 的「approx 12 experiments/hour」和 program.md 的「about 100 over the duration of the average human sleep」。"
+    }
+  ],
+  "original_anchor": "1-the-core-idea"
+}
