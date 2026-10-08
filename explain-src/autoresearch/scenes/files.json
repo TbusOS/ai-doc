@@ -3,7 +3,7 @@
   "chapter": "what",
   "widget": "files",
   "title": "三个文件，三个角色",
-  "lead": "整个仓库真正要紧的只有三个文件：prepare.py 是考场和考卷，谁都不动；train.py 是 AI 唯一改的文件；program.md 是人写给 AI 的工作手册。",
+  "lead": "整个仓库真正要紧的只有三个文件：prepare.py 是考场和考卷，做实验时谁都不动；train.py 是 AI 唯一改的文件；program.md 是人写给 AI 的工作手册。",
   "body": [
     "关键在分工。平常做研究，人亲手改 Python 代码；在这里，人改的是 program.md 这份说明，改代码、跑训练、判断好坏都交给 AI。",
     "所以 autoresearch 不是一个新模型。训练代码本身是 nanochat 的简化版，它新在规则：让 AI 在一个固定的考场里，自己一次次做实验。",

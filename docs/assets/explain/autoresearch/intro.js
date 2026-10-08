@@ -237,19 +237,20 @@
       return P.fit(Pn.x + Pn.pad, y, copy.labels.fast, '--term-ink', St.size, '--font-hand', 700, 220, 'intro-screen');
     }
     if (s.station !== 'first') return '';
-    var cur = M.STEPS.indexOf(s.step), k = s.step;
+    var steps = s.steps || M.STEPS, cur = steps.indexOf(s.step), k = s.step;
     var label = copy.labels.steps[k], color = '--accent';
     if (k === 'verdict' && s.verdict) {
       label = copy.labels.verdicts[s.verdict];
       color = s.verdict === 'keep' ? '--term-ok' : '--discard';
     }
-    M.STEPS.forEach(function (key, i) {
+    if (k === 'record') color = '--term-ok';
+    steps.forEach(function (key, i) {
       var cx = Pn.x + Pn.pad + St.dot + i * St.dot * 3.4;
       out += tag('circle', { cx: cx.toFixed(1), cy: (y - St.size * 0.34).toFixed(1), r: St.dot,
         style: i < cur ? 'fill:var(--term-ink);opacity:0.55' : i === cur ? 'fill:var(--accent)' : 'fill:none;stroke:var(--term-ink);stroke-width:1.5;opacity:0.45' });
     });
-    var tx = Pn.x + Pn.pad + St.dot * 3.4 * M.STEPS.length + St.dot;
-    out += P.fit(tx, y, (cur + 1) + ' / ' + M.STEPS.length + '  ' + label, color, St.size, '--font-hand', 700, Pn.x + Pn.w - Pn.pad - tx, 'intro-screen');
+    var tx = Pn.x + Pn.pad + St.dot * 3.4 * steps.length + St.dot;
+    out += P.fit(tx, y, (cur + 1) + ' / ' + steps.length + '  ' + label, color, St.size, '--font-hand', 700, Pn.x + Pn.w - Pn.pad - tx, 'intro-screen');
     return out;
   }
 

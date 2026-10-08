@@ -115,3 +115,21 @@ test('without data the model still runs (counts and clock only)', () => {
   assert.equal(s.kept, null);
   assert.equal(s.best, null);
 });
+
+test('the baseline run changes nothing and compares with nothing', () => {
+  // program.md: "Your very first run should always be to establish the baseline, so you will
+  // run the training script as is." Run 1 must never show "edit code" or "compare".
+  const first = M.SCHED.find(x => x.key === 'first');
+  const seen = new Set();
+  for (let i = 0; i <= 200; i++) {
+    const t = first.start + (first.end - first.start) * i / 200 - 1e-9;
+    const s = M.stateAt(Math.max(first.start, t), opts);
+    if (s.station === 'first' && s.current === 1) seen.add(s.step);
+  }
+  assert.deepEqual([...seen].sort(), ['asis', 'record', 'train'].sort());
+  // later runs keep the four steps
+  const s2 = M.stateAt(first.start + (first.end - first.start) * 0.4, opts);
+  assert.equal(s2.current, 2);
+  assert.ok(M.STEPS.includes(s2.step));
+});
+

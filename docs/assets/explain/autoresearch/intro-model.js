@@ -22,6 +22,8 @@
   var TOTAL = 83, KEPT = 15;              // progress.png title
   var FIRST = 3;                          // experiments shown one step at a time
   var STEPS = ['edit', 'train', 'compare', 'verdict'];
+  // run 1 is the baseline: "run the training script as is" (program.md), nothing to edit or compare
+  var BASE_STEPS = ['asis', 'train', 'record'];
   var STATIONS = ['handoff', 'first', 'night', 'morning'];
   var DURS = { handoff: 2.4, first: 5.4, night: 8.0, morning: 3.6 };
   var FIRST_SLOT = DURS.first / FIRST;
@@ -65,7 +67,7 @@
     var points = opts && opts.points ? opts.points : null;
     var at = T.locate(SCHED, T.clamp(t, 0, END));
     var k = at.item.key, local = at.local;
-    var s = { station: k, local: local, done: 0, current: null, step: null, verdict: null,
+    var s = { station: k, local: local, done: 0, current: null, steps: null, step: null, verdict: null,
               progress: 0, minutes: 0, clock: '', screenOn: true, dawn: 0, wake: 0,
               visible: [], kept: null, best: null };
 
@@ -74,11 +76,13 @@
     } else if (k === 'first') {
       var slot = Math.min(FIRST - 1, Math.floor(local * FIRST + 1e-9));
       var frac = T.clamp(local * FIRST - slot, 0, 1);
-      var step = Math.min(STEPS.length - 1, Math.floor(frac * STEPS.length + 1e-9));
+      var steps = slot === 0 ? BASE_STEPS : STEPS;
+      var step = Math.min(steps.length - 1, Math.floor(frac * steps.length + 1e-9));
       s.done = slot;
       s.current = slot + 1;
-      s.step = STEPS[step];
-      s.verdict = s.step === 'verdict' ? statusOf(s.current, points) : null;
+      s.steps = steps;
+      s.step = steps[step];
+      s.verdict = s.step === 'verdict' || s.step === 'record' ? statusOf(s.current, points) : null;
       s.progress = (slot + frac) / TOTAL;
     } else if (k === 'night') {
       var x = local * (TOTAL - FIRST);
@@ -104,7 +108,7 @@
     return s;
   }
 
-  return { TOTAL: TOTAL, KEPT: KEPT, FIRST: FIRST, STEPS: STEPS, STATIONS: STATIONS, DURS: DURS,
+  return { TOTAL: TOTAL, KEPT: KEPT, FIRST: FIRST, STEPS: STEPS, BASE_STEPS: BASE_STEPS, STATIONS: STATIONS, DURS: DURS,
            FIRST_SLOT: FIRST_SLOT, NIGHT_MIN: NIGHT_MIN, SCHED: SCHED, duration: duration, stops: stops,
            stateAt: stateAt, statusOf: statusOf, bestLine: bestLine, clockText: clockText };
 });

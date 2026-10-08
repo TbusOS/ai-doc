@@ -3,7 +3,7 @@
   "type": "annotated",
   "chapter": "how",
   "title": "program.md 逐段批注",
-  "lead": "整套方法就写在这一份 114 行的手册里。左边是原文（逐字摘录），右边是一句大白话。",
+  "lead": "整套方法就写在这一份 114 行的手册里。每段先摘原文（逐字），再配一句大白话。",
   "body": [
     "这份手册是人唯一要写的东西。想让 AI 换一种做法，就改这份手册，不用改训练代码。"
   ],
@@ -59,7 +59,7 @@
     {
       "quote": "The `evaluate_bpb` function in `prepare.py` is the ground truth metric.",
       "source": "program.md",
-      "note": "打分函数是唯一的裁判。AI 改不了它，也就没法靠改裁判来抬高分数。",
+      "note": "打分函数是唯一的裁判，手册规定 AI 不许改它。不过这道防线靠 AI 守规矩：文件并没有被锁住，而且打分时调用的模型计算和最后打印出来的分数都在 train.py 里。",
       "group": "Experimentation",
       "group_zh": "规矩：能改什么、不能改什么、比什么",
       "mark": "ground truth metric"
@@ -99,7 +99,7 @@
     {
       "quote": "redirect everything — do NOT use tee or let output flood your context",
       "source": "program.md",
-      "note": "训练日志全部写进文件，AI 只用 grep 读出两行关键数字。要是几千行日志都读进来，几轮之后 AI 的上下文就满了。",
+      "note": "训练日志全部写进文件，AI 只用 grep 读出两行关键数字。要是近千条训练进度（示例里是 953 步）都读进来，几轮之后 AI 的上下文就满了。",
       "group": "The experiment loop",
       "group_zh": "实验循环：只进不退",
       "mark": "do NOT use tee"
@@ -107,7 +107,7 @@
     {
       "quote": "If val_bpb improved (lower), you \"advance\" the branch, keeping the git commit",
       "source": "program.md",
-      "note": "只进不退的关键：分数变好（更低）就把这次提交留在分支上；没变好就按第 9 步 git reset 退回这一轮开始的地方。分支上只会留下让分数变好的改动。",
+      "note": "只进不退的关键：分数变好（更低）就把这次提交留在分支上；没变好就按第 9 步 git reset 退回这一轮开始的地方。分支上基本只留下让分数变好的改动（「简单优先」和偶尔回退是例外）。",
       "group": "The experiment loop",
       "group_zh": "实验循环：只进不退",
       "mark": "keeping the git commit"
@@ -154,7 +154,7 @@
     },
     {
       "tag": "解读",
-      "text": "右边的批注是我们的大白话解释，不是原文。",
+      "text": "批注是我们的大白话解释，不是原文。",
       "basis": "逐段对照 program.md 原文写成；跟原文意思冲突的地方以原文为准。"
     }
   ],
