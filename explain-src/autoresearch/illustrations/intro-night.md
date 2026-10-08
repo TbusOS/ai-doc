@@ -4,7 +4,8 @@
 - 成品:`docs/assets/explain/autoresearch/intro-night.webp`(1672×941,WebP 质量 80,105 KB)
 - 出处标记:**示意**。小机器人是比喻,真实的 AI 是电脑里跑的程序。
 - 生成:2026-10-09,Codex CLI 0.159.2,`codex exec -m gpt-6-astra`,调用 Codex 自带的出图工具
-- 屏幕位置(原图像素):x 1295–1481,y 429–545;屏幕底色约 `#FEB359`。网页在这块上面叠动画。
+- 深色模式用另一张:`docs/assets/explain/autoresearch/intro-night-dark.webp`(同尺寸),由下面「夜间版」提示词生成,附亮色版当构图参考。
+- 屏幕位置(原图像素):亮色版 x 1295–1481,y 429–545,底色约 `#FEB359`;夜间版 x 1296–1481,y 429–545(两张差不到 1 像素)。网页在这块上面叠动画。
 
 ## 参考图
 
@@ -20,6 +21,7 @@
 | 2 | 加画风参考图 | 铅笔质感对了;被子是蓝色,跟窗外的夜抢眼 |
 | 3a | 被子改米白,屏幕留成纯色 | 好,但「谁在干活」要靠读者自己想 |
 | 3b(选用) | 3a + 书桌前一个小机器人在敲键盘 | 一眼看懂「人睡了,有个东西在替他干活」 |
+| 夜间版 | 以 3b 为构图参考,关灯、深色纸、屏幕是唯一光源 | 用于深色模式。试过把亮色版直接反相:夜空变成白天的浅蓝、头发变白、屏幕变暗褐色,意思全反了,弃用 |
 
 GPT 出图不能按种子复现;要重做时用下面的提示词 + 两张参考图,结果会相近但不会一模一样。
 
@@ -37,4 +39,18 @@ Use your image generation tool to create ONE wide 16:9 illustration:
 - Absolutely no text, letters, digits, logos, UI or watermark anywhere.
 - On the desk chair sits a small, round, friendly robot (about the size of a child, simple dome head, two dot eyes, no mouth text), seen from a three-quarter back view, typing on the keyboard with both hands while looking at the screen. It is drawn in the same pencil style, light grey with a touch of orange where the screen light falls on it.
 Save the PNG in the current directory as intro-v3b.png and reply with only its path and pixel size.
+```
+
+## 提示词(夜间版,原文;附图 = 3b 成品)
+
+```
+The attached image is the light version of an illustration. Use your image generation tool to create its NIGHT / DARK-MODE version: the exact same drawing, same composition, same objects in the same positions and sizes (bed, sleeping person, bedside table and lamp, rug and slippers, window with curtains, desk, chair, small robot typing, monitor, plant). Only the lighting and palette change:
+- The room lights are off. Background becomes a deep navy-ink paper (around #141a26) with the same subtle pencil texture.
+- Lines become soft light-grey chalk / pencil lines.
+- The monitor screen keeps exactly the same position and size and stays a flat, evenly lit warm-orange rectangle with nothing drawn on it; it is the main light source and casts a soft warm glow on the robot, the desk and the nearby wall.
+- Through the window: deep-blue night sky, a pale crescent moon and stars; faint cool moonlight on the bed.
+- The sleeping person and robot keep their friendly faces; furniture in muted dark wood tones; plant leaves dark green.
+- Top band of the image (about 18 %) stays plain dark paper.
+- Absolutely no text, letters, digits, logos, UI or watermark.
+Save the PNG in the current directory as intro-dark.png and reply with only its path and pixel size.
 ```
