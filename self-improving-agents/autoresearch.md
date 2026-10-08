@@ -87,7 +87,7 @@ pyproject.toml  — 依赖
 
 **val_bpb**（validation bits per byte），越低越好。
 
-选 bpb 而不是 val_loss 有一个精心的原因：**bpb 与词表大小无关**。这意味着 agent 可以自由地把 `vocab_size` 从 8192 改到 4096 或 1024，换掉 tokenizer 方案，而不同配置之间**仍然可公平比较**。如果用 val_loss，vocab 一变损失的可比性就丢了，agent 就可以"作弊式"地通过缩小词表来伪造进步。
+选 bpb 而不是 val_loss 有一个精心的原因：**bpb 与词表大小无关**，所以不同的结构改动之间**仍然可公平比较**。词表大小 `VOCAB_SIZE = 8192` 和 tokenizer 都在 `prepare.py` 里，agent 不能改（program.md：prepare.py 是只读的）；README 建议在小机器上把 `vocab_size` 调小到 4096、1024 甚至 256，那是给换平台的人用的，调小之后 bpb 依然能和原来比。如果用每个 token 的 val_loss，词表一变，同一句话切出的 token 数就变，损失跟着变，分数就没法前后比了。
 
 **val_bpb (validation bits per byte), lower is better.** The deliberate reason for choosing bpb over val_loss is that bpb is **vocab-size-independent** — architectural/tokenizer changes remain fairly comparable, which closes a whole class of "gaming the metric" failure modes.
 
