@@ -131,7 +131,9 @@
     }
 
     // scene controls: checkbox (bool), range slider (number), button group (string)
-    function setOption(key, value) { if (w.setOption) w.setOption(key, value); paint(); }
+    var options = {};  // what the scene was last told, per control (read by the browser tests)
+    function tell(key, value) { options[key] = value; if (w.setOption) w.setOption(key, value); }
+    function setOption(key, value) { tell(key, value); paint(); }
     Array.prototype.forEach.call(section.querySelectorAll('input[type="checkbox"][data-option]'), function (box) {
       box.addEventListener('change', function () { setOption(box.dataset.option, box.checked); });
     });
@@ -151,13 +153,27 @@
       });
     });
 
+    // Push every control's starting value before the first frame: the scene must not rely on its
+    // own defaults matching the copy, and the browser may restore a checkbox state after "back".
+    Array.prototype.forEach.call(section.querySelectorAll('input[type="checkbox"][data-option]'), function (box) {
+      tell(box.dataset.option, box.checked);
+    });
+    Array.prototype.forEach.call(section.querySelectorAll('input[type="range"][data-option]'), function (range) {
+      var out = section.querySelector('output[data-for="' + range.dataset.option + '"]');
+      if (out) out.textContent = range.value;
+      tell(range.dataset.option, +range.value);
+    });
+    Array.prototype.forEach.call(section.querySelectorAll('button[data-option][aria-pressed="true"]'), function (btn) {
+      tell(btn.dataset.option, btn.dataset.value);
+    });
+
     if (window.ResizeObserver) new ResizeObserver(relayout).observe(svg);
 
     s.t = reduced ? w.duration : 0;
     relayout();
 
     return {
-      section: section, stage: stage || section, widget: w, state: s,
+      section: section, stage: stage || section, widget: w, state: s, options: options,
       play: play, pause: pause, seek: seek,
       onVisible: function (ratio) {
         if (reduced) return;
@@ -246,7 +262,7 @@
     var scenes = sections.map(function (el) { return mount(el, data); }).filter(Boolean);
     Array.prototype.push.apply(mounted, scenes);
     window.Explain.mounted = scenes.map(function (sc) {
-      return { id: sc.section.dataset.scene, stops: sc.widget.stops, duration: sc.widget.duration };
+      return { id: sc.section.dataset.scene, stops: sc.widget.stops, duration: sc.widget.duration, options: sc.options };
     });
     watchViewport(scenes);
   }

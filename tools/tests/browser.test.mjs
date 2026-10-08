@@ -57,6 +57,58 @@ test('scrub bar moves every animation', { skip }, async () => {
   });
 });
 
+// Every toggle / slider / choice: the scene was told its starting value, and moving it changes the
+// picture at one stop or more (a control that never changes anything is broken).
+async function controlsOf(page, id) {
+  return page.evaluate(sel => Array.from(document.querySelectorAll(sel + ' [data-option]'))
+    .filter(el => el.matches('input[type="checkbox"], input[type="range"], button[data-value]'))
+    .map(el => ({ option: el.dataset.option, kind: el.type === 'checkbox' ? 'toggle' : el.type === 'range' ? 'slider' : 'choice',
+      value: el.type === 'checkbox' ? el.checked : el.type === 'range' ? +el.value : el.dataset.value,
+      pressed: el.getAttribute('aria-pressed') === 'true', min: el.min, max: el.max })), sceneSel(id));
+}
+
+test('every control starts its scene with the value shown on the page', { skip }, async () => {
+  await withPage({}, async page => {
+    for (const m of await mounted(page)) {
+      for (const c of await controlsOf(page, m.id)) {
+        if (c.kind === 'choice' && !c.pressed) continue;
+        assert.deepEqual(m.options[c.option], c.value, `${m.id}: ${c.option}`);
+      }
+    }
+  });
+});
+
+test('every control changes the picture at some stop', { skip }, async () => {
+  await withPage({}, async page => {
+    for (const m of await mounted(page)) {
+      const sec = sceneSel(m.id);
+      const seen = new Set();
+      for (const c of await controlsOf(page, m.id)) {
+        const key = c.option + (c.kind === 'choice' ? '=' + c.value : '');
+        if (seen.has(key) || (c.kind === 'choice' && c.pressed)) continue;
+        seen.add(key);
+        const flip = async on => {
+          if (c.kind === 'toggle') await page.locator(`${sec} input[type="checkbox"][data-option="${c.option}"]`).setChecked(on);
+          else if (c.kind === 'slider') await page.locator(`${sec} input[type="range"][data-option="${c.option}"]`).fill(on ? c.max : c.min);
+          else await page.locator(on ? `${sec} button[data-option="${c.option}"][data-value="${c.value}"]`
+            : `${sec} button[data-option="${c.option}"]:not([data-value="${c.value}"])`).first().click();
+        };
+        let changed = false;
+        for (const t of m.stops.concat([m.duration])) {
+          await page.locator(`${sec} .scrub`).fill(String(Math.round(1000 * t / m.duration)));
+          await flip(false);
+          const a = await page.locator(`${sec} .stage-svg`).innerHTML();
+          await flip(true);
+          const b = await page.locator(`${sec} .stage-svg`).innerHTML();
+          await flip(false);
+          if (a !== b) { changed = true; break; }
+        }
+        assert.ok(changed, `${m.id}: control ${key} never changes the picture`);
+      }
+    }
+  });
+});
+
 test('arrow keys step to the next stop', { skip }, async () => {
   await withPage({}, async page => {
     for (const m of await mounted(page)) {

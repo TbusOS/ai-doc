@@ -137,6 +137,8 @@ p { margin: 0 0 1em; }
 a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 3px; }
 a:hover { color: var(--accent-ink); }
 code, kbd { font-family: var(--font-mono); font-size: 0.86em; background: var(--paper-2); padding: 0.1em 0.35em; border-radius: 5px; }
+/* JetBrains Mono would draw <=, //, -> as ligatures; quoted code must look like the source */
+code, kbd, pre, .stage-svg { font-variant-ligatures: none; }
 img, svg { max-width: 100%; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
 ::selection { background: var(--accent-soft); }
