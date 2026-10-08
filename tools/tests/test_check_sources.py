@@ -42,6 +42,16 @@ class ClaimsTest(unittest.TestCase):
     def test_illustrative_ok(self):
         self.assertEqual(check_claims(self.data({"tag": "示意", "text": "数字是假设的"}), self.tmp), [])
 
+    def test_nested_quotes_are_checked_with_inherited_source(self):
+        scene = {"id": "s", "source": "program.md", "pairs": [{"quote": "advance the trunk", "note": "x"}]}
+        self.assertEqual(len(check_claims({"scenes": [scene]}, self.tmp)), 1)
+        scene["pairs"][0]["quote"] = 'you "advance" the branch'
+        self.assertEqual(check_claims({"scenes": [scene]}, self.tmp), [])
+
+    def test_snippet_without_any_source_fails(self):
+        scene = {"id": "s", "snippets": [{"quote": "x"}]}
+        self.assertEqual(len(check_claims({"scenes": [scene]}, self.tmp)), 1)
+
     def test_bad_tag(self):
         self.assertEqual(len(check_claims(self.data({"tag": "猜的", "text": "x"}), self.tmp)), 1)
 

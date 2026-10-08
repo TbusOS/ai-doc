@@ -6,12 +6,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "docs" / "scripts"))
-from explain_build import render_explain  # noqa: E402
+from explain_build import load_explainer, render_explain  # noqa: E402
 
 
 class RenderTest(unittest.TestCase):
     def setUp(self):
-        self.data = json.loads((ROOT / "explain-src/autoresearch/zh.json").read_text(encoding="utf-8"))
+        self.data = load_explainer(ROOT / "explain-src/autoresearch")
         self.html = render_explain(self.data)
 
     def test_all_scene_copy_in_html(self):
@@ -47,7 +47,8 @@ class RenderTest(unittest.TestCase):
 
     def test_chapters_and_original_link(self):
         for ch in self.data["chapters"]:
-            self.assertIn(h.escape(ch["title"]), self.html)
+            if ch.get("nav") is not False:  # the five questions are always listed in the nav
+                self.assertIn(h.escape(ch["title"]), self.html)
         self.assertIn(self.data["paper"]["original_page"], self.html)
 
     def test_chapter_without_scene_is_disabled(self):

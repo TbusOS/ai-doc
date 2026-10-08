@@ -1,0 +1,184 @@
+{
+  "id": "loop",
+  "chapter": "why",
+  "widget": "loop",
+  "title": "实验循环：只进不退",
+  "lead": "autoresearch 的核心是一个不停转的循环。每一轮只回答一个问题：这次改动让分数变好了吗？变好就留在分支上；没变好就撤掉代码，只在 results.tsv 里留一行记录。",
+  "body": [
+    "program.md 把这个循环写成 9 步，这里合并成 7 站，顺序跟原文一致：先比较分数，再记一笔（第 7 步），最后让 git 分支前进或退回（第 8、9 步）。分数更低，分支就前进一格；持平或变差，就用 git reset 退回去。所以分支上基本只留下一串越来越好的提交，像一个只能往一个方向拧的棘轮。",
+    "有一个例外：program.md 的「简单优先」规则说，分数几乎没变、但代码简单得多的改动也值得保留，场景 7 会专门讲。",
+    "动画里这 4 轮实验记录不是我们编的，是 program.md 原文举的例子：一次基线、一次变好、一次变差、一次崩溃，正好把循环的四种结局各走一遍。"
+  ],
+  "stage_label": "实验循环动画：七个步骤围成一圈，旁边是 git 分支和 results.tsv 实验记录",
+  "branch": "autoresearch/mar5",
+  "commands": {
+    "train": "uv run train.py > run.log 2>&1",
+    "read": "grep \"^val_bpb:\\|^peak_vram_mb:\" run.log",
+    "tail": "tail -n 50 run.log"
+  },
+  "stations": {
+    "edit": {
+      "label": "改 train.py",
+      "caption": "想一个点子，直接改 train.py。这是 AI 唯一能动的文件。"
+    },
+    "commit": {
+      "label": "git commit",
+      "caption": "先提交。万一这次没变好，git reset 就能退回到提交之前的样子。"
+    },
+    "train": {
+      "label": "训练 5 分钟",
+      "caption": "开始训练，输出全部写进 run.log。不管改了什么，时间都是 5 分钟。"
+    },
+    "read": {
+      "label": "读结果",
+      "caption": "用 grep 只挑出分数和显存两行，不把整份日志塞进自己的上下文。"
+    },
+    "decide": {
+      "label": "比一比",
+      "caption": "跟分支上当前版本的分数比：更低才算变好。"
+    },
+    "log": {
+      "label": "记一笔",
+      "caption": "在 results.tsv 里记一行：提交号、分数、显存、结论、做了什么。"
+    },
+    "git": {
+      "label": "前进/退回",
+      "caption": "变好就让分支前进，没变好就 git reset。"
+    }
+  },
+  "special": {
+    "intro": "一轮实验 = 改代码 → 提交 → 训练 5 分钟 → 读结果 → 比一比 → 记一笔 → 前进或退回。看它连跑 4 轮。",
+    "edit_baseline": "第一轮什么都不改，原样跑一遍，先拿到基线分数。之后每个点子都跟分支上当前的版本比，一开始就是这个基线。",
+    "read_crash": "grep 什么也没读到：训练崩了。去看 run.log 最后 50 行找原因。",
+    "outro": "4 轮跑完：2 次保留，1 次丢弃，1 次崩溃。这 4 轮里，分支上只留下了变好的提交。人睡一觉，这个循环能转大约 100 圈。",
+    "outro_noreset": "4 轮跑完，但分支上混进了变差和崩溃的提交，之后所有实验都只能建立在它们上面。这就是第 9 步必须 reset 的原因。"
+  },
+  "verdicts": {
+    "baseline": "基线分数 {bpb}。这是起点。",
+    "keep": "{bpb} 比 {best} 低：变好了。",
+    "discard": "{bpb} 没有比 {best} 低：没变好。",
+    "crash": "没有分数：这次训练崩了（显存不够，OOM）。"
+  },
+  "labels": {
+    "best": "目前最好",
+    "head_score": "分支上代码的分数",
+    "branch_title": "git 分支",
+    "table_title": "results.tsv",
+    "round": "第 {n} 轮"
+  },
+  "toggle": {
+    "option": "noReset",
+    "label": "去掉 git reset 会怎样",
+    "tag": "解读",
+    "note": "勾上后重新播放：变差和崩溃的改动都不再撤销。这是按循环第 8、9 步反推的情况，program.md 没有演示它。",
+    "basis": "由 program.md 循环第 8、9 步反推：第 9 步存在的意义，就是把没变好的改动撤掉。"
+  },
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "第一轮不改任何代码，先跑出基线分数。",
+      "quote": "Your very first run should always be to establish the baseline, so you will run the training script as is.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "训练的输出全部重定向到 run.log，不让它淹没 AI 的上下文。",
+      "quote": "Run the experiment: `uv run train.py > run.log 2>&1` (redirect everything — do NOT use tee or let output flood your context)",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "第 5 步用 grep 只挑出分数和显存两行。",
+      "quote": "Read out the results: `grep \"^val_bpb:\\|^peak_vram_mb:\" run.log`",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "第一轮读到的 0.997900 和 45060.2，来自 program.md 给的输出示例。",
+      "quote": "val_bpb: 0.997900\ntraining_seconds: 300.1\ntotal_seconds: 325.9\npeak_vram_mb: 45060.2",
+      "source": "program.md"
+    },
+    {
+      "tag": "示意",
+      "text": "第 2、3 轮的 peak_vram_mb 是按 results.tsv 里的 memory_gb × 1024 倒推的，program.md 只给了第一轮的原始输出。"
+    },
+    {
+      "tag": "原文",
+      "text": "先记录（第 7 步），results.tsv 只用来记录，不提交进 git。",
+      "quote": "Record the results in the tsv (NOTE: do not commit the results.tsv file, leave it untracked by git)",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "分数变好（更低），分支就往前走一步，这次提交保留（第 8 步）。",
+      "quote": "If val_bpb improved (lower), you \"advance\" the branch, keeping the git commit",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "持平或变差，就用 git reset 退回到这轮开始的地方（第 9 步）。",
+      "quote": "If val_bpb is equal or worse, you git reset back to where you started",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "「比一比」是从第 8、9 步里单独拆出来的一站：原文把比较和 git 操作写在同一步，而第 7 步的记录要先知道结论，所以比较放在记录之前。",
+      "basis": "program.md 循环第 7–9 步，以及 results.tsv 的 status 列（keep / discard / crash）。"
+    },
+    {
+      "tag": "原文",
+      "text": "例外：分数几乎没变、但代码简单得多的改动也保留。",
+      "quote": "An improvement of ~0 but much simpler code? Keep.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "grep 读不到分数就是训练崩了：看日志最后 50 行，试着修。",
+      "quote": "If the grep output is empty, the run crashed. Run `tail -n 50 run.log` to read the Python stack trace and attempt a fix.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "点子本身就不成立时，不硬修：记一笔 crash，换下一个。",
+      "quote": "If the idea itself is fundamentally broken, just skip it, log \"crash\" as the status in the tsv, and move on.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "超过 10 分钟没跑完也算失败：丢弃并退回。",
+      "quote": "If a run exceeds 10 minutes, kill it and treat it as a failure (discard and revert).",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "崩溃的提交也不会留在分支上。",
+      "basis": "program.md 对崩溃只写了 skip it / move on；超时一条明确写了 discard and revert，按同样的处理推断。"
+    },
+    {
+      "tag": "原文",
+      "text": "动画里的 4 行实验记录，是 program.md 自己举的例子。",
+      "quote": "a1b2c3d 0.997900 44.0 keep baseline\nb2c3d4e 0.993200 44.2 keep increase LR to 0.04\nc3d4e5f 1.005000 44.0 discard switch to GeLU activation\nd4e5f6g 0.000000 0.0 crash double model width (OOM)",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "分支名 autoresearch/mar5 也是 program.md 里的例子。",
+      "quote": "The experiment runs on a dedicated branch (e.g. `autoresearch/mar5` or `autoresearch/mar5-gpu0`).",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "如果没有 git reset，变差和崩溃的改动会留在分支上，后面每一次实验都从这个更差的起点出发。",
+      "basis": "由 program.md 循环第 8、9 步反推：第 9 步存在的意义，就是把没变好的改动撤掉。"
+    }
+  ],
+  "original_anchor": "3-the-experimentation-loop",
+  "actions": {
+    "baseline": "基线留在分支上，HEAD 指向它。",
+    "keep": "保留这次提交：分支前进一格，HEAD 跟着走。",
+    "discard": "git reset：代码退回上一个好版本，这次改动作废，只在 results.tsv 里留下记录。",
+    "discard_noreset": "没有 reset：变差的代码留在了分支上，下一个点子只能从 {bpb} 这个更差的起点出发。",
+    "crash": "崩溃的提交也不留在分支上：跳过这个点子，换下一个。",
+    "crash_noreset": "没有 reset：崩溃的代码也留在了分支上，接下来的实验都建立在它上面。"
+  }
+}

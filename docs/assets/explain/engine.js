@@ -15,6 +15,7 @@
 
   var T = window.ExplainTimeline;
   var registry = {};
+  var mounted = [];  // every mounted scene; only one plays at a time
   var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   var captureId = new URLSearchParams(window.location.search).get('capture');
   var SPEEDS = [1, 2, 0.5];
@@ -46,7 +47,18 @@
       data: data,
       caption: function (text) { if (capEl && capEl.textContent !== text) capEl.textContent = text; }
     };
-    var w = factory(svg, ctx);
+    var w;
+    try {
+      w = factory(svg, ctx);
+    } catch (err) {
+      // a broken scene must not take the others down: show its text version instead
+      section.classList.add('scene-broken');
+      var tr = section.querySelector('.stage-transcript');
+      if (tr) tr.open = true;
+      console.error('scene "' + section.dataset.scene + '" failed to start:', err);
+      return null;
+    }
+    ctx.redraw = function () { paint(); };
     var transcript = section.querySelector('.stage-transcript');
     if (transcript) transcript.open = false;  // the animation is running; the text version stays one click away
     var s = { t: 0, playing: false, played: false, pausedByView: false, speedIdx: 0, last: 0 };
@@ -81,6 +93,7 @@
     }
 
     function play() {
+      mounted.forEach(function (other) { if (other.widget !== w && other.state.playing) other.pause(); });
       if (s.t >= w.duration - 1e-6) s.t = 0;
       s.playing = true; s.played = true; s.pausedByView = false;
       s.last = performance.now();
@@ -117,11 +130,24 @@
       });
     }
 
-    var toggles = section.querySelectorAll('.ex-toggle input[data-option]');
-    Array.prototype.forEach.call(toggles, function (box) {
-      box.addEventListener('change', function () {
-        if (w.setOption) w.setOption(box.dataset.option, box.checked);
-        paint();
+    // scene controls: checkbox (bool), range slider (number), button group (string)
+    function setOption(key, value) { if (w.setOption) w.setOption(key, value); paint(); }
+    Array.prototype.forEach.call(section.querySelectorAll('input[type="checkbox"][data-option]'), function (box) {
+      box.addEventListener('change', function () { setOption(box.dataset.option, box.checked); });
+    });
+    Array.prototype.forEach.call(section.querySelectorAll('input[type="range"][data-option]'), function (range) {
+      var out = section.querySelector('output[data-for="' + range.dataset.option + '"]');
+      range.addEventListener('input', function () {
+        if (out) out.textContent = range.value;
+        setOption(range.dataset.option, +range.value);
+      });
+    });
+    Array.prototype.forEach.call(section.querySelectorAll('button[data-option][data-value]'), function (btn) {
+      btn.addEventListener('click', function () {
+        Array.prototype.forEach.call(section.querySelectorAll('button[data-option="' + btn.dataset.option + '"]'), function (b) {
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
+        setOption(btn.dataset.option, btn.dataset.value);
       });
     });
 
@@ -209,6 +235,7 @@
       target.classList.add('is-capture');
       var sc = mount(target, data);
       if (!sc) return;
+      mounted.push(sc);
       sc.seek(0);
       window.__explain = { duration: sc.widget.duration, seek: function (t) { sc.seek(t); } };
       return;
@@ -217,6 +244,10 @@
     initTheme();
     watchReveal();
     var scenes = sections.map(function (el) { return mount(el, data); }).filter(Boolean);
+    Array.prototype.push.apply(mounted, scenes);
+    window.Explain.mounted = scenes.map(function (sc) {
+      return { id: sc.section.dataset.scene, stops: sc.widget.stops, duration: sc.widget.duration };
+    });
     watchViewport(scenes);
   }
 
