@@ -1,7 +1,7 @@
 /* autoresearch opening scene model — one night, 83 experiments.
  *
  * Four stations on one absolute schedule:
- *   handoff  22:00, the human starts the agent and goes to bed
+ *   handoff  23:00, the human starts the agent and goes to bed
  *   first    experiments 1–3 slowly, one step at a time (edit → train → compare → verdict)
  *   night    experiments 4–83 fast-forwarded
  *   morning  06:00, the human wakes up to the log
@@ -9,8 +9,9 @@
  * experiment and the running-best line come from data/progress.json (read off
  * that figure). Experiment n is point x = n - 1; an index missing from the
  * points was not drawn because it scored worse than baseline + 0.0005
- * (analysis.ipynb), so it was discarded. The clock (22:00 → 06:00) is
- * illustrative: it advances with the experiment count.
+ * (analysis.ipynb), so it was discarded. The clock (23:00 → 06:00) is
+ * illustrative: it advances with the experiment count. 7 hours keeps README's
+ * pace (approx 12 experiments/hour): 83 / 7 ≈ 11.9.
  * stateAt(t, {points}) is pure: same t, same frame, whatever was called before. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(root.ExplainTimeline || global.ExplainTimeline);
@@ -24,8 +25,8 @@
   var STATIONS = ['handoff', 'first', 'night', 'morning'];
   var DURS = { handoff: 2.4, first: 5.4, night: 8.0, morning: 3.6 };
   var FIRST_SLOT = DURS.first / FIRST;
-  var NIGHT_MIN = 8 * 60;                 // 22:00 → 06:00, illustrative
-  var START_MIN = 22 * 60;
+  var NIGHT_MIN = 7 * 60;                 // 23:00 → 06:00, illustrative (≈ 12 an hour, as in README)
+  var START_MIN = 23 * 60;
 
   var SCHED = T.schedule(STATIONS.map(function (k) { return { key: k, dur: DURS[k] }; }), 0);
   var END = SCHED[SCHED.length - 1].end;

@@ -5,7 +5,8 @@
 - 出处标记:**示意**。小机器人是比喻,真实的 AI 是电脑里跑的程序。
 - 生成:2026-10-09,Codex CLI 0.159.2,`codex exec -m gpt-6-astra`,调用 Codex 自带的出图工具
 - 深色模式用另一张:`docs/assets/explain/autoresearch/intro-night-dark.webp`(同尺寸),由下面「夜间版」提示词生成,附亮色版当构图参考。
-- 屏幕位置(原图像素):亮色版 x 1295–1481,y 429–545,底色约 `#FEB359`;夜间版 x 1296–1481,y 429–545(两张差不到 1 像素)。网页在这块上面叠动画。
+- 早上(场景最后一站)渐变到早晨版:`intro-morning.webp`(亮色)、`intro-morning-dark.webp`(深色),提示词见文末。
+- 屏幕位置(原图像素):四张图都在 x 1295–1481、y 428–545 之内,彼此差不超过 2 像素;亮色版底色约 `#FEB359`。网页在这块上面叠动画。
 
 ## 参考图
 
@@ -54,3 +55,21 @@ The attached image is the light version of an illustration. Use your image gener
 - Absolutely no text, letters, digits, logos, UI or watermark.
 Save the PNG in the current directory as intro-dark.png and reply with only its path and pixel size.
 ```
+
+## 提示词(早晨版,原文)
+
+亮色版附图:画风参考图 + 3b 成品;深色版附图:夜间版成品。两张共用下面这段要求:
+
+```
+- Same composition, same objects in the same positions and sizes: bed, bedside table and lamp (off), rug and slippers, window with curtains, desk, chair, robot, monitor, plant.
+- It is now early morning. Through the window: a pale morning sky with a soft sunrise (warm yellow and pink near the horizon), no moon, no stars.
+- The person is now sitting up in bed, arms stretched up in a big yawn-stretch, sleepy happy face; blanket around the waist.
+- The small robot is still on the chair but has turned its head and upper body toward the person and raises one hand in a small friendly wave.
+- The monitor screen keeps EXACTLY the same position and size and stays a flat, evenly lit warm-orange rectangle with nothing drawn on it.
+- Keep the top band of the image (about 18 %) plain.
+- Absolutely no text, letters, digits, logos, UI or watermark anywhere.
+```
+
+亮色版开头:`Attached image 1 is the STYLE REFERENCE (drawing technique only). Attached image 2 is the NIGHT version of this illustration; draw its MORNING version in exactly the same pencil style, warm cream paper, light coloured-pencil fills.`
+
+深色版开头:`The attached image is the dark-mode NIGHT version of an illustration (deep navy-ink paper, soft light-grey chalk/pencil lines). Draw its DAWN version in exactly the same dark-mode style and palette: the room is still dim, but the first light of dawn comes through the window and falls softly into the room.`

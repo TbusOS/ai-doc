@@ -36,9 +36,9 @@ test('pure: order of calls does not matter', () => {
   assert.deepEqual(a, b);
 });
 
-test('the night starts at 22:00 with nothing run yet', () => {
+test('the night starts at 23:00 with nothing run yet', () => {
   const s = M.stateAt(0, opts);
-  assert.equal(s.clock, '22:00');
+  assert.equal(s.clock, '23:00');
   assert.equal(s.done, 0);
   assert.equal(s.current, null);
   assert.equal(s.kept, 0);
@@ -55,6 +55,12 @@ test('06:00: all 83 experiments done, 15 kept, best reading 0.97728', () => {
     assert.equal(s.visible.length, progress.points.length);
   }
   assert.ok(M.stateAt(M.duration(), opts).wake > 0.99);
+});
+
+test('the illustrative clock keeps README pace: about 12 experiments an hour', () => {
+  // README: "approx 12 experiments/hour"; 83 experiments over the night
+  const perHour = M.TOTAL / (M.NIGHT_MIN / 60);
+  assert.ok(perHour > 11 && perHour < 13, `${perHour.toFixed(1)} per hour`);
 });
 
 test('experiments count up one at a time and the clock never runs backwards', () => {
