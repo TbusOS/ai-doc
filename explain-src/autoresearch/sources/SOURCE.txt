@@ -1,0 +1,1 @@
+karpathy/autoresearch e6d79c1 — https://github.com/karpathy/autoresearch (copied 2026-10-08, MIT license)
