@@ -1,0 +1,217 @@
+{
+  "id": "simplicity",
+  "chapter": "why",
+  "widget": "simplicity",
+  "title": "简单优先：改进要跟复杂度一起称",
+  "lead": "分数变好了就一定留吗？program.md 说不一定：要把改进的幅度和代码变复杂的代价放在一起称。改进很小却让代码变乱，不值；删了代码还能持平或变好，就该留。",
+  "body": [
+    "天平左边放「分数改善」，右边放「代码复杂度」。删代码让复杂度变少，图里画成气球，把右边往上拉。哪边沉就听哪边：左边沉，保留；右边沉，不值。",
+    "四张卡是 program.md「简单优先」一段里的原话，按原文顺序排。砝码和气球的大小是我们画的示意，倾斜方向跟原文结论一致。",
+    "第四张卡是上面「实验循环」一节提到的例外：循环第 9 步说分数持平就退回，这里却说分数几乎没变、但代码简单得多，也保留。"
+  ],
+  "stage_label": "简单优先天平动画：左盘放分数改善，右盘放代码复杂度，program.md 的四个例子依次上秤",
+  "first_caption": "称一称：左盘放分数改善，右盘放代码复杂度。哪边沉，就听哪边。",
+  "controls": [
+    {
+      "type": "choice",
+      "option": "card",
+      "label": "放上秤",
+      "value": "all",
+      "choices": [
+        {
+          "value": "all",
+          "label": "依次看四张"
+        },
+        {
+          "value": "1",
+          "label": "① 小改善·代码变丑"
+        },
+        {
+          "value": "2",
+          "label": "② +0.001·多 20 行"
+        },
+        {
+          "value": "3",
+          "label": "③ +0.001·删代码"
+        },
+        {
+          "value": "4",
+          "label": "④ ≈0·简单得多"
+        }
+      ],
+      "note": "也可以直接点图里右边的卡片。"
+    },
+    {
+      "type": "toggle",
+      "option": "scoreOnly",
+      "label": "去掉简单优先、只看分数会怎样",
+      "tag": "解读",
+      "note": "勾上后右盘不再上秤，只按 val_bpb 判：更低就留，持平就退回。第一、二张卡会被留下，第四张会被退回，正好跟原文结论相反。",
+      "basis": "按实验循环第 8、9 步只比 val_bpb：更低就保留，持平或变差就退回。"
+    }
+  ],
+  "cards": [
+    {
+      "title": "小改善，代码变丑",
+      "gain_label": "一点改善",
+      "cost_label": "难看的复杂度",
+      "example": "A small improvement that adds ugly complexity",
+      "says_en": "is not worth it.",
+      "says_zh": "不值得",
+      "quote": "A small improvement that adds ugly complexity is not worth it.",
+      "source": "program.md"
+    },
+    {
+      "title": "+0.001，多 20 行乱代码",
+      "gain_label": "0.001",
+      "cost_label": "+20 行 hacky 代码",
+      "example": "A 0.001 val_bpb improvement that adds 20 lines of hacky code?",
+      "says_en": "Probably not worth it.",
+      "says_zh": "大概不值",
+      "quote": "A 0.001 val_bpb improvement that adds 20 lines of hacky code? Probably not worth it.",
+      "source": "program.md"
+    },
+    {
+      "title": "+0.001，靠删代码",
+      "gain_label": "0.001",
+      "cost_label": "删代码",
+      "example": "A 0.001 val_bpb improvement from deleting code?",
+      "says_en": "Definitely keep.",
+      "says_zh": "一定保留",
+      "quote": "A 0.001 val_bpb improvement from deleting code? Definitely keep.",
+      "source": "program.md"
+    },
+    {
+      "title": "改善 ≈0，代码简单得多",
+      "gain_label": "≈0",
+      "cost_label": "简单得多",
+      "example": "An improvement of ~0 but much simpler code?",
+      "says_en": "Keep.",
+      "says_zh": "保留",
+      "quote": "An improvement of ~0 but much simpler code? Keep.",
+      "source": "program.md"
+    }
+  ],
+  "labels": {
+    "gain_pan": "分数改善",
+    "cost_pan": "代码复杂度",
+    "rule": "哪边沉，听哪边",
+    "keep_side": "左沉：保留",
+    "reject_side": "右沉：不值",
+    "deck_title": "program.md 的四个例子",
+    "motto_en": "All else being equal, simpler is better.",
+    "motto_zh": "其他都一样时，越简单越好。",
+    "pick_hint": "点一张卡放上秤",
+    "not_weighed": "只看分数：右盘不称",
+    "says": "原文："
+  },
+  "stamps": {
+    "keep": "保留 ✓",
+    "reject": "不值",
+    "reset": "退回",
+    "wrong": "跟原文结论相反"
+  },
+  "captions": {
+    "intro": "称一称：左盘放分数改善，右盘放代码复杂度。哪边沉，就听哪边。",
+    "weigh": [
+      "改进很小，代码却变丑了：右边沉。",
+      "val_bpb 好了 0.001，代价是 20 行 hacky 代码：右边沉。",
+      "val_bpb 好了 0.001，还删了代码：气球把右边拉起来，左边沉。",
+      "分数几乎没变，代码简单得多：气球把右边拉起来，左边沉。"
+    ],
+    "verdict": [
+      "原文结论：不值得（not worth it）。",
+      "原文结论：大概不值（Probably not worth it）。",
+      "原文结论：一定保留（Definitely keep）。",
+      "原文结论：保留（Keep）。按循环规则，分数持平本该退回；代码简单得多，破例留下。"
+    ],
+    "weigh_score_only": [
+      "只看分数：改进再小也是变好，左边沉。",
+      "只看分数：好了 0.001，左边沉。",
+      "只看分数：好了 0.001，左边沉。",
+      "只看分数：几乎没变，天平不动。"
+    ],
+    "verdict_score_only": [
+      "只看分数就留下了，可原文说不值得：乱代码混进了分支。",
+      "只看分数就留下了，可原文说大概不值：20 行 hacky 代码混进了分支。",
+      "只看分数也留下，跟原文一致：这次碰巧没差别。",
+      "持平就退回，可原文说要保留：一次简化被扔掉了。"
+    ],
+    "outro": "其他都一样时，越简单越好。改进越小，越不值得让代码变乱；删了代码还能持平或变好，就是赚到。",
+    "outro_score_only": "只看分数，会留下乱代码、扔掉简化。简单优先就是为了不让这两种事发生。"
+  },
+  "transcript": [
+    "称一称：天平左盘放分数改善，右盘放代码复杂度；删代码画成气球，把右边往上拉。哪边沉，就听哪边。",
+    "① 改进很小，却加了难看的复杂度：右边沉。原文结论：不值得（not worth it）。",
+    "② val_bpb 好了 0.001，代价是 20 行 hacky 代码：右边沉。原文结论：大概不值（Probably not worth it）。",
+    "③ val_bpb 好了 0.001，还删了代码：左边沉。原文结论：一定保留（Definitely keep）。",
+    "④ 分数几乎没变，代码简单得多：左边沉。原文结论：保留（Keep）。按循环规则分数持平本该退回，这里破例留下。",
+    "如果去掉简单优先、只看分数：①② 改进再小也是变好，被留下，乱代码混进了分支；④ 几乎没变，天平不动，按持平退回，一次简化被扔掉；③ 碰巧跟原文一样。只看分数，会留下乱代码、扔掉简化。",
+    "结论：其他都一样时，越简单越好。改进越小，越不值得让代码变乱；删了代码还能持平或变好，就是赚到。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "其他条件都一样时，越简单越好。",
+      "quote": "All else being equal, simpler is better.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "决定留不留一个改动时，把复杂度的代价和改进的幅度放在一起称。",
+      "quote": "When evaluating whether to keep a change, weigh the complexity cost against the improvement magnitude.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "① 改进很小、却加了难看的复杂度：不值得。",
+      "quote": "A small improvement that adds ugly complexity is not worth it.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "② val_bpb 好了 0.001、却多了 20 行 hacky 代码：大概不值。",
+      "quote": "A 0.001 val_bpb improvement that adds 20 lines of hacky code? Probably not worth it.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "③ 靠删代码换来 0.001 的改进：一定保留。",
+      "quote": "A 0.001 val_bpb improvement from deleting code? Definitely keep.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "④ 改进约等于 0，但代码简单得多：保留。",
+      "quote": "An improvement of ~0 but much simpler code? Keep.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "反过来，删掉一部分、结果持平或更好，是很好的结果：简化上的胜利。",
+      "quote": "Conversely, removing something and getting equal or better results is a great outcome — that's a simplification win.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "循环第 9 步：分数持平或变差，就退回。",
+      "quote": "If val_bpb is equal or worse, you git reset back to where you started",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "第四张卡是循环规则的例外：第 9 步说分数持平就退回，简单优先却说分数几乎没变、代码简单得多也保留。",
+      "basis": "program.md 循环第 9 步（equal or worse → git reset）与「Simplicity criterion」最后一句（~0 but much simpler code → Keep）放在一起看。"
+    },
+    {
+      "tag": "解读",
+      "text": "去掉简单优先、只看分数：第一、二张卡会被留下，第四张会被退回，正好跟原文结论相反。",
+      "basis": "按循环第 8、9 步只比 val_bpb：更低就保留，持平或变差就退回；再跟四张卡的原文结论逐张对照。"
+    },
+    {
+      "tag": "示意",
+      "text": "砝码和气球的大小是示意，只表示哪边更重；原文只给了结论，没给数字权重。"
+    }
+  ],
+  "original_anchor": "6-the-simplicity-criterion"
+}
