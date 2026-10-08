@@ -4,3 +4,8 @@
 #   uv venv --python 3.14 .venv && uv pip install --python .venv/bin/python -r tools/requirements.txt
 markdown==3.10.2
 numpy==2.4.4
+
+# Illustrations (PNG -> WebP) and GIF / MP4 export.
+# imageio-ffmpeg ships a static ffmpeg (libx264, palettegen); no root needed.
+pillow==12.0.0
+imageio-ffmpeg==0.6.0
