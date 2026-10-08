@@ -29,6 +29,7 @@ A curated, open-source knowledge base of high-quality AI papers, articles, and m
 | [Fast Inference of MoE with Offloading](inference-optimization/fast-inference-moe-offloading.md) | Eliseev & Mazur | 2023 | MoE expert offloading to SSD/CPU, run Mixtral-8x7B on consumer hardware |
 | [TurboQuant](inference-optimization/turboquant.md) | Google Research | 2025 | Data-oblivious vector quantization, KV cache to 3-bit with zero accuracy loss, 8x on H100 |
 | [FlashMoE](inference-optimization/flashmoe.md) | Kim et al. | 2026 | ML-based cache replacement for MoE SSD offloading, 2.6x speedup on edge devices |
+| [Autoresearching LLM in a Flash](inference-optimization/blog-swilw-autoresearching-llm-in-a-flash.md) (blog) | Simon Willison, on Dan Woods' experiment | 2026 | LLM in a Flash + the autoresearch loop run Qwen3.5-397B-A17B at 5.5+ tokens/s on a 48GB MacBook Pro |
 
 ### Self-Improving Agents
 
@@ -210,6 +211,7 @@ AI 领域优质论文、文章与模型的中英双语知识库。为训练模�
 | [Fast Inference of MoE with Offloading](inference-optimization/fast-inference-moe-offloading.md) | Eliseev & Mazur | 2023 | MoE 专家 offload 到 SSD/CPU，消费级硬件跑 Mixtral-8x7B |
 | [TurboQuant](inference-optimization/turboquant.md) | Google Research | 2025 | 数据无关向量量化，KV Cache 压缩至 3 bit 无精度损失，H100 加速 8 倍 |
 | [FlashMoE](inference-optimization/flashmoe.md) | Kim et al. | 2026 | ML-based 缓存替换 + MoE SSD offload，边缘设备加速 2.6 倍 |
+| [Autoresearching LLM in a Flash](inference-optimization/blog-swilw-autoresearching-llm-in-a-flash.md)（博客） | Simon Willison，转述 Dan Woods 的实验 | 2026 | LLM in a Flash 加 autoresearch 循环，在 48GB MacBook Pro 上把 Qwen3.5-397B-A17B 跑到 5.5+ tokens/s |
 
 ### 自我改进 Agent (Self-Improving Agents)
 

@@ -110,6 +110,15 @@ CATEGORIES: list[Category] = [
                 "ML-based cache replacement for MoE SSD offloading, 2.6× speedup on edge devices.",
                 "ML 驱动缓存替换 + MoE SSD offload，边缘设备加速 2.6 倍。",
             ),
+            Paper(
+                "autoresearch-llm-in-a-flash",
+                "inference-optimization/blog-swilw-autoresearching-llm-in-a-flash.md",
+                "Autoresearching LLM in a Flash (blog)",
+                "Simon Willison, on Dan Woods' experiment",
+                "2026",
+                "Blog note: LLM in a Flash + the autoresearch loop run Qwen3.5-397B-A17B at 5.5+ tokens/s on a 48GB MacBook Pro.",
+                "博客笔记：LLM in a Flash 加 autoresearch 循环，在 48GB MacBook Pro 上把 Qwen3.5-397B-A17B 跑到 5.5+ tokens/s。",
+            ),
         ],
     ),
     Category(
