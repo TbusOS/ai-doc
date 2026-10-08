@@ -178,6 +178,7 @@ def render_explain(data: dict, prefix: str = "../../") -> str:
         + f'<script type="application/json" id="explain-data">{blob}</script>\n'
         + f'<script src="{prefix}assets/explain/timeline.js"></script>\n'
         + f'<script src="{prefix}assets/explain/engine.js"></script>\n'
+        + f'<script src="{prefix}assets/explain/draw.js"></script>\n'
         + widget_scripts
         + "</body>\n</html>\n"
     )
