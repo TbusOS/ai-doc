@@ -1,0 +1,130 @@
+/* Explainer pages: hero, five-question nav, scenes, stage, controls, claims. */
+
+/* ---------- hero ---------- */
+.ex-hero { padding: 72px 0 40px; position: relative; overflow: hidden; }
+.ex-hero h1 { max-width: 15em; margin-top: 18px; }
+.ex-hero .lead { font-size: clamp(1.1rem, 1.6vw, 1.3rem); color: var(--ink-2); max-width: 40em; }
+.ex-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-top: 22px; font-family: var(--font-head); font-size: 0.9rem; color: var(--ink-2); }
+.ex-meta a { font-weight: 650; }
+.ex-hero .note {
+  display: inline-block; margin-top: 20px; font-family: var(--font-hand); font-size: 1.05rem;
+  color: var(--accent-ink); background: var(--accent-soft); padding: 4px 12px; border-radius: 8px;
+}
+
+/* ---------- five-question nav ---------- */
+.ex-chapters {
+  display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 14px; margin: 30px 0 0;
+  list-style: none; scrollbar-width: thin;
+}
+.ex-chapters li { flex: 0 0 auto; }
+.ex-chapters a, .ex-chapters span {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  padding: 9px 16px 9px 9px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--card); font-family: var(--font-head); font-weight: 650; font-size: 0.95rem; color: var(--ink);
+}
+.ex-chapters a:hover { border-color: var(--accent); }
+.ex-chapters .num {
+  width: 30px; height: 30px; border-radius: 50%; display: inline-grid; place-items: center;
+  background: var(--ink); color: var(--paper); font-family: var(--font-hand); font-size: 1rem;
+}
+.ex-chapters [aria-disabled="true"] { color: var(--ink-2); background: transparent; border-style: dashed; }
+.ex-chapters [aria-disabled="true"] .num { background: var(--paper-2); color: var(--ink-2); }
+.ex-chapters small { font-weight: 500; color: var(--ink-2); font-size: 0.78rem; }
+
+/* ---------- chapter + scene ---------- */
+.chapter { padding: 64px 0 8px; border-top: 1px solid var(--line-soft); margin-top: 40px; }
+.chapter-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 18px; }
+.chapter-num { font-family: var(--font-hand); font-size: 2.6rem; line-height: 1; color: var(--accent); }
+.chapter-title { font-family: var(--font-head); font-weight: 700; font-size: 1rem; letter-spacing: 0.06em; color: var(--ink-2); }
+
+.scene { margin: 0 0 56px; }
+.scene-text { max-width: 720px; }
+.scene-text .lead { font-size: 1.15rem; color: var(--ink); }
+.scene-text p { color: var(--ink-2); }
+
+/* ---------- stage ---------- */
+.stage {
+  position: relative; margin: 26px 0 0; border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.stage-svg { display: block; width: 100%; height: auto; font-family: var(--font-hand); }
+.stage-svg text { fill: var(--ink); }
+.stage-caption {
+  margin: 0; padding: 12px 20px 14px; min-height: 3.6em;
+  font-family: var(--font-hand); font-size: 1.12rem; line-height: 1.55; color: var(--ink);
+  border-top: 1px dashed var(--line); background: var(--card);
+}
+.stage-caption::before { content: "✎ "; color: var(--accent); }
+
+.stage-controls {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: 12px; font-family: var(--font-head); font-size: 0.86rem;
+}
+.stage-controls button {
+  height: 36px; min-width: 36px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  font: inherit; font-weight: 650; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+.stage-controls button:hover { border-color: var(--accent); }
+.stage-controls .play { background: var(--ink); color: var(--paper); border-color: var(--ink); min-width: 44px; }
+.stage-controls input[type="range"] { flex: 1 1 180px; accent-color: var(--accent); min-width: 120px; }
+.stage-controls .clock { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-2); min-width: 7.5em; text-align: right; }
+
+/* ---------- toggle ---------- */
+.ex-toggle {
+  display: flex; align-items: flex-start; gap: 12px; margin-top: 18px; padding: 14px 16px;
+  border: 1px dashed var(--accent); border-radius: var(--radius-sm); background: var(--accent-soft);
+}
+.ex-toggle input { width: 20px; height: 20px; accent-color: var(--accent); margin-top: 4px; flex: 0 0 auto; }
+.ex-toggle label { font-family: var(--font-head); font-weight: 700; cursor: pointer; }
+.ex-toggle .toggle-note { display: block; font-family: var(--font-body); font-weight: 400; font-size: 0.95rem; color: var(--ink-2); margin-top: 2px; }
+
+/* ---------- claims (source marks) ---------- */
+.claims { margin: 26px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; max-width: 900px; }
+.claims-title { font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; color: var(--ink-2); margin: 30px 0 0; }
+details.claim { border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--card); }
+details.claim summary {
+  cursor: pointer; padding: 10px 14px; display: flex; gap: 10px; align-items: baseline;
+  list-style: none; font-size: 1rem; line-height: 1.6;
+}
+details.claim summary::-webkit-details-marker { display: none; }
+details.claim summary::after { content: "＋"; margin-left: auto; color: var(--ink-3); font-family: var(--font-head); }
+details.claim[open] summary::after { content: "－"; }
+.claim-body { padding: 0 14px 14px 14px; }
+.claim-body blockquote {
+  margin: 0; padding: 10px 14px; border-left: 3px solid var(--info);
+  background: var(--paper-2); border-radius: 0 8px 8px 0;
+  font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.65; color: var(--ink); white-space: pre-wrap;
+}
+.claim-src { margin: 8px 0 0; font-family: var(--font-head); font-size: 0.82rem; color: var(--ink-2); }
+
+.tag {
+  flex: 0 0 auto; font-family: var(--font-head); font-size: 0.74rem; font-weight: 750;
+  padding: 1px 8px; border-radius: 6px; letter-spacing: 0.04em; position: relative; top: -1px;
+}
+.tag--orig { background: color-mix(in srgb, var(--info) 16%, transparent); color: var(--info-ink); }
+.tag--interp { background: var(--accent-soft); color: var(--accent-ink); }
+.tag--illus { border: 1px dashed var(--ink-3); color: var(--ink-2); }
+
+.to-original { display: inline-flex; margin-top: 22px; font-family: var(--font-head); font-weight: 650; font-size: 0.95rem; }
+
+/* ---------- capture mode (GIF / MP4 export) ---------- */
+body.capture { background: var(--card); }
+body.capture > *:not(main), body.capture main > *:not(.chapter), body.capture .chapter > *:not(.wrap) { display: none !important; }
+body.capture .chapter { padding: 0; margin: 0; border: 0; }
+body.capture .chapter-head, body.capture .scene:not(.is-capture), body.capture .scene-text,
+body.capture .stage-controls, body.capture .ex-toggle, body.capture .claims, body.capture .claims-title,
+body.capture .to-original { display: none !important; }
+body.capture .wrap { max-width: none; padding: 0; }
+body.capture .scene.is-capture { margin: 0; }
+body.capture .stage { width: 1200px; height: 675px; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+body.capture .stage-caption {
+  position: absolute; left: 0; right: 0; bottom: 0; border: 0; min-height: 0;
+  background: color-mix(in srgb, var(--card) 88%, transparent); font-size: 1.35rem; text-align: center;
+}
+
+@media (max-width: 720px) {
+  .ex-hero { padding: 44px 0 24px; }
+  .chapter { padding-top: 44px; }
+  .stage-caption { font-size: 1.02rem; padding: 10px 14px 12px; }
+}
