@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>睡一觉,AI 替你跑完 100 次实验 · autoresearch 图解 — AI Doc</title>
+<meta name="description" content="Karpathy 把一个小型 GPT 训练程序交给 AI 助手:它自己改代码、自己训练 5 分钟、自己判断留不留,一整夜循环下去。这一页用 12 个场景讲清楚它每个设计为什么这样做。">
+<script>try{var m=localStorage.getItem('aidoc-theme');if(m&&m!=='auto')document.documentElement.setAttribute('data-theme',m)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Noto+Sans+SC:wght@500;700;900&family=Noto+Serif+SC:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..650;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/lxgwwenkaigbscreen.css">
+<link rel="stylesheet" href="../../assets/theme.css">
+<link rel="stylesheet" href="../../assets/explain/explain.css">
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="../../zh/index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="var(--ink)"/><path d="M9 22 L14.5 9 L20 22 M11.3 17 H17.7" fill="none" stroke="var(--paper)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23" cy="21.5" r="2.6" fill="var(--accent)"/></svg><span>AI Doc</span></a>
+    <nav class="site-nav" aria-label="主导航"><a href="../../zh/index.html">首页</a><a href="../../zh/index.html#topics">主题</a><a href="../../zh/open-source-models.html">开源模型</a></nav>
+    <div class="head-tools">
+      <nav class="view-switch" aria-label="视图"><a href="autoresearch.html" aria-current="page">图解</a><a href="../articles/autoresearch.html">原文</a></nav>
+      <button class="theme-btn" type="button" aria-label="切换主题">◐</button>
+    </div>
+  </div>
+</header>
+<main>
+<section class="ex-hero">
+  <div class="wrap">
+    <span class="kicker">图解 · 自我改进 Agent</span>
+    <h1>睡一觉,AI 替你跑完 100 次实验</h1>
+    <p class="lead">Karpathy 把一个小型 GPT 训练程序交给 AI 助手:它自己改代码、自己训练 5 分钟、自己判断留不留,一整夜循环下去。这一页用 12 个场景讲清楚它每个设计为什么这样做。</p>
+    <div class="ex-meta">
+      <span>autoresearch · Andrej Karpathy · 2026-03</span>
+      <span>约 9 分钟</span>
+      <a href="../articles/autoresearch.html">读原文 →</a>
+      <a href="https://github.com/karpathy/autoresearch">GitHub 仓库 →</a>
+    </div>
+    <p class="note">样张:目前只完成了第三章的场景 4「实验循环」</p>
+    <ol class="ex-chapters" aria-label="五个问题"><li><span aria-disabled="true"><span class="num">一</span>这是什么 <small>制作中</small></span></li><li><span aria-disabled="true"><span class="num">二</span>没有它会怎样 <small>制作中</small></span></li><li><a href="#ch-why"><span class="num">三</span>为什么这么设计</a></li><li><span aria-disabled="true"><span class="num">四</span>用在什么场景 <small>制作中</small></span></li><li><span aria-disabled="true"><span class="num">五</span>机制细节 <small>制作中</small></span></li></ol>
+  </div>
+</section>
+<section class="chapter" id="ch-why"><div class="wrap"><div class="chapter-head"><span class="chapter-num">三</span><span class="chapter-title">为什么这么设计</span></div><section class="scene" id="scene-loop" data-scene="loop" data-widget="loop">
+  <div class="scene-text rise">
+    <h2>实验循环:只进不退</h2>
+    <p class="lead">autoresearch 的核心是一个不停转的循环。每一轮只回答一个问题:这次改动让分数变好了吗?变好就留下,没变好就当没发生过。</p>
+    <p>program.md 把这个循环写成 9 步,这里合并成 6 站。关键在判断那一步:分数更低,git 分支就前进一格;否则用 git reset 退回去。所以分支上只会留下一串越来越好的提交,像一个只能往一个方向拧的棘轮。</p><p>动画里这 4 轮实验记录不是我们编的,是 program.md 原文举的例子:一次基线、一次变好、一次变差、一次崩溃,正好把循环的四种结局各走一遍。</p>
+  </div>
+  <figure class="stage grid-paper">
+    <svg class="stage-svg" viewBox="0 0 1200 675" role="img" aria-label="实验循环动画:六个步骤围成一圈,右边是 git 分支和 results.tsv 实验记录"></svg>
+    <figcaption class="stage-caption" aria-live="polite">一轮实验 = 改代码 → 提交 → 训练 5 分钟 → 读分数 → 比一比 → 记一笔。看它连跑 4 轮。</figcaption>
+    <noscript><p class="stage-caption">动画需要 JavaScript;文字说明和出处都在下面。</p></noscript>
+  </figure>
+  <div class="stage-controls" role="group" aria-label="动画控制">
+    <button class="play" type="button" aria-label="播放">▶</button>
+    <button class="prev" type="button" aria-label="上一步">‹ 上一步</button>
+    <button class="next" type="button" aria-label="下一步">下一步 ›</button>
+    <input class="scrub" type="range" min="0" max="1000" value="0" aria-label="进度">
+    <button class="speed" type="button" aria-label="播放速度">1×</button>
+    <span class="clock" aria-hidden="true"></span>
+  </div>
+  <div class="ex-toggle"><input type="checkbox" id="opt-loop-noReset" data-option="noReset"><label for="opt-loop-noReset"><span class="tag tag--interp">解读</span> 去掉 git reset 会怎样<span class="toggle-note">勾上后重新播放:变差的改动不再撤销。这是按循环第 8、9 步反推的情况,program.md 没有演示它。</span></label></div>
+  <p class="claims-title">这一节每句话的出处(点开看原句)</p>
+  <ul class="claims"><li><details class="claim"><summary><span class="tag tag--orig">原文</span><span>第一轮不改任何代码,先跑出基线分数。</span></summary><div class="claim-body"><blockquote lang="en">Your very first run should always be to establish the baseline, so you will run the training script as is.</blockquote><p class="claim-src">出处:program.md(karpathy/autoresearch 原文)</p></div></details></li><li><details class="claim"><summary><span class="tag tag--orig">原文</span><span>分数变好(更低),分支就往前走一步,这次提交保留。</span></summary><div class="claim-body"><blockquote lang="en">If val_bpb improved (lower), you &quot;advance&quot; the branch, keeping the git commit</blockquote><p class="claim-src">出处:program.md(karpathy/autoresearch 原文)</p></div></details></li><li><details class="claim"><summary><span class="tag tag--orig">原文</span><span>持平或变差,就用 git reset 退回到这轮开始的地方。</span></summary><div class="claim-body"><blockquote lang="en">If val_bpb is equal or worse, you git reset back to where you started</blockquote><p class="claim-src">出处:program.md(karpathy/autoresearch 原文)</p></div></details></li><li><details class="claim"><summary><span class="tag tag--orig">原文</span><span>grep 读不到分数就是训练崩了:看日志最后 50 行,试着修。</span></summary><div class="claim-body"><blockquote lang="en">If the grep output is empty, the run crashed. Run `tail -n 50 run.log` to read the Python stack trace and attempt a fix.</blockquote><p class="claim-src">出处:program.md(karpathy/autoresearch 原文)</p></div></details></li><li><details class="claim"><summary><span class="tag tag--orig">原文</span><span>点子本身就不成立时,不硬修:记一笔 crash,换下一个。</span></summary><div class="claim-body"><blockquote lang="en">If the idea itself is fundamentally broken, just skip it, log &quot;crash&quot; as the status in the tsv, and move on.</blockquote><p class="claim-src">出处:program.md(karpathy/autoresearch 原文)</p></div></details></li><li><details class="claim"><summary><span class="tag tag--orig">原文</span><span>动画里的 4 行实验记录,是 program.md 自己举的例子。</span></summary><div class="claim-body"><blockquote lang="en">a1b2c3d 0.997900 44.0 keep baseline
+b2c3d4e 0.993200 44.2 keep increase LR to 0.04
+c3d4e5f 1.005000 44.0 discard switch to GeLU activation
+d4e5f6g 0.000000 0.0 crash double model width (OOM)</blockquote><p class="claim-src">出处:program.md(karpathy/autoresearch 原文)</p></div></details></li><li><details class="claim"><summary><span class="tag tag--orig">原文</span><span>分支名 autoresearch/mar5 也是 program.md 里的例子。</span></summary><div class="claim-body"><blockquote lang="en">The experiment runs on a dedicated branch (e.g. `autoresearch/mar5` or `autoresearch/mar5-gpu0`).</blockquote><p class="claim-src">出处:program.md(karpathy/autoresearch 原文)</p></div></details></li><li><details class="claim"><summary><span class="tag tag--orig">原文</span><span>results.tsv 只用来记录,不提交进 git。</span></summary><div class="claim-body"><blockquote lang="en">NOTE: do not commit the results.tsv file, leave it untracked by git</blockquote><p class="claim-src">出处:program.md(karpathy/autoresearch 原文)</p></div></details></li><li><details class="claim"><summary><span class="tag tag--interp">解读</span><span>如果没有 git reset,变差的改动会留在分支上,后面每一次实验都从这个更差的起点出发。</span></summary><div class="claim-body"><p class="claim-src">依据:由 program.md 循环第 8、9 步反推:第 9 步存在的意义,就是把没变好的改动撤掉。</p></div></details></li></ul>
+  <a class="to-original" href="../articles/autoresearch.html#3-the-experimentation-loop">对照原文这一节 →</a>
+</section>
+</div></section>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <span>AI Doc · AI 论文与工程文章的中英对照翻译和图解</span>
+    <span><a href="https://github.com/TbusOS/ai-doc">GitHub</a> · <a href="../../en/index.html">English</a></span>
+  </div>
+</footer>
+<script type="application/json" id="explain-data">{"slug": "autoresearch", "kicker": "图解 · 自我改进 Agent", "title": "睡一觉,AI 替你跑完 100 次实验", "lead": "Karpathy 把一个小型 GPT 训练程序交给 AI 助手:它自己改代码、自己训练 5 分钟、自己判断留不留,一整夜循环下去。这一页用 12 个场景讲清楚它每个设计为什么这样做。", "reading_minutes": 9, "sample_note": "样张:目前只完成了第三章的场景 4「实验循环」", "paper": {"title": "autoresearch", "author": "Andrej Karpathy", "date": "2026-03", "repo": "https://github.com/karpathy/autoresearch", "original_page": "../articles/autoresearch.html"}, "chapters": [{"id": "what", "num": "一", "title": "这是什么"}, {"id": "without", "num": "二", "title": "没有它会怎样"}, {"id": "why", "num": "三", "title": "为什么这么设计"}, {"id": "where", "num": "四", "title": "用在什么场景"}, {"id": "how", "num": "五", "title": "机制细节"}], "scenes": [{"id": "loop", "chapter": "why", "widget": "loop", "title": "实验循环:只进不退", "lead": "autoresearch 的核心是一个不停转的循环。每一轮只回答一个问题:这次改动让分数变好了吗?变好就留下,没变好就当没发生过。", "body": ["program.md 把这个循环写成 9 步,这里合并成 6 站。关键在判断那一步:分数更低,git 分支就前进一格;否则用 git reset 退回去。所以分支上只会留下一串越来越好的提交,像一个只能往一个方向拧的棘轮。", "动画里这 4 轮实验记录不是我们编的,是 program.md 原文举的例子:一次基线、一次变好、一次变差、一次崩溃,正好把循环的四种结局各走一遍。"], "stage_label": "实验循环动画:六个步骤围成一圈,右边是 git 分支和 results.tsv 实验记录", "branch": "autoresearch/mar5", "commands": {"train": "uv run train.py > run.log 2>&1", "read": "grep \"^val_bpb:\" run.log", "tail": "tail -n 50 run.log"}, "stations": {"edit": {"label": "改 train.py", "caption": "想一个点子,直接改 train.py。这是 AI 唯一能动的文件。"}, "commit": {"label": "git commit", "caption": "先提交。不管结果好坏,之后都能精确地回到这一步。"}, "train": {"label": "训练 5 分钟", "caption": "开始训练,输出全部写进 run.log。不管改了什么,时间都是 5 分钟。"}, "read": {"label": "读分数", "caption": "只用 grep 读出 val_bpb 这一行,不把整份日志塞进自己的上下文。"}, "decide": {"label": "比一比", "caption": "跟目前最好的分数比:更低才算变好。"}, "log": {"label": "记一笔", "caption": "在 results.tsv 里记一行:提交号、分数、显存、结论、做了什么。"}}, "special": {"intro": "一轮实验 = 改代码 → 提交 → 训练 5 分钟 → 读分数 → 比一比 → 记一笔。看它连跑 4 轮。", "edit_baseline": "第一轮什么都不改,原样跑一遍,先拿到基线分数。之后每个点子都跟它比。", "read_crash": "grep 什么也没读到:训练崩了。去看 run.log 最后 50 行找原因。", "outro": "4 轮跑完:2 次保留,1 次丢弃,1 次崩溃。分支上只留下变好的提交。人睡一觉,这个循环能转大约 100 圈。", "outro_noreset": "4 轮跑完,但分支上混进了一次变差的提交,之后所有实验都只能建立在它上面。这就是第 9 步必须 reset 的原因。"}, "verdicts": {"baseline": "基线分数 {bpb}。这是起点,先保留。", "keep": "{bpb} 比 {best} 低,变好了:保留这次提交,分支前进一格。", "discard": "{bpb} 没有比 {best} 低:git reset 退回上一个好版本,这次改动作废。", "discard_noreset": "没有 reset:变差的代码留在了分支上,下一个点子只能从 {bpb} 这个更差的起点出发。", "crash": "崩溃了(这次是显存不够,OOM)。记一笔 crash,退回去,换下一个点子。"}, "labels": {"best": "目前最好", "head_score": "分支上代码的分数", "branch_title": "git 分支", "table_title": "results.tsv", "round": "第 {n} 轮"}, "toggle": {"option": "noReset", "label": "去掉 git reset 会怎样", "tag": "解读", "note": "勾上后重新播放:变差的改动不再撤销。这是按循环第 8、9 步反推的情况,program.md 没有演示它。"}, "claims": [{"tag": "原文", "text": "第一轮不改任何代码,先跑出基线分数。", "quote": "Your very first run should always be to establish the baseline, so you will run the training script as is.", "source": "program.md"}, {"tag": "原文", "text": "分数变好(更低),分支就往前走一步,这次提交保留。", "quote": "If val_bpb improved (lower), you \"advance\" the branch, keeping the git commit", "source": "program.md"}, {"tag": "原文", "text": "持平或变差,就用 git reset 退回到这轮开始的地方。", "quote": "If val_bpb is equal or worse, you git reset back to where you started", "source": "program.md"}, {"tag": "原文", "text": "grep 读不到分数就是训练崩了:看日志最后 50 行,试着修。", "quote": "If the grep output is empty, the run crashed. Run `tail -n 50 run.log` to read the Python stack trace and attempt a fix.", "source": "program.md"}, {"tag": "原文", "text": "点子本身就不成立时,不硬修:记一笔 crash,换下一个。", "quote": "If the idea itself is fundamentally broken, just skip it, log \"crash\" as the status in the tsv, and move on.", "source": "program.md"}, {"tag": "原文", "text": "动画里的 4 行实验记录,是 program.md 自己举的例子。", "quote": "a1b2c3d 0.997900 44.0 keep baseline\nb2c3d4e 0.993200 44.2 keep increase LR to 0.04\nc3d4e5f 1.005000 44.0 discard switch to GeLU activation\nd4e5f6g 0.000000 0.0 crash double model width (OOM)", "source": "program.md"}, {"tag": "原文", "text": "分支名 autoresearch/mar5 也是 program.md 里的例子。", "quote": "The experiment runs on a dedicated branch (e.g. `autoresearch/mar5` or `autoresearch/mar5-gpu0`).", "source": "program.md"}, {"tag": "原文", "text": "results.tsv 只用来记录,不提交进 git。", "quote": "NOTE: do not commit the results.tsv file, leave it untracked by git", "source": "program.md"}, {"tag": "解读", "text": "如果没有 git reset,变差的改动会留在分支上,后面每一次实验都从这个更差的起点出发。", "basis": "由 program.md 循环第 8、9 步反推:第 9 步存在的意义,就是把没变好的改动撤掉。"}], "original_anchor": "3-the-experimentation-loop"}]}</script>
+<script src="../../assets/explain/timeline.js"></script>
+<script src="../../assets/explain/engine.js"></script>
+<script src="../../assets/explain/autoresearch/loop-model.js"></script>
+<script src="../../assets/explain/autoresearch/loop.js"></script>
+</body>
+</html>
