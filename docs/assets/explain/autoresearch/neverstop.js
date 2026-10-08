@@ -19,11 +19,7 @@
     landscape: {
       W: 1200, H: 675, minFont: 13,
       room: { x: 30, y: 30, w: 450, h: 404 },
-      win: { x: 64, y: 58, w: 170, h: 132 },
-      clock: { x: 284, y: 78, w: 168, h: 66, size: 36 },
-      bed: { x: 52, y: 340, w: 400, h: 58, head: 88 },
-      person: { lie: [122, 314], sit: [120, 268], r: 22 },
-      zzz: { x: 168, y: 270 },
+      clock: { x: 48, y: 46, w: 150, h: 58, size: 32 },
       mon: { x: 520, y: 34, w: 650, h: 404, pad: 18, stand: 40 },
       note: { x: 1046, y: 18, w: 132, h: 48 },
       count: { x: 570, y: 250, size: 96, unit: 30 },
@@ -36,11 +32,7 @@
     portrait: {
       W: 540, H: 1080, minFont: 15,
       room: { x: 16, y: 20, w: 508, h: 316 },
-      win: { x: 40, y: 44, w: 150, h: 112 },
-      clock: { x: 330, y: 58, w: 170, h: 64, size: 34 },
-      bed: { x: 40, y: 250, w: 460, h: 52, head: 80 },
-      person: { lie: [110, 226], sit: [108, 188], r: 21 },
-      zzz: { x: 156, y: 184 },
+      clock: { x: 30, y: 32, w: 140, h: 54, size: 30 },
       mon: { x: 16, y: 352, w: 508, h: 450, pad: 14, stand: 34 },
       note: { x: 384, y: 330, w: 136, h: 50 },
       count: { x: 52, y: 560, size: 96, unit: 30 },
@@ -59,63 +51,42 @@
 
   /* ---------- bedroom ---------- */
 
-  function drawRoom(g, P, s) {
-    var R = g.room, Wn = g.win, out = '';
-    var dawn = s.awake ? 1 : 0;
-    out += tag('rect', { x: R.x, y: R.y, width: R.w, height: R.h, rx: 18, style: 'fill:var(--paper-2);stroke:var(--line);stroke-width:1.5' });
-    // window: night sky with a moon crossing it, or the sun at dawn
-    out += tag('rect', { x: Wn.x, y: Wn.y, width: Wn.w, height: Wn.h, rx: 6, style: 'fill:var(' + (dawn ? '--accent-soft' : '--card') + ');stroke:var(--ink-2);stroke-width:3' });
-    if (!dawn) {
-      var f = T.clamp(s.minute / M.NIGHT_MIN, 0, 1), r = 13;
-      var mx = lerp(Wn.x + 26, Wn.x + Wn.w - 26, f), my = Wn.y + Wn.h * 0.62 - Math.sin(Math.PI * f) * Wn.h * 0.32;
-      out += tag('path', { d: 'M' + mx.toFixed(1) + ' ' + (my - r).toFixed(1) + ' A' + r + ' ' + r + ' 0 1 0 ' + mx.toFixed(1) + ' ' + (my + r).toFixed(1) +
-        ' A' + (r * 0.55) + ' ' + r + ' 0 0 1 ' + mx.toFixed(1) + ' ' + (my - r).toFixed(1) + ' Z', style: 'fill:var(--paper-2);stroke:var(--ink-2);stroke-width:2' });
-    } else {
-      out += tag('circle', { cx: Wn.x + Wn.w * 0.7, cy: Wn.y + Wn.h * 0.72, r: 18, style: 'fill:var(--accent)' });
-    }
-    out += tag('path', { d: 'M' + (Wn.x + Wn.w / 2) + ' ' + Wn.y + ' L' + (Wn.x + Wn.w / 2) + ' ' + (Wn.y + Wn.h) +
-      ' M' + Wn.x + ' ' + (Wn.y + Wn.h / 2) + ' L' + (Wn.x + Wn.w) + ' ' + (Wn.y + Wn.h / 2), style: 'stroke:var(--ink-2);stroke-width:2.5' });
-    // bedside clock
-    var C = g.clock;
-    out += tag('rect', { x: C.x, y: C.y, width: C.w, height: C.h, rx: 10, style: 'fill:var(--term-bg)', 'data-box': 'ns-clock' });
-    out += P.fit(C.x + C.w / 2, C.y + C.h / 2 + C.size * 0.36, s.clock, '--term-ok', C.size, '--font-mono', 600, C.w - 20, 'ns-clock', 'middle');
-    out += tag('rect', { x: C.x + 14, y: C.y + C.h, width: 10, height: 8, style: 'fill:var(--ink-3)' }) +
-      tag('rect', { x: C.x + C.w - 24, y: C.y + C.h, width: 10, height: 8, style: 'fill:var(--ink-3)' });
-    out += drawBed(g, P, s);
-    return out;
+  // The room is cut from the opening scene's pencil drawings (the same bedroom, so the
+  // reader recognises it): night and morning, light and dark; CSS shows the current theme.
+  var here = (document.currentScript && document.currentScript.src) || '';
+  function asset(name) { try { return new URL(name, here).href; } catch (e) { return name; } }
+  var ROOM = {
+    night: { light: asset('room-night.webp'), dark: asset('room-night-dark.webp') },
+    morning: { light: asset('room-morning.webp'), dark: asset('room-morning-dark.webp') },
+    w: 990, h: 710,           // the crop, in drawing pixels
+    head: [298, 330]          // the sleeper's head inside the crop
+  };
+
+  // cover the card: fill it, keep the left edge (nightstand and sleeper), centre vertically
+  function roomFit(R) {
+    var k = Math.max(R.w / ROOM.w, R.h / ROOM.h), w = ROOM.w * k, h = ROOM.h * k;
+    return { x: R.x, y: R.y + (R.h - h) / 2, w: w, h: h, k: k };
   }
 
-  function drawBed(g, P, s) {
-    var B = g.bed, Pe = g.person, out = '';
-    out += tag('rect', { x: B.x, y: B.y - B.head + B.h, width: 22, height: B.head, rx: 6, style: 'fill:var(--card);stroke:var(--ink-2);stroke-width:2.5' });
-    out += tag('rect', { x: B.x, y: B.y, width: B.w, height: B.h, rx: 10, style: 'fill:var(--card);stroke:var(--ink-2);stroke-width:2.5' });
-    out += tag('rect', { x: B.x + 30, y: B.y + B.h, width: 12, height: 16, style: 'fill:var(--ink-3)' }) +
-      tag('rect', { x: B.x + B.w - 42, y: B.y + B.h, width: 12, height: 16, style: 'fill:var(--ink-3)' });
-    out += tag('ellipse', { cx: B.x + 66, cy: B.y - 8, rx: 40, ry: 15, style: 'fill:var(--card);stroke:var(--ink-3);stroke-width:2' });
-    var p = s.awake ? Pe.sit : Pe.lie, r = Pe.r;
-    if (s.awake) {
-      // sitting up: a torso from the shoulders down to the mattress
-      var x = p[0], y = p[1] + r + 2;
-      out += tag('path', { d: 'M' + (x - 22) + ' ' + (B.y + 4) + ' C' + (x - 24) + ' ' + (y + 12) + ' ' + (x - 14) + ' ' + y + ' ' + x + ' ' + y +
-        ' C' + (x + 14) + ' ' + y + ' ' + (x + 24) + ' ' + (y + 12) + ' ' + (x + 22) + ' ' + (B.y + 4) + ' Z',
-        style: 'fill:var(--card);stroke:var(--ink-2);stroke-width:2.5' });
-    }
-    out += tag('circle', { cx: p[0], cy: p[1], r: r, style: 'fill:var(--card);stroke:var(--ink-2);stroke-width:2.5' });
-    if (s.awake) {
-      out += tag('circle', { cx: p[0] + 6, cy: p[1] - 3, r: 2.6, style: 'fill:var(--ink)' }) + tag('circle', { cx: p[0] + 14, cy: p[1] - 3, r: 2.6, style: 'fill:var(--ink)' });
-    } else {
-      out += tag('path', { d: 'M' + (p[0] + 2) + ' ' + (p[1] - 2) + ' q4 4 8 0 M' + (p[0] + 12) + ' ' + (p[1] - 2) + ' q4 4 8 0',
-        style: 'fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round' });
-    }
-    // blanket
-    var bx = B.x + (s.awake ? 150 : 120);
-    out += tag('path', { d: 'M' + bx + ' ' + (B.y + 6) + ' C' + (bx + 30) + ' ' + (B.y - 40) + ' ' + (B.x + B.w - 60) + ' ' + (B.y - 34) + ' ' + (B.x + B.w - 8) + ' ' + (B.y + 6) + ' Z',
-      style: 'fill:var(--line);stroke:var(--ink-2);stroke-width:2.5' });
+  function drawRoom(g, P, s) {
+    var R = g.room, F = roomFit(R), out = '';
+    var pair = s.awake ? ROOM.morning : ROOM.night;
+    var img = function (href, cls) {
+      return tag('image', { href: href, x: F.x.toFixed(1), y: F.y.toFixed(1), width: F.w.toFixed(1), height: F.h.toFixed(1),
+        preserveAspectRatio: 'none', class: 'illo ' + cls });
+    };
+    out += tag('g', { 'clip-path': 'url(#ns-room-clip)' }, img(pair.light, 'illo-light') + img(pair.dark, 'illo-dark'));
+    out += tag('rect', { x: R.x, y: R.y, width: R.w, height: R.h, rx: 18, style: 'fill:none;stroke:var(--line);stroke-width:1.5' });
+    // bedside clock, on the empty wall at the top left
+    var C = g.clock;
+    out += tag('rect', { x: C.x, y: C.y, width: C.w, height: C.h, rx: 10, style: 'fill:var(--term-bg);stroke:var(--ink);stroke-width:2', 'data-box': 'ns-clock' });
+    out += P.fit(C.x + C.w / 2, C.y + C.h / 2 + C.size * 0.36, s.clock, '--term-ok', C.size, '--font-mono', 600, C.w - 20, 'ns-clock', 'middle');
     if (!s.awake && s.phase !== 'intro') {
-      var Zz = g.zzz, ph = (s.minute / 25) % 1;
+      var hx = F.x + ROOM.head[0] * F.k, hy = F.y + ROOM.head[1] * F.k, ph = (s.minute / 25) % 1;
       [['z', 17, 0], ['z', 21, 0.33], ['Z', 26, 0.66]].forEach(function (z, i) {
         var q = (ph + z[2]) % 1;
-        out += P.text(Zz.x + i * 17, Zz.y - q * 30, z[0], P.style('--ink-2', z[1], '--font-hand', 700) + ';opacity:' + (1 - Math.abs(q - 0.5) * 1.6).toFixed(3));
+        out += P.text((hx + 34 + i * 17).toFixed(1), (hy - 30 - q * 30).toFixed(1), z[0],
+          P.style('--ink-2', z[1], '--font-hand', 700) + ';opacity:' + (1 - Math.abs(q - 0.5) * 1.6).toFixed(3));
       });
     }
     return out;
@@ -290,7 +261,9 @@
         var g = GEO[mode], P = Painter(g);
         var s = M.stateAt(t, opts);
         var dim = s.ideas > 0 ? 0.4 : 1;  // the idea list is an aside: the room steps back
-        svg.innerHTML = DEFS + tag('g', { style: 'opacity:' + dim }, drawRoom(g, P, s)) + drawMonitor(g, P, s, copy) + drawLine(g, P, s, copy);
+        var R = g.room;
+        var clip = '<defs><clipPath id="ns-room-clip">' + tag('rect', { x: R.x, y: R.y, width: R.w, height: R.h, rx: 18 }) + '</clipPath></defs>';
+        svg.innerHTML = DEFS + clip + tag('g', { style: 'opacity:' + dim }, drawRoom(g, P, s)) + drawMonitor(g, P, s, copy) + drawLine(g, P, s, copy);
         ctx.caption(captionFor(s, copy));
       }
     };

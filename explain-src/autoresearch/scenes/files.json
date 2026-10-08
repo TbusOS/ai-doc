@@ -17,14 +17,45 @@
       "role": "考场和考卷",
       "desc": "固定常量 · 数据准备 · 打分函数",
       "code": [
-        { "source": "prepare.py", "quote": "MAX_SEQ_LEN = 2048       # context length", "show": ["MAX_SEQ_LEN = 2048"] },
-        { "source": "prepare.py", "quote": "TIME_BUDGET = 300        # training time budget in seconds (5 minutes)", "show": ["TIME_BUDGET = 300"] },
-        { "source": "prepare.py", "quote": "EVAL_TOKENS = 40 * 524288  # number of tokens for val eval", "show": ["EVAL_TOKENS = 40 * 524288"] },
-        { "source": "prepare.py", "quote": "def evaluate_bpb(model, tokenizer, batch_size):", "show": ["def evaluate_bpb(model,", "    tokenizer, batch_size):"] }
+        {
+          "source": "prepare.py",
+          "quote": "MAX_SEQ_LEN = 2048       # context length",
+          "show": [
+            "MAX_SEQ_LEN = 2048"
+          ]
+        },
+        {
+          "source": "prepare.py",
+          "quote": "TIME_BUDGET = 300        # training time budget in seconds (5 minutes)",
+          "show": [
+            "TIME_BUDGET = 300"
+          ]
+        },
+        {
+          "source": "prepare.py",
+          "quote": "EVAL_TOKENS = 40 * 524288  # number of tokens for val eval",
+          "show": [
+            "EVAL_TOKENS = 40 * 524288"
+          ]
+        },
+        {
+          "source": "prepare.py",
+          "quote": "def evaluate_bpb(model, tokenizer, batch_size):",
+          "show": [
+            "def evaluate_bpb(model,",
+            "    tokenizer, batch_size):"
+          ]
+        }
       ],
       "notes": [
-        { "line": 1, "text": "300 秒：每次训练都只给 5 分钟" },
-        { "line": 3, "text": "打分函数也在这里" }
+        {
+          "line": 1,
+          "text": "300 秒：每次训练都只给 5 分钟"
+        },
+        {
+          "line": 3,
+          "text": "打分函数也在这里"
+        }
       ],
       "caption": "prepare.py：固定的常量、数据准备、打分函数都在这里。做实验时人和 AI 都不改它，每次都用同一套标准打分。"
     },
@@ -33,11 +64,41 @@
       "role": "学习方法",
       "desc": "模型 · 优化器 · 训练循环",
       "code": [
-        { "source": "train.py", "quote": "ASPECT_RATIO = 64       # model_dim = depth * ASPECT_RATIO", "show": ["ASPECT_RATIO = 64"] },
-        { "source": "train.py", "quote": "WINDOW_PATTERN = \"SSSL\" # sliding window pattern: L=full, S=half context", "show": ["WINDOW_PATTERN = \"SSSL\""] },
-        { "source": "train.py", "quote": "MATRIX_LR = 0.04        # learning rate for matrix parameters (Muon)", "show": ["MATRIX_LR = 0.04"] },
-        { "source": "train.py", "quote": "WARMDOWN_RATIO = 0.5    # fraction of time budget for LR warmdown", "show": ["WARMDOWN_RATIO = 0.5"] },
-        { "source": "train.py", "quote": "DEPTH = 8               # number of transformer layers", "show": ["DEPTH = 8"] }
+        {
+          "source": "train.py",
+          "quote": "ASPECT_RATIO = 64       # model_dim = depth * ASPECT_RATIO",
+          "show": [
+            "ASPECT_RATIO = 64"
+          ]
+        },
+        {
+          "source": "train.py",
+          "quote": "WINDOW_PATTERN = \"SSSL\" # sliding window pattern: L=full, S=half context",
+          "show": [
+            "WINDOW_PATTERN = \"SSSL\""
+          ]
+        },
+        {
+          "source": "train.py",
+          "quote": "MATRIX_LR = 0.04        # learning rate for matrix parameters (Muon)",
+          "show": [
+            "MATRIX_LR = 0.04"
+          ]
+        },
+        {
+          "source": "train.py",
+          "quote": "WARMDOWN_RATIO = 0.5    # fraction of time budget for LR warmdown",
+          "show": [
+            "WARMDOWN_RATIO = 0.5"
+          ]
+        },
+        {
+          "source": "train.py",
+          "quote": "DEPTH = 8               # number of transformer layers",
+          "show": [
+            "DEPTH = 8"
+          ]
+        }
       ],
       "edit": {
         "line": 3,
@@ -54,13 +115,42 @@
       "role": "给 AI 的工作手册",
       "desc": "能改什么 · 不能改什么 · 怎么循环",
       "code": [
-        { "source": "program.md", "quote": "**What you CAN do:**", "show": ["**What you CAN do:**"] },
-        { "source": "program.md", "quote": "- Modify `train.py` — this is the only file you edit.", "show": ["- Modify `train.py` — this is", "  the only file you edit."] },
-        { "source": "program.md", "quote": "**What you CANNOT do:**", "show": ["**What you CANNOT do:**"] },
-        { "source": "program.md", "quote": "- Modify `prepare.py`. It is read-only.", "show": ["- Modify `prepare.py`.", "  It is read-only."] }
+        {
+          "source": "program.md",
+          "quote": "**What you CAN do:**",
+          "show": [
+            "**What you CAN do:**"
+          ]
+        },
+        {
+          "source": "program.md",
+          "quote": "- Modify `train.py` — this is the only file you edit.",
+          "show": [
+            "- Modify `train.py` — this is",
+            "  the only file you edit."
+          ]
+        },
+        {
+          "source": "program.md",
+          "quote": "**What you CANNOT do:**",
+          "show": [
+            "**What you CANNOT do:**"
+          ]
+        },
+        {
+          "source": "program.md",
+          "quote": "- Modify `prepare.py`. It is read-only.",
+          "show": [
+            "- Modify `prepare.py`.",
+            "  It is read-only."
+          ]
+        }
       ],
       "notes": [
-        { "line": 1, "text": "人写给 AI 的规矩：只许改 train.py" }
+        {
+          "line": 1,
+          "text": "人写给 AI 的规矩：只许改 train.py"
+        }
       ],
       "caption": "program.md：人写给 AI 的工作手册，写明能改什么、不能改什么、怎么一轮轮做实验。人改的是它，不是 Python 代码。",
       "caption_usual": "平常用不上 program.md：没有 AI 替你做实验，也就不用给它写手册。",
@@ -76,7 +166,7 @@
   },
   "captions": {
     "intro": "仓库里真正要紧的只有三个文件。一个一个看。",
-    "essence": "所以 autoresearch 不是一个新模型，而是一套让 AI 自己做实验的规则。",
+    "essence": "分工就这么简单：人只改手册，AI 只改训练代码，考卷谁都不碰。",
     "essence_usual": "平常是人自己改代码；autoresearch 把改代码交给 AI，人只改 program.md。"
   },
   "banner": {
@@ -99,7 +189,7 @@
     "prepare.py：固定的常量、数据准备、打分函数都在这里。做实验时人和 AI 都不改它，每次都用同一套标准打分。卡片上是原文代码：MAX_SEQ_LEN = 2048、TIME_BUDGET = 300（每次训练只给 300 秒）、EVAL_TOKENS = 40 * 524288，以及打分函数 evaluate_bpb。",
     "train.py：模型、优化器、训练循环都在这个文件里。AI 只改它，里面什么都能动。卡片上是几行超参数，其中 WARMDOWN_RATIO = 0.5 被 AI 改成了 0.7：progress.png 上这次改动让分数变低，被保留了。",
     "program.md：人写给 AI 的工作手册，写明能改什么、不能改什么、怎么一轮轮做实验。人改的是它，不是 Python 代码。卡片上是原文：能改的只有 train.py，prepare.py 只读。",
-    "所以 autoresearch 不是一个新模型，而是一套让 AI 自己做实验的规则。",
+    "它不是一个新模型，而是一套让 AI 自己做实验的规则。分工就这么简单：人只改手册，AI 只改训练代码，考卷谁都不碰。",
     "勾上「换成平常的研究方式」后，train.py 这一站：平常的做法：研究员自己改 train.py，自己等训练、看结果。",
     "program.md 这一站：平常用不上 program.md：没有 AI 替你做实验，也就不用给它写手册。",
     "最后一站：平常是人自己改代码；autoresearch 把改代码交给 AI，人只改 program.md。"

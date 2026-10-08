@@ -140,10 +140,13 @@ body.capture .stage-controls, body.capture .ex-toggle, body.capture .claims, bod
 body.capture .to-original { display: none !important; }
 body.capture .wrap { max-width: none; padding: 0; }
 body.capture .scene.is-capture { margin: 0; }
-body.capture .stage { width: 1200px; height: 675px; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+body.capture .stage { width: 1200px; height: auto; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+/* the caption sits under the picture, never on it (scenes draw down to the bottom edge);
+   a fixed two-line height keeps every exported frame the same size */
 body.capture .stage-caption {
-  position: absolute; left: 0; right: 0; bottom: 0; border: 0; min-height: 0;
-  background: color-mix(in srgb, var(--card) 88%, transparent); font-size: 1.35rem; text-align: center;
+  position: static; height: 92px; min-height: 0; box-sizing: border-box; margin: 0; padding: 0 48px;
+  display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden;
+  border-top: 1px dashed var(--line); background: var(--card); font-size: 1.3rem; line-height: 1.45;
 }
 
 @media (max-width: 560px) {
