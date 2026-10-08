@@ -252,7 +252,8 @@
       var y = nodeY(g, s, n);
       if (y < B.drop - 1) return;
       var x = xs(n.round), hx = xs(n.resetTo);
-      out += tag('path', { d: 'M' + (x - 18) + ' ' + (y - 6) + ' C' + (x - 50) + ' ' + (y - 10) + ' ' + (hx + 30) + ' ' + (B.y + 40) + ' ' + (hx + 12) + ' ' + (B.y + 20),
+      // end on the right edge of the HEAD node, above its commit label (the label sits at B.y + 38)
+      out += tag('path', { d: 'M' + (x - 18) + ' ' + (y - 6) + ' C' + (x - 50) + ' ' + (y - 10) + ' ' + (hx + 64) + ' ' + (B.y + 10) + ' ' + (hx + 20) + ' ' + (B.y + 3),
         style: 'fill:none;stroke:var(--discard);stroke-width:2;stroke-dasharray:5 5', 'marker-end': 'url(#loop-arrow)' });
       out += P.text(x + 24, y + 6, 'git reset', P.style('--ink-2', B.hash, '--font-mono'));
     });
