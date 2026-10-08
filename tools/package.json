@@ -1,0 +1,8 @@
+{
+  "name": "ai-doc-tools",
+  "private": true,
+  "description": "Dev tools for the ai-doc site: browser tests and GIF / MP4 export. Not shipped to docs/.",
+  "devDependencies": {
+    "playwright": "1.60.0"
+  }
+}

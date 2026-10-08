@@ -41,6 +41,7 @@ function args(argv) {
 
 function findPlaywright() {
   const c = [process.env.PLAYWRIGHT,
+    join(root, 'tools/node_modules/playwright/index.mjs'),
     join(homedir(), 'linux-kernel/github/sky-skills/node_modules/playwright/index.mjs'),
     join(homedir(), 'claude-tools/sky-skills/node_modules/playwright/index.mjs')].filter(Boolean);
   const hit = c.find(existsSync);

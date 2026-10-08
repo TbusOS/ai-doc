@@ -6,6 +6,8 @@ This file tracks non-obvious work-in-progress directions for this repo beyond th
 
 For per-initiative details, see **`docs/superpowers/specs/`** (design docs) and **`docs/superpowers/plans/`** (implementation plans).
 
+To continue on another machine (setup, daily commands, illustrations, exports, publishing, what to write down before you stop), see **[`MAINTENANCE.md`](MAINTENANCE.md)**. 换电脑接着做,看 `MAINTENANCE.md`。Keep each initiative's **Status** line below current: it is how the next machine knows where things stand.
+
 ---
 
 <a name="english"></a>

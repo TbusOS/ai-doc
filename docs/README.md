@@ -71,13 +71,9 @@ The script:
    pages for both languages.
 
 Requires once — a Python environment with the pinned packages (another
-markdown version renders the original pages differently):
-
-```bash
-uv venv --python 3.14 .venv
-uv pip install --python .venv/bin/python -r tools/requirements.txt
-source .venv/bin/activate    # tools/check_all.sh picks up .venv by itself
-```
+markdown version renders the original pages differently) and, for browser
+tests and exports, Playwright under `tools/`. Full setup on a new machine:
+[`MAINTENANCE.md`](../MAINTENANCE.md) §2.
 
 ## Quality gates
 

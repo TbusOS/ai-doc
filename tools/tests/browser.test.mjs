@@ -1,6 +1,7 @@
 // Browser checks for the explainer page — things unit tests cannot see.
 //   node --test tools/tests/browser.test.mjs
-// Needs Playwright; borrowed from sky-skills (PLAYWRIGHT=<path to index.mjs> to override).
+// Needs Playwright: tools/node_modules (cd tools && npm install), else sky-skills' copy;
+// PLAYWRIGHT=<path to index.mjs> overrides.
 // Pages are opened over file://, the same way check_objective.mjs opens them.
 import test from 'node:test';
 import assert from 'node:assert';
@@ -12,7 +13,11 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 // PAGE=docs/zh/explain/<slug>--<tag>.html checks a preview page with only some scenes
 const PAGE = pathToFileURL(resolve(process.env.PAGE || resolve(here, '../../docs/zh/explain/autoresearch.html'))).href;
-const PW = process.env.PLAYWRIGHT || join(homedir(), 'linux-kernel/github/sky-skills/node_modules/playwright/index.mjs');
+const PW = process.env.PLAYWRIGHT || [
+  resolve(here, '../node_modules/playwright/index.mjs'),
+  join(homedir(), 'linux-kernel/github/sky-skills/node_modules/playwright/index.mjs'),
+  join(homedir(), 'claude-tools/sky-skills/node_modules/playwright/index.mjs'),
+].find(existsSync) || resolve(here, '../node_modules/playwright/index.mjs');
 const skip = existsSync(PW) ? false : `playwright not found at ${PW}`;
 const { chromium } = skip ? {} : await import(PW);
 

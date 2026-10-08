@@ -22,7 +22,12 @@ if [ -z "${SKY_SKILLS:-}" ]; then
 fi
 SKY="${SKY_SKILLS:-$HOME/linux-kernel/github/sky-skills}"
 GATE="${TECH_WRITING_GATE:-$HOME/.claude/skills/tech-writing-gate/scripts}"
-export PLAYWRIGHT="${PLAYWRIGHT:-$SKY/node_modules/playwright/index.mjs}"
+# Playwright: the repo's own copy (cd tools && npm install) first, then sky-skills'.
+if [ -z "${PLAYWRIGHT:-}" ]; then
+  PLAYWRIGHT="$SKY/node_modules/playwright/index.mjs"
+  [ -f tools/node_modules/playwright/index.mjs ] && PLAYWRIGHT="$PWD/tools/node_modules/playwright/index.mjs"
+fi
+export PLAYWRIGHT
 fail=0
 
 run() {  # run <name> <command...>
@@ -52,7 +57,9 @@ for d in explain-src/*/; do
 done
 run "original article text unchanged" python3 tools/check_articles_unchanged.py check
 
-pages=(docs/sample/index.html docs/zh/explain/*.html)
+# Published pages only: docs/zh/explain/<slug>--<tag>.html are local previews (git-ignored).
+pages=(docs/sample/index.html)
+for f in docs/zh/explain/*.html; do case "$f" in *--*) ;; *) pages+=("$f") ;; esac; done
 if [ -f "$SKY/skills/design-review/scripts/check_objective.mjs" ]; then
   run "objective defects (light + dark)" node "$SKY/skills/design-review/scripts/check_objective.mjs" --themes=dark,light "${pages[@]}"
 else skip "objective defects" "no sky-skills at \$SKY_SKILLS"; fi
