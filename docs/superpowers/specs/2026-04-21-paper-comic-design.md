@@ -2,9 +2,12 @@
 
 - **日期**：2026-04-21
 - **状态**：待用户确认
-- **目标仓库**：`/Users/sky/linux-kernel/ai-doc`（bilingual AI paper 知识库）
+- **目标仓库**：`$AI_DOC`（bilingual AI paper 知识库）
 
 ---
+
+
+> 路径约定:`$AI_DOC` 指本仓库根目录。
 
 ## 1. 目标
 
@@ -150,7 +153,7 @@
 
 ## 7. Pilot 论文：Bitter Lesson
 
-**路径**：`/Users/sky/linux-kernel/ai-doc/ai-thinking/bitter-lesson.md`
+**路径**：`$AI_DOC/ai-thinking/bitter-lesson.md`
 
 **为什么做第一篇**：
 - 核心思想一句话（"算力 + 通用方法赢过精巧人类知识"）

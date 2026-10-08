@@ -1,6 +1,8 @@
 # 图解板块 · 第一阶段(样张)实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **状态:已完成**(2026-10-09,main `4e01134`)。最后一步的单独提交 `chore: phase-1 sample checks` 没有做,检查结果和 review 修复合在 `93dd81f`、`4e01134` 里。
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 做出一张能判断视觉方向的样张:新视觉 + 新首页首屏 + autoresearch 图解页的场景 4(实验循环),
 同时把后面阶段要用的地基(时间轴、场景引擎、出处检查、原文不变检查)一起打好。
@@ -73,7 +75,7 @@ Python 测试用标准库 `unittest`(本机没装 pytest);Playwright 借用 sky-
 **Interfaces:**
 - Produces: `extract_article_text(html: str) -> str`;CLI `python3 tools/check_articles_unchanged.py snapshot|check`,`check` 有差异时退出码 1 并打印页面名。
 
-- [ ] **Step 1: 写失败测试** `tools/tests/test_articles_text.py`
+- [x] **Step 1: 写失败测试** `tools/tests/test_articles_text.py`
 
 ```python
 import sys, unittest
@@ -104,11 +106,11 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-- [ ] **Step 2: 跑测试确认失败** — `python3 -m unittest discover -s tools/tests -p 'test_*.py' -v`,预期 `ModuleNotFoundError: articles_text`
-- [ ] **Step 3: 实现** `tools/articles_text.py`:用 `html.parser.HTMLParser`,遇到 `<article class="article-body">` 开始收集文本,按嵌套深度遇到对应 `</article>` 结束;结果 `" ".join(text.split())`;没找到就 `raise ValueError`。
-- [ ] **Step 4: 实现 CLI** `tools/check_articles_unchanged.py`:遍历 `docs/en/articles/*.html` 和 `docs/zh/articles/*.html`,key 为 `en/xxx.html`;`snapshot` 写 JSON(`sort_keys=True, ensure_ascii=False, indent=0`);`check` 逐个比对,打印差异页面和第一个不同字符附近 60 字,有差异退出 1;页面数量变化也算差异。
-- [ ] **Step 5: 跑测试通过** + `python3 tools/check_articles_unchanged.py snapshot` + `python3 tools/check_articles_unchanged.py check`(预期 `80 pages unchanged`)
-- [ ] **Step 6: 提交** `test: baseline check that original article text stays unchanged`
+- [x] **Step 2: 跑测试确认失败** — `python3 -m unittest discover -s tools/tests -p 'test_*.py' -v`,预期 `ModuleNotFoundError: articles_text`
+- [x] **Step 3: 实现** `tools/articles_text.py`:用 `html.parser.HTMLParser`,遇到 `<article class="article-body">` 开始收集文本,按嵌套深度遇到对应 `</article>` 结束;结果 `" ".join(text.split())`;没找到就 `raise ValueError`。
+- [x] **Step 4: 实现 CLI** `tools/check_articles_unchanged.py`:遍历 `docs/en/articles/*.html` 和 `docs/zh/articles/*.html`,key 为 `en/xxx.html`;`snapshot` 写 JSON(`sort_keys=True, ensure_ascii=False, indent=0`);`check` 逐个比对,打印差异页面和第一个不同字符附近 60 字,有差异退出 1;页面数量变化也算差异。
+- [x] **Step 5: 跑测试通过** + `python3 tools/check_articles_unchanged.py snapshot` + `python3 tools/check_articles_unchanged.py check`(预期 `80 pages unchanged`)
+- [x] **Step 6: 提交** `test: baseline check that original article text stays unchanged`
 
 ### Task 2: 原文副本 + 出处检查
 
@@ -119,8 +121,8 @@ if __name__ == "__main__":
 - Produces: `check_claims(data: dict, sources_dir: Path) -> list[str]`(返回错误列表,空 = 通过);CLI `python3 tools/check_sources.py explain-src/autoresearch` 有错退出 1。
 - zh.json 里 claim 的格式(Task 6 依赖):`{"tag": "原文"|"解读"|"示意", "text": "大白话一句", "quote": "英文原句(原文必填)", "source": "program.md(原文必填)", "basis": "推断依据(解读必填)"}`;claim 出现在 `scenes[].claims[]`。
 
-- [ ] **Step 1: 拷贝副本** — `cp ~/linux-kernel/github/autoresearch/{README.md,program.md,prepare.py} explain-src/autoresearch/sources/`;`SOURCE.txt` 写 `karpathy/autoresearch e6d79c1 (git -C ~/linux-kernel/github/autoresearch rev-parse --short HEAD)`
-- [ ] **Step 2: 写失败测试**
+- [x] **Step 1: 拷贝副本** — `cp ~/linux-kernel/github/autoresearch/{README.md,program.md,prepare.py} explain-src/autoresearch/sources/`;`SOURCE.txt` 写 `karpathy/autoresearch e6d79c1 (git -C ~/linux-kernel/github/autoresearch rev-parse --short HEAD)`
+- [x] **Step 2: 写失败测试**
 
 ```python
 import sys, unittest, tempfile
@@ -160,10 +162,10 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-- [ ] **Step 3: 跑测试确认失败**
-- [ ] **Step 4: 实现** — 比较前两边都做 `" ".join(s.split())`;错误信息格式 `"<scene id>: <原因>: <text 前 30 字>"`;CLI 读 `<dir>/zh.json` 和 `<dir>/sources/`,打印 `N claims checked, M errors`。
-- [ ] **Step 5: 跑测试通过**
-- [ ] **Step 6: 提交** `feat(tools): source-quote checker for explainer claims`
+- [x] **Step 3: 跑测试确认失败**
+- [x] **Step 4: 实现** — 比较前两边都做 `" ".join(s.split())`;错误信息格式 `"<scene id>: <原因>: <text 前 30 字>"`;CLI 读 `<dir>/zh.json` 和 `<dir>/sources/`,打印 `N claims checked, M errors`。
+- [x] **Step 5: 跑测试通过**
+- [x] **Step 6: 提交** `feat(tools): source-quote checker for explainer claims`
 
 ### Task 3: 时间轴纯函数
 
@@ -179,7 +181,7 @@ if __name__ == "__main__":
   - `locate(sched, t) -> {index, item, local}`(local = 段内 0..1;t 超出两端时夹到首 / 末段)
   - `nextStop(stops: number[], t) -> number`,`prevStop(stops, t) -> number`(严格大于 / 小于 t,超出返回端点)
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```js
 const test = require('node:test');
@@ -207,24 +209,24 @@ test('stops', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试确认失败** — `node --test tools/tests/`
-- [ ] **Step 3: 实现**(UMD 包装:`(function (root, f) { if (typeof module === 'object' && module.exports) module.exports = f(); else root.ExplainTimeline = f(); })(this, function () { ... })`;`locate` 用二分查找)
-- [ ] **Step 4: 跑测试通过**
-- [ ] **Step 5: 提交** `feat(explain): pure timeline helpers`
+- [x] **Step 2: 跑测试确认失败** — `node --test tools/tests/`
+- [x] **Step 3: 实现**(UMD 包装:`(function (root, f) { if (typeof module === 'object' && module.exports) module.exports = f(); else root.ExplainTimeline = f(); })(this, function () { ... })`;`locate` 用二分查找)
+- [x] **Step 4: 跑测试通过**
+- [x] **Step 5: 提交** `feat(explain): pure timeline helpers`
 
 ### Task 4: 新视觉 `theme.css` + `explain.css`
 
 **Files:**
 - Create: `docs/assets/theme.css`, `docs/assets/explain/explain.css`
 
-- [ ] **Step 1: 写 `theme.css`** — 至少包含:
+- [x] **Step 1: 写 `theme.css`** — 至少包含:
   - `:root` 浅色变量:`--paper #f6efe2`、`--paper-2 #efe6d4`、`--card #fbf8f1`、`--ink #1e1a15`、`--ink-2 #574e43`、`--line #dccfb8`、`--keep #2e8a57`、`--discard #8f877c`、`--crash #c4423a`、`--accent #d9682a`、`--info #3a6db3`;主题色 `--t-inference #6a9bcc`、`--t-self #d97757`、`--t-agent #788c5d`、`--t-training #a14238`、`--t-thinking #6b8e3c`、`--t-memory #4a4a6a`
   - 深色:`@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {...} }` 和 `:root[data-theme="dark"] {...}` 两处同值:`--paper #11151d`、`--paper-2 #171c26`、`--card #1b212d`、`--ink #ece5d8`、`--ink-2 #b5ad9f`、`--line #2b3342`、`--keep #4cbb82`、`--discard #858c99`、`--crash #ee6b5f`、`--accent #f08a47`、`--info #74a0e3`
   - 字体变量 `--font-head / --font-body / --font-hand / --font-mono`(值见 Global Constraints)
   - 基础:`body { background: var(--paper); color: var(--ink); font-family: var(--font-body); }`,标题用 `--font-head`;页头 `.site-head`(sticky,半透明纸色 + 细底线)、页脚 `.site-foot`、主题切换按钮 `.theme-btn`、卡片 `.card`、标签 `.chip`、容器 `.wrap`(max 1160px,左右 20px 内边距)
   - `@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }`
-- [ ] **Step 2: 写 `explain.css`** — 图解页:`.ex-hero`、五问导航 `.ex-chapters`(可横向滚动的 chip 列;未完成的 chip `aria-disabled` 灰显)、`.scene`、舞台 `.stage`(`aspect-ratio: 16/9`,圆角,`--card` 底,细边框)、控制条 `.stage-controls`(播放、上一步、下一步、进度 `input[type=range]`、倍速)、字幕行 `.stage-caption`(`--font-hand`,`aria-live=polite`)、开关 `.ex-toggle`、出处卡 `details.claim`(summary 里 `.tag-原文/.tag-解读/.tag-示意` 三种色块)、`body.capture` 模式(只显示目标舞台,固定 1200×675,隐藏其他一切)
-- [ ] **Step 3: 提交** `feat(site): new theme tokens and explainer styles`
+- [x] **Step 2: 写 `explain.css`** — 图解页:`.ex-hero`、五问导航 `.ex-chapters`(可横向滚动的 chip 列;未完成的 chip `aria-disabled` 灰显)、`.scene`、舞台 `.stage`(`aspect-ratio: 16/9`,圆角,`--card` 底,细边框)、控制条 `.stage-controls`(播放、上一步、下一步、进度 `input[type=range]`、倍速)、字幕行 `.stage-caption`(`--font-hand`,`aria-live=polite`)、开关 `.ex-toggle`、出处卡 `details.claim`(summary 里 `.tag-原文/.tag-解读/.tag-示意` 三种色块)、`body.capture` 模式(只显示目标舞台,固定 1200×675,隐藏其他一切)
+- [x] **Step 3: 提交** `feat(site): new theme tokens and explainer styles`
 
 ### Task 5: 场景引擎 `engine.js`
 
@@ -239,7 +241,7 @@ test('stops', () => {
   capture 模式:URL `?capture=<sceneId>` → `body.capture`,`window.__explain = { duration, seek(t) }`。
   全站数据:`<script type="application/json" id="explain-data">` 内嵌 zh.json。
 
-- [ ] **Step 1: 实现** — 要点:
+- [x] **Step 1: 实现** — 要点:
   - `DOMContentLoaded` 后读数据,对每个 `.scene[data-widget]` 找已注册的 factory 并挂载
   - 播放循环:`requestAnimationFrame`,`t += dt * speed`,到 `duration` 停住并把播放键变回 ▶
   - IntersectionObserver:可见比例 ≥ 0.5 且未播放过时自动播;离开视口暂停
@@ -249,7 +251,7 @@ test('stops', () => {
   - 开关:`.ex-toggle input[type=checkbox][data-option]` 变化时调 `setOption(key, checked)` 然后重绘当前 t
   - 主题切换按钮 `.theme-btn`:在 auto → light → dark 间循环,写 `html[data-theme]`,`localStorage` 读写包 try/catch
   - capture 模式:只挂载目标场景,不自动播,暴露 `__explain`
-- [ ] **Step 2: 提交** `feat(explain): scene engine with controls, viewport pause, reduced motion, capture mode`
+- [x] **Step 2: 提交** `feat(explain): scene engine with controls, viewport pause, reduced motion, capture mode`
 
 (引擎的 DOM 行为在 Task 9 用真实浏览器验证;纯逻辑已在 Task 3 测过。)
 
@@ -263,7 +265,7 @@ test('stops', () => {
   `explain_build.render_explain(data: dict, prefix="../../") -> str`、`explain_build.build_all() -> list[Path]`(写 `docs/zh/explain/<slug>.html`)。
 - zh.json 顶层:`slug, title, kicker, lead, reading_minutes, paper{title,author,date,repo,original_page}, chapters[{id,num,title}], scenes[{id, chapter, widget, title, lead, body[], stations{}, verdicts{}, toggle{option,label,tag,note}, claims[], original_anchor}]`
 
-- [ ] **Step 1: 写失败测试** `tools/tests/test_explain_build.py`
+- [x] **Step 1: 写失败测试** `tools/tests/test_explain_build.py`
 
 ```python
 import sys, unittest, json
@@ -315,15 +317,15 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-- [ ] **Step 2: 写 zh.json 样张内容** — 5 个 chapter(`what 一 这是什么 / without 二 没有它会怎样 / why 三 为什么这么设计 / where 四 用在什么场景 / how 五 机制细节`);只有一个 scene `loop`(chapter `why`),含:
+- [x] **Step 2: 写 zh.json 样张内容** — 5 个 chapter(`what 一 这是什么 / without 二 没有它会怎样 / why 三 为什么这么设计 / where 四 用在什么场景 / how 五 机制细节`);只有一个 scene `loop`(chapter `why`),含:
   - `stations`:`edit / commit / train / read / decide / log` 六站的短标签和每站大白话字幕
   - `verdicts`:`baseline / keep / discard / crash` 的字幕;`toggle`:`{"option":"noReset","label":"去掉 git reset 会怎样","tag":"解读","note":"…"}`
   - `claims`(每条原文 quote 都从 `sources/program.md` 里逐字摘):循环第 8 步 advance、第 9 步 git reset、第一次跑基线、results.tsv 四行示例、crash 的处理、results.tsv 不提交;外加一条「解读」:没有 reset 时坏改动会留在分支上(basis:由第 8–9 步反推)
   - `original_anchor: "3-the-experimentation-loop"`
-- [ ] **Step 3: 跑测试确认失败**(`explain_build` 不存在)
-- [ ] **Step 4: 实现 `site_v2.py` + `explain_build.py`** — 页面结构:页头(AI Doc · 首页 / 主题 / 开源模型 · 「图解 | 原文」切换 · 主题按钮)→ hero(kicker、h1、lead、作者 / 日期 / 阅读时间、「读原文 →」)→ 五问导航(有场景的 chapter 是锚点,没有的 `aria-disabled="true"` 并显示「制作中」)→ 每个 chapter 一个 `<section>`,内含场景:章节号、h2、lead、body 段落、舞台(`<svg class="stage-svg" viewBox="0 0 1200 675" role="img" aria-label=标题>` + 字幕行 + 控制条)、开关、出处列表(`<details class="claim">`:summary = 标记色块 + 大白话;展开 = `<blockquote lang="en">` 原句 + 「出处:program.md」)、「对照原文 →」(`original_page#original_anchor`)→ 页脚;`<script type="application/json" id="explain-data">` 内嵌 `json.dumps(data, ensure_ascii=False).replace("</", "<\\/")`;脚本顺序 timeline.js → engine.js → 场景的 model → 场景的绘制文件。
-- [ ] **Step 5: 跑测试通过** + `python3 docs/scripts/explain_build.py` 生成页面 + `python3 tools/check_sources.py explain-src/autoresearch`(0 errors)
-- [ ] **Step 6: 提交** `feat(explain): explainer page builder and autoresearch sample copy`
+- [x] **Step 3: 跑测试确认失败**(`explain_build` 不存在)
+- [x] **Step 4: 实现 `site_v2.py` + `explain_build.py`** — 页面结构:页头(AI Doc · 首页 / 主题 / 开源模型 · 「图解 | 原文」切换 · 主题按钮)→ hero(kicker、h1、lead、作者 / 日期 / 阅读时间、「读原文 →」)→ 五问导航(有场景的 chapter 是锚点,没有的 `aria-disabled="true"` 并显示「制作中」)→ 每个 chapter 一个 `<section>`,内含场景:章节号、h2、lead、body 段落、舞台(`<svg class="stage-svg" viewBox="0 0 1200 675" role="img" aria-label=标题>` + 字幕行 + 控制条)、开关、出处列表(`<details class="claim">`:summary = 标记色块 + 大白话;展开 = `<blockquote lang="en">` 原句 + 「出处:program.md」)、「对照原文 →」(`original_page#original_anchor`)→ 页脚;`<script type="application/json" id="explain-data">` 内嵌 `json.dumps(data, ensure_ascii=False).replace("</", "<\\/")`;脚本顺序 timeline.js → engine.js → 场景的 model → 场景的绘制文件。
+- [x] **Step 5: 跑测试通过** + `python3 docs/scripts/explain_build.py` 生成页面 + `python3 tools/check_sources.py explain-src/autoresearch`(0 errors)
+- [x] **Step 6: 提交** `feat(explain): explainer page builder and autoresearch sample copy`
 
 ### Task 7: 场景 4「实验循环 + git 只进不退」
 
@@ -337,7 +339,7 @@ if __name__ == "__main__":
   `LoopModel.duration() -> number`(= 1.0 + 4×5.4 + 2.0 = 24.6)、`LoopModel.stops() -> number[]`(每站起点 + 结尾,共 4×6+1=25 个)、
   `LoopModel.stateAt(t, {noReset=false}) -> { phase: 'intro'|'run'|'outro', round, station, local, nodes: [{commit, status: 'pending'|'keep'|'discard'|'crash', onBranch: bool}], head: number (-1 = 无), best: number|null, headBpb: number|null, rows: number, readout: string|null, verdict: null|'baseline'|'keep'|'discard'|'crash' }`
 
-- [ ] **Step 1: 写失败测试** `tools/tests/loop-model.test.js`
+- [x] **Step 1: 写失败测试** `tools/tests/loop-model.test.js`
 
 ```js
 const test = require('node:test');
@@ -407,9 +409,9 @@ test('drawing code uses CSS variables, not hex colors', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试确认失败**
-- [ ] **Step 3: 实现 `loop-model.js`** — 每轮的判定:轮 0 = baseline(keep);之后 `crash` 行 → crash;`bpb < best` → keep;否则 discard。`decide` 站的 `local ≥ 0.5` 时判定生效(节点变色、head 移动);`log` 站 `local ≥ 0.3` 时 `rows` 加一;`read` 站 `readout` = crash 时 `''`,否则 `'val_bpb: ' + bpb.toFixed(6)`;`commit` 站开始时新节点以 `pending` 出现。`noReset` 时 discard 节点 `onBranch=true` 且 head 移到它,`headBpb` = 该行 bpb;crash 在 `noReset` 下也不留(崩溃的代码跑不出分数,program.md 要求修或跳过)。
-- [ ] **Step 4: 实现 `loop.js`**(宽屏布局,viewBox 1200×675):
+- [x] **Step 2: 跑测试确认失败**
+- [x] **Step 3: 实现 `loop-model.js`** — 每轮的判定:轮 0 = baseline(keep);之后 `crash` 行 → crash;`bpb < best` → keep;否则 discard。`decide` 站的 `local ≥ 0.5` 时判定生效(节点变色、head 移动);`log` 站 `local ≥ 0.3` 时 `rows` 加一;`read` 站 `readout` = crash 时 `''`,否则 `'val_bpb: ' + bpb.toFixed(6)`;`commit` 站开始时新节点以 `pending` 出现。`noReset` 时 discard 节点 `onBranch=true` 且 head 移到它,`headBpb` = 该行 bpb;crash 在 `noReset` 下也不留(崩溃的代码跑不出分数,program.md 要求修或跳过)。
+- [x] **Step 4: 实现 `loop.js`**(宽屏布局,viewBox 1200×675):
   - 左半:六站环形路线(圆心 (300, 330),半径 200),每站一个圆角标签;当前站 `var(--accent)` 高亮,一个小圆点沿弧线从上一站移到当前站(`ease.inOut`)
   - 环中心:当前站的大图标区 —— `edit` 显示 `train.py` 卡片和本轮 desc;`train` 显示 5:00 倒计时环;`read` 显示终端一行 `grep "^val_bpb:" run.log` 和 readout;crash 时显示「(空)→ 崩溃了,看 `tail -n 50 run.log`」,不编造具体报错(program.md 只写了 `OOM`);`decide` 显示「0.993200 < 0.997900 ?」比较式和判定章
   - 右上:git 分支(y=150),分支名 `autoresearch/mar5`(program.md 示例标签),节点从左往右排,`keep` 实心 `var(--keep)`,`discard` 虚线 `var(--discard)` 并在判定后向下滑出 + 一条弯箭头回到 head 写 `git reset`,`crash` 红色 ×;HEAD 小旗
@@ -418,9 +420,9 @@ test('drawing code uses CSS variables, not hex colors', () => {
   - 字幕:每帧调用 `ctx.caption(text)`(站字幕或判定字幕),文案全来自 `ctx.copy`
   - 窄屏(容器宽 < 640px):换竖排 viewBox 675×1200 布局(环在上、分支和表格在下),字号按竖排重排,保证 390px 宽时最小字 ≥ 9px
   - 所有颜色用 `var(--…)`;SVG 文本用 `font-family: var(--font-hand)` 或 `var(--font-mono)`
-- [ ] **Step 5: 跑全部 JS 测试通过** — `node --test tools/tests/`
-- [ ] **Step 6: 浏览器里看一遍**(本地 `python3 -m http.server 8765 --directory docs`,Playwright 截 t = 0 / 3 / 9 / 15 / 21 / 24.6 六帧,宽屏 + 390 宽各一组),修到画面对
-- [ ] **Step 7: 提交** `feat(explain): autoresearch scene 4 — experiment loop and git ratchet`
+- [x] **Step 5: 跑全部 JS 测试通过** — `node --test tools/tests/`
+- [x] **Step 6: 浏览器里看一遍**(本地 `python3 -m http.server 8765 --directory docs`,Playwright 截 t = 0 / 3 / 9 / 15 / 21 / 24.6 六帧,宽屏 + 390 宽各一组),修到画面对
+- [x] **Step 7: 提交** `feat(explain): autoresearch scene 4 — experiment loop and git ratchet`
 
 ### Task 8: 样张首页首屏
 
@@ -431,18 +433,18 @@ test('drawing code uses CSS variables, not hex colors', () => {
 - Consumes: `build.CATEGORIES`(`from build import CATEGORIES`,build.py 有 main 守卫,import 不会触发构建)、`ExplainTimeline`
 - Produces: `docs/sample/index.html`
 
-- [ ] **Step 1: 实现 `render_home_sample()`** — 页头;hero 左文右图:kicker「AI Doc · 论文图解」、h1「把 AI 论文讲到你能看懂」、lead「{N} 篇论文和工程文章的中英对照翻译,加上用动画和交互图讲原理的图解页。」(N 由 `sum(len(c.papers) for c in CATEGORIES)` 算,当前 40)、两个按钮(「看图解」→ `../zh/explain/autoresearch.html`,「按主题浏览」→ `#topics`);右侧 `<svg id="stack" viewBox="0 0 640 520">`,四层块的标题和篇数在 HTML/SVG 里静态写好(不开 JS 也能看),每块是 `<a href="../zh/<key>.html">`;下方「图解系列」一条:autoresearch 卡片(标题、一句话、「12 个场景 · 约 9 分钟」、「样张:目前只有场景 4」)
-- [ ] **Step 2: 实现 `stack.js`** — 用 `ExplainTimeline` 排程:四层依次「描边画出(stroke-dashoffset 从全长到 0)→ 填色淡入 → 文字淡入」,总长约 3 秒;各层之间画连线;悬停块上浮 4px;reduced motion 时直接终态;颜色用主题色变量
-- [ ] **Step 3: 生成** `python3 -c "import sys; sys.path.insert(0,'docs/scripts'); import site_v2; site_v2.build_sample()"`,浏览器截图看首屏(1440 宽、390 宽、深色各一张),修到满意
-- [ ] **Step 4: 提交** `feat(site): sample homepage hero with animated topic stack`
+- [x] **Step 1: 实现 `render_home_sample()`** — 页头;hero 左文右图:kicker「AI Doc · 论文图解」、h1「把 AI 论文讲到你能看懂」、lead「{N} 篇论文和工程文章的中英对照翻译,加上用动画和交互图讲原理的图解页。」(N 由 `sum(len(c.papers) for c in CATEGORIES)` 算,当前 40)、两个按钮(「看图解」→ `../zh/explain/autoresearch.html`,「按主题浏览」→ `#topics`);右侧 `<svg id="stack" viewBox="0 0 640 520">`,四层块的标题和篇数在 HTML/SVG 里静态写好(不开 JS 也能看),每块是 `<a href="../zh/<key>.html">`;下方「图解系列」一条:autoresearch 卡片(标题、一句话、「12 个场景 · 约 9 分钟」、「样张:目前只有场景 4」)
+- [x] **Step 2: 实现 `stack.js`** — 用 `ExplainTimeline` 排程:四层依次「描边画出(stroke-dashoffset 从全长到 0)→ 填色淡入 → 文字淡入」,总长约 3 秒;各层之间画连线;悬停块上浮 4px;reduced motion 时直接终态;颜色用主题色变量
+- [x] **Step 3: 生成** `python3 -c "import sys; sys.path.insert(0,'docs/scripts'); import site_v2; site_v2.build_sample()"`,浏览器截图看首屏(1440 宽、390 宽、深色各一张),修到满意
+- [x] **Step 4: 提交** `feat(site): sample homepage hero with animated topic stack`
 
 ### Task 9: 检查 + 交样张
 
-- [ ] **Step 1: 全部单元测试** — `python3 -m unittest discover -s tools/tests -p 'test_*.py' -v` 和 `node --test tools/tests/`,全绿
-- [ ] **Step 2: 出处检查** — `python3 tools/check_sources.py explain-src/autoresearch`,0 errors
-- [ ] **Step 3: 原文不变** — `python3 tools/check_articles_unchanged.py check`,`80 pages unchanged`
-- [ ] **Step 4: 客观缺陷检查** — `node ~/linux-kernel/github/sky-skills/skills/design-review/scripts/check_objective.mjs --themes=dark,light docs/sample/index.html docs/zh/explain/autoresearch.html`,退出码 0
-- [ ] **Step 5: 词表检查** — 两张词表 `--strict` 扫 `explain-src/autoresearch/zh.json`、`docs/sample/index.html`、`docs/zh/explain/autoresearch.html`,0 命中
-- [ ] **Step 6: 手动核对 Review Focus 第 5 条** — Playwright:场景播放中滚出视口,1 秒后读 range 值,再过 1 秒读,两次相同
-- [ ] **Step 7: 截图** — 首页首屏(浅 / 深 / 390 宽)、场景 4 四个关键帧,发给 user
-- [ ] **Step 8: 提交** `chore: phase-1 sample checks` 并更新当日 `_status`;**停下等 user 看样张**
+- [x] **Step 1: 全部单元测试** — `python3 -m unittest discover -s tools/tests -p 'test_*.py' -v` 和 `node --test tools/tests/`,全绿
+- [x] **Step 2: 出处检查** — `python3 tools/check_sources.py explain-src/autoresearch`,0 errors
+- [x] **Step 3: 原文不变** — `python3 tools/check_articles_unchanged.py check`,`80 pages unchanged`
+- [x] **Step 4: 客观缺陷检查** — `node ~/linux-kernel/github/sky-skills/skills/design-review/scripts/check_objective.mjs --themes=dark,light docs/sample/index.html docs/zh/explain/autoresearch.html`,退出码 0
+- [x] **Step 5: 词表检查** — 两张词表 `--strict` 扫 `explain-src/autoresearch/zh.json`、`docs/sample/index.html`、`docs/zh/explain/autoresearch.html`,0 命中
+- [x] **Step 6: 手动核对 Review Focus 第 5 条** — Playwright:场景播放中滚出视口,1 秒后读 range 值,再过 1 秒读,两次相同
+- [x] **Step 7: 截图** — 首页首屏(浅 / 深 / 390 宽)、场景 4 四个关键帧,发给 user
+- [x] **Step 8: 提交** `chore: phase-1 sample checks` 并更新当日 `_status`;**停下等 user 看样张**

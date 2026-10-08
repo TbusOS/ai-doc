@@ -29,8 +29,10 @@ Explain the principles and the math of each paper with animations, interactive d
 
 - **Design doc:** [`docs/superpowers/specs/2026-10-08-paper-explainers-design.md`](docs/superpowers/specs/2026-10-08-paper-explainers-design.md)
 - **Phase 1 plan (done):** [`docs/superpowers/plans/2026-10-08-explainers-phase1-sample.md`](docs/superpowers/plans/2026-10-08-explainers-phase1-sample.md)
-- **Status (2026-10-09):** phase 1 shipped — new theme, homepage preview at `docs/sample/`, autoresearch explainer with scene 4 (the experiment loop). Next: phase 2 moves all 40 papers to the new theme; phase 3 completes the 12 autoresearch scenes; phase 4 illustrations (ComfyUI); phase 5 GIF / MP4 export.
-- **Relation to the comic series:** comics tell a story; explainers explain the mechanism. Both can share a local ComfyUI setup.
+- **Status (2026-10-09):** phase 1 shipped — new theme, homepage preview at `docs/sample/`, autoresearch explainer with scene 4 (the experiment loop). In progress on branch `feat/explainer-skill-and-scenes`: phase 3 (all autoresearch scenes), then phase 4 illustrations and phase 5 GIF / MP4 export for autoresearch. Phase 2 (all 40+ papers on the new theme) comes after autoresearch is complete.
+- **One style per paper (2026-10-09):** each paper gets its own visual style chosen from its content; only the reader's landmarks stay fixed across pages (source tags, player controls, chapter nav, reduced-motion behaviour, colour meanings). The whiteboard sketch look of autoresearch is one style, not the template.
+- **Illustrations:** generated with Codex image generation (gpt-6-astra) plus a style-reference image; prompts are stored next to the explainer source. No local open-model setup for now.
+- **Relation to the comic series:** comics tell a story; explainers explain the mechanism.
 
 ---
 
@@ -46,7 +48,7 @@ Explain the principles and the math of each paper with animations, interactive d
 - **Pilot 实施计划**：[`docs/superpowers/plans/2026-04-21-paper-comic-pilot.md`](docs/superpowers/plans/2026-04-21-paper-comic-pilot.md)
 - **Pilot 论文**：[The Bitter Lesson](ai-thinking/bitter-lesson.md)
 - **状态**：设计稿 + 实施计划已完成（2026-04-21）。**暂停执行** —— 当前 24GB M3 MacBook Air 跑 FLUX.1-dev 并同时常驻 Qwen-Image 2.0 和 FLUX.1 Kontext-dev 太紧。等 64GB Mac 到货后恢复。
-- **已锁定**：叙事（拟人化世界观）、视觉（纯水墨 · 井上式）、格式（按论文气质选海报 / 短漫 / 中篇 / 交互长文）、流水线（本地 ComfyUI + FLUX GGUF + Ink Wash Fusion LoRA，Claude Code 通过 MCP 驱动）。
+- **已锁定**：叙事（拟人化世界观）、视觉（纯水墨 · 井上式）、格式（按论文气质选海报 / 短漫 / 中篇 / 交互长文）、出图流程（本地 ComfyUI + FLUX GGUF + Ink Wash Fusion LoRA，Claude Code 通过 MCP 驱动）。
 - **产物路径（开工后）**：`docs/comics/`
 
 ### 2. 论文图解 + 站点改版（进行中）
@@ -55,5 +57,7 @@ Explain the principles and the math of each paper with animations, interactive d
 
 - **设计稿**：[`docs/superpowers/specs/2026-10-08-paper-explainers-design.md`](docs/superpowers/specs/2026-10-08-paper-explainers-design.md)
 - **第一阶段计划（已完成）**：[`docs/superpowers/plans/2026-10-08-explainers-phase1-sample.md`](docs/superpowers/plans/2026-10-08-explainers-phase1-sample.md)
-- **状态（2026-10-09）**：第一阶段已上线：新视觉、`docs/sample/` 新首页预览、autoresearch 图解页的场景 4（实验循环）。接下来：第二阶段 40 篇原文换新视觉；第三阶段补齐 autoresearch 12 个场景；第四阶段插画（ComfyUI）；第五阶段导出 GIF / MP4。
-- **跟漫画系列的关系**：漫画是讲故事，图解是讲原理；本地 ComfyUI 可以共用。
+- **状态（2026-10-09）**：第一阶段已上线：新视觉、`docs/sample/` 新首页预览、autoresearch 图解页的场景 4（实验循环）。分支 `feat/explainer-skill-and-scenes` 上正在做：第三阶段补齐 autoresearch 全部场景，然后是 autoresearch 的第四阶段插画、第五阶段导出 GIF / MP4。第二阶段（40 多篇原文换新视觉）排在 autoresearch 做完之后。
+- **每篇论文一种风格（2026-10-09 定）**：按论文内容定这篇的视觉风格；全站只固定读者跨页认路要靠的东西（出处标记、播放控制条、章节导航、减少动态效果时的表现、颜色的意思）。autoresearch 的白板手绘只是其中一种，不是模板。
+- **插画**：用 Codex 出图（gpt-6-astra），附一张参考图定画风；提示词原文跟图解源文件放在一起。暂不在本地部署开源模型。
+- **跟漫画系列的关系**：漫画是讲故事，图解是讲原理。

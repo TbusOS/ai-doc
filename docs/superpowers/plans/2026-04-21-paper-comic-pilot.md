@@ -18,6 +18,9 @@
 
 ---
 
+
+> 路径约定:`$AI_DOC` 指本仓库根目录。
+
 ## 开工前提 · 硬件检查
 
 **当前机器（2026-04-21）**：MacBook Air M3 · 24GB · 勉强可跑 Q6_K，Qwen-Image/Kontext 不能并行。
@@ -51,7 +54,7 @@
   workflows/
     paper-comic-base.json                 # 我们的基础水墨 workflow
 
-/Users/sky/linux-kernel/ai-doc/           # 项目仓库
+$AI_DOC/           # 项目仓库
   tools/
     comic-pipeline/
       README.md                           # 制作流水线说明
@@ -305,7 +308,7 @@ Expected: ~100-200 MB 文件存在。
 ### Task 6: 启动 ComfyUI + Smoke Test
 
 **Files:**
-- Create: `/Users/sky/linux-kernel/ai-doc/tools/comic-pipeline/smoke-test.md`
+- Create: `$AI_DOC/tools/comic-pipeline/smoke-test.md`
 
 - [ ] **Step 1: 启动 ComfyUI（后台）**
 
@@ -355,7 +358,7 @@ Expected：2-5 分钟内出一张水墨风景图。
 - [ ] **Step 4: 提交 smoke-test 记录**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 mkdir -p tools/comic-pipeline/assets
 cp ~/ComfyUI/output/<第一张生成图> tools/comic-pipeline/assets/smoke-01.png
 git add tools/comic-pipeline/
@@ -419,7 +422,7 @@ Expected: Claude Code 在 ToolSearch 或 MCP 列表里看到 `comfyui` 相关工
 - [ ] **Step 2: 把生成图存到 repo**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 cp <mcp-输出路径> tools/comic-pipeline/assets/mcp-smoke-01.png
 ```
 
@@ -438,7 +441,7 @@ cp <mcp-输出路径> tools/comic-pipeline/assets/mcp-smoke-01.png
 - [ ] **Step 4: 提交**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 git add tools/comic-pipeline/
 git commit -m "feat(comic): MCP smoke test — Claude → ComfyUI end-to-end"
 ```
@@ -450,7 +453,7 @@ git commit -m "feat(comic): MCP smoke test — Claude → ComfyUI end-to-end"
 ### Task 9: 提炼核心概念 + 写角色圣经 v1
 
 **Files:**
-- Create: `/Users/sky/linux-kernel/ai-doc/tools/comic-pipeline/character-bible.md`
+- Create: `$AI_DOC/tools/comic-pipeline/character-bible.md`
 
 - [ ] **Step 1: 读原文**
 
@@ -517,7 +520,7 @@ Create `tools/comic-pipeline/character-bible.md`:
 - [ ] **Step 4: 提交**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 git add tools/comic-pipeline/character-bible.md
 git commit -m "feat(comic): character bible v1 for Bitter Lesson pilot"
 ```
@@ -708,7 +711,7 @@ vermillion seal bottom-right, aspect ratio 3:4
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 mkdir -p docs/comics/bitter-lesson
 git add docs/comics/bitter-lesson/storyboard.md
 git commit -m "feat(comic): storyboard for Bitter Lesson pilot"
@@ -730,7 +733,7 @@ git commit -m "feat(comic): storyboard for Bitter Lesson pilot"
 - [ ] **Step 2: 挑选最好的一张，存为 cover.png**
 
 ```bash
-cp /tmp/cover-<best>.png /Users/sky/linux-kernel/ai-doc/docs/comics/bitter-lesson/assets/cover.png
+cp /tmp/cover-<best>.png $AI_DOC/docs/comics/bitter-lesson/assets/cover.png
 ```
 
 - [ ] **Step 3: 按 Panel 1-6 的 prompt，依次生成**
@@ -740,7 +743,7 @@ cp /tmp/cover-<best>.png /Users/sky/linux-kernel/ai-doc/docs/comics/bitter-lesso
 - [ ] **Step 4: 检查文件完整**
 
 ```bash
-ls -lh /Users/sky/linux-kernel/ai-doc/docs/comics/bitter-lesson/assets/
+ls -lh $AI_DOC/docs/comics/bitter-lesson/assets/
 ```
 
 Expected: `cover.png` + `panel-01.png` ~ `panel-06.png`，各 1-5 MB。
@@ -750,7 +753,7 @@ Expected: `cover.png` + `panel-01.png` ~ `panel-06.png`，各 1-5 MB。
 - [ ] **Step 6: 提交**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 git add docs/comics/bitter-lesson/assets/ docs/comics/bitter-lesson/storyboard.md
 git commit -m "feat(comic): generate Bitter Lesson cover + 6 panels"
 ```
@@ -878,7 +881,7 @@ body.comic-page {
 - [ ] **Step 2: 提交**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 mkdir -p docs/comics/_assets
 git add docs/comics/_assets/ink-frame.css
 git commit -m "feat(comic): ink-frame.css base style"
@@ -966,7 +969,7 @@ git commit -m "feat(comic): ink-frame.css base style"
 - [ ] **Step 2: 本地预览**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc/docs
+cd $AI_DOC/docs
 python3 -m http.server 8000 &
 open http://localhost:8000/comics/bitter-lesson/
 ```
@@ -980,7 +983,7 @@ Expected: 页面正确显示封面 + 6 格，图文对齐。
 - [ ] **Step 4: 提交**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 git add docs/comics/bitter-lesson/index.html
 git commit -m "feat(comic): Bitter Lesson pilot page"
 ```
@@ -1058,7 +1061,7 @@ git commit -m "feat(comic): Bitter Lesson pilot page"
 - [ ] **Step 4: 本地预览确认**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc/docs
+cd $AI_DOC/docs
 python3 -m http.server 8000 &
 open http://localhost:8000/comics/
 open http://localhost:8000/zh/
@@ -1073,7 +1076,7 @@ Expected: 漫画集索引页显示 Bitter Lesson 卡片。主站顶部有"漫画
 - [ ] **Step 6: 提交 + 推送**
 
 ```bash
-cd /Users/sky/linux-kernel/ai-doc
+cd $AI_DOC
 git add docs/comics/index.html docs/zh/index.html docs/en/index.html
 git commit -m "feat(comic): comic hub index + main site entry"
 git push origin main
