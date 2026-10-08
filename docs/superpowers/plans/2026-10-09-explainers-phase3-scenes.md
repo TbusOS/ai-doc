@@ -1,6 +1,11 @@
 # 图解板块 · 第三阶段(autoresearch 全部场景)实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development. Read `.claude/skills/paper-explainer/SKILL.md` first. Steps use checkbox (`- [ ]`) syntax.
+> **状态(2026-10-09)**:已完成。13 个动画场景 + 逐段批注 + 自测题都在 `docs/zh/explain/autoresearch.html`。
+> 跟计划不同的地方:开场改用 GPT 出的 4 张铅笔插画(提示词记录在 `explain-src/autoresearch/illustrations/`),数据放进「屏幕放大」面板;
+> neverstop 的卧室用同一套插画;时钟 23:00 → 06:00;引擎加了 `ctx.pause()` / `ctx.reduced`,控件初始值统一推给场景;
+> 截取模式的字幕改到画面下方。独立 reviewer 报的问题按「必须修 / 应该修」修完后才合并。
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development. Read `.claude/skills/paper-explainer/SKILL.md` first. Steps use checkbox (`- [x]`) syntax.
 
 **Goal:** 补齐 autoresearch 图解页的全部场景(设计稿第 5 节 0–12 + 边界 + 自测),让页面完整可用。
 
@@ -58,15 +63,15 @@
 
 ## Task 5–8:场景(agent A–D,并行)
 每个场景:
-- [ ] 先写 `tools/tests/<widget>-model.test.js`(停靠点落在站开头、调用顺序无关、关键状态值),看它失败
-- [ ] 写 `<widget>-model.js` 让它通过
-- [ ] 写 `scenes/<id>.json`(文案、claims、transcript、控件),`python3 tools/check_sources.py explain-src/autoresearch --scene <id>` 0 errors
-- [ ] 写 `<widget>.js`;`python3 docs/scripts/explain_build.py --only <id> --out autoresearch--<id>` 生成预览页
-- [ ] `PAGE=docs/zh/explain/autoresearch--<id>.html node --test tools/tests/browser.test.mjs` 全过;截图看横屏 / 竖屏 / 深色各一张
-- [ ] `python3 tools/fix_cjk_punct.py --check` 与两张词表对场景 json 0 命中
+- [x] 先写 `tools/tests/<widget>-model.test.js`(停靠点落在站开头、调用顺序无关、关键状态值),看它失败
+- [x] 写 `<widget>-model.js` 让它通过
+- [x] 写 `scenes/<id>.json`(文案、claims、transcript、控件),`python3 tools/check_sources.py explain-src/autoresearch --scene <id>` 0 errors
+- [x] 写 `<widget>.js`;`python3 docs/scripts/explain_build.py --only <id> --out autoresearch--<id>` 生成预览页
+- [x] `PAGE=docs/zh/explain/autoresearch--<id>.html node --test tools/tests/browser.test.mjs` 全过;截图看横屏 / 竖屏 / 深色各一张
+- [x] `python3 tools/fix_cjk_punct.py --check` 与两张词表对场景 json 0 命中
 
 ## Task 9:合并与送审(主会话)
-- [ ] 全量构建,`bash tools/check_all.sh` 全过
-- [ ] 逐场景截图自查(浅 / 深 / 手机)
-- [ ] 独立 reviewer 审整个分支,修复后重跑检查
-- [ ] 更新 ROADMAP / docs/README / skill(新经验),合并 main、敏感词扫描、push、确认线上
+- [x] 全量构建,`bash tools/check_all.sh` 全过
+- [x] 逐场景截图自查(浅 / 深 / 手机)
+- [x] 独立 reviewer 审整个分支,修复后重跑检查
+- [x] 更新 ROADMAP / docs/README / skill(新经验),合并 main、敏感词扫描、push、确认线上
