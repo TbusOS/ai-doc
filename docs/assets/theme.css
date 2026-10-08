@@ -22,7 +22,7 @@
   --crash: #c4423a;
   --crash-ink: #a3322b;
   --accent: #d9682a;
-  --accent-ink: #a5481a;
+  --accent-ink: #933d12;
   --accent-soft: rgba(217, 104, 42, 0.14);
   --info: #3a6db3;
   --info-ink: #2d5a97;
@@ -110,7 +110,7 @@
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   background: var(--paper);
@@ -222,7 +222,7 @@ img, svg { max-width: 100%; }
 
 /* ---------- reveal on scroll (only when JS runs and motion is allowed) ---------- */
 @media (prefers-reduced-motion: no-preference) {
-  .js .rise { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .js .rise { opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform 0.4s ease; }
   .js .rise.in { opacity: 1; transform: none; }
 }
 

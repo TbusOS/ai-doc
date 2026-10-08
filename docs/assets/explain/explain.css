@@ -25,7 +25,8 @@
 .ex-chapters a:hover { border-color: var(--accent); }
 .ex-chapters .num {
   width: 30px; height: 30px; border-radius: 50%; display: inline-grid; place-items: center;
-  background: var(--ink); color: var(--paper); font-family: var(--font-hand); font-size: 1rem;
+  background: var(--ink); color: var(--paper); font-family: var(--font-hand); font-size: 1.05rem;
+  line-height: 1; padding-bottom: 8px;  /* LXGW WenKai sits low in its line box */
 }
 .ex-chapters [aria-disabled="true"] { color: var(--ink-2); background: transparent; border-style: dashed; }
 .ex-chapters [aria-disabled="true"] .num { background: var(--paper-2); color: var(--ink-2); }
@@ -105,6 +106,7 @@ details.claim[open] summary::after { content: "－"; }
 .tag--orig { background: color-mix(in srgb, var(--info) 16%, transparent); color: var(--info-ink); }
 .tag--interp { background: var(--accent-soft); color: var(--accent-ink); }
 .tag--illus { border: 1px dashed var(--ink-3); color: var(--ink-2); }
+.ex-toggle .tag { background: var(--card); }
 
 .to-original { display: inline-flex; margin-top: 22px; font-family: var(--font-head); font-weight: 650; font-size: 0.95rem; }
 

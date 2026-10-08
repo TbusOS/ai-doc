@@ -126,7 +126,7 @@
     relayout();
 
     return {
-      section: section, widget: w, state: s,
+      section: section, stage: stage || section, widget: w, state: s,
       play: play, pause: pause, seek: seek,
       onVisible: function (ratio) {
         if (reduced) return;
@@ -136,13 +136,15 @@
     };
   }
 
+  // observe the stage, not the whole scene: a scene with its text and source list
+  // is taller than the window, so its visible ratio never reaches 0.5
   function watchViewport(scenes) {
     if (!window.IntersectionObserver) return;
-    var byEl = new Map(scenes.map(function (sc) { return [sc.section, sc]; }));
+    var byEl = new Map(scenes.map(function (sc) { return [sc.stage, sc]; }));
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { byEl.get(e.target).onVisible(e.intersectionRatio); });
     }, { threshold: [0, 0.15, 0.5] });
-    scenes.forEach(function (sc) { io.observe(sc.section); });
+    scenes.forEach(function (sc) { io.observe(sc.stage); });
   }
 
   function watchReveal() {
@@ -153,7 +155,7 @@
     }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: 0.12 });
+    }, { threshold: 0, rootMargin: '0px 0px 20% 0px' });  // start the fade a little before it scrolls in
     Array.prototype.forEach.call(els, function (el) { io.observe(el); });
   }
 
