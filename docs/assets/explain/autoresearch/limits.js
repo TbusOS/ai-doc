@@ -34,33 +34,6 @@
     }
   };
 
-  var CLOSERS = '，。：；、）」』！？,.:;)';
-  var OPENERS = '（「『(';
-
-  // greedy line wrap by estimated width; Latin words stay whole, CJK breaks anywhere;
-  // a line never starts with closing punctuation nor ends with an opening one
-  function wrap(P, str, size, avail) {
-    var words = [], buf = '';
-    for (var i = 0; i < str.length; i++) {
-      var ch = str[i];
-      if (ch.charCodeAt(0) > 0x2e80) { if (buf) words.push(buf); words.push(ch); buf = ''; }
-      else if (ch === ' ') { if (buf) words.push(buf); words.push(' '); buf = ''; }
-      else buf += ch;
-    }
-    if (buf) words.push(buf);
-    var lines = [], cur = '';
-    words.forEach(function (w) {
-      if (cur && P.width(cur + w, size) > avail) {
-        if (CLOSERS.indexOf(w) >= 0 && cur.length > 1) { lines.push(cur.slice(0, -1)); cur = cur.slice(-1) + w; return; }
-        if (OPENERS.indexOf(cur.slice(-1)) >= 0 && cur.length > 1) { lines.push(cur.slice(0, -1)); cur = cur.slice(-1) + w; return; }
-        lines.push(cur.replace(/ +$/, ''));
-        cur = w === ' ' ? '' : w;
-      } else cur += w;
-    });
-    if (cur) lines.push(cur.replace(/ +$/, ''));
-    return lines;
-  }
-
   function X(g, M, i) { var p = g.plot; return p.l + i / (M.N - 1) * (p.r - p.l); }
   function Y(g, h) { var p = g.plot; return p.b - (h - p.hMin) / (p.hMax - p.hMin) * (p.b - p.t); }
 
@@ -220,7 +193,7 @@
       }
     });
     if (p > 0.6) {
-      var lines = wrap(P, L.machine_result, 21, A.w - 20);
+      var lines = P.wrap(L.machine_result, 21, A.w - 20);
       lines.forEach(function (l, i) {
         out += P.text(A.x + 10, A.y + A.h - 60 + i * 30, l, P.style('--accent-ink', 21, '--font-hand', 700), { 'data-on': 'stage' });
       });
@@ -276,10 +249,10 @@
       inner += tag('rect', { x: x, y: y, width: C.w, height: C.h, rx: 14, 'data-box': id,
         style: lit ? 'fill:var(--card);stroke:var(--accent);stroke-width:3' : 'fill:var(--card);stroke:var(--line);stroke-width:1.5' });
       var head = L.card_num[i] + ' ' + card.title, ty = y + C.pad + C.title;
-      var tl = wrap(P, head, C.title, C.w - 2 * C.pad);
+      var tl = P.wrap(head, C.title, C.w - 2 * C.pad);
       tl.forEach(function (l, j) { inner += P.fit(x + C.pad, ty + j * (C.title + 6), l, lit ? '--accent-ink' : '--ink', C.title, '--font-hand', 700, C.w - 2 * C.pad, id); });
       var by = ty + (tl.length - 1) * (C.title + 6) + C.lh + 6;
-      wrap(P, card.body, C.body, C.w - 2 * C.pad).forEach(function (l, j) {
+      P.wrap(card.body, C.body, C.w - 2 * C.pad).forEach(function (l, j) {
         inner += P.fit(x + C.pad, by + j * C.lh, l, '--ink-2', C.body, '--font-hand', 400, C.w - 2 * C.pad, id);
       });
       out += tag('g', { style: 'opacity:' + a.toFixed(3) }, inner);
