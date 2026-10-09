@@ -2,8 +2,8 @@
  *
  * Left pan: the val_bpb improvement (gain). Right pan: the complexity cost.
  * Deleting code is a negative cost (a balloon that lifts the cost pan). The
- * heavier side goes down; the four cards are program.md's own examples, in
- * program.md order, and each one must tip the way program.md concludes
+ * heavier side goes down; the four cards are program.md's own words (one
+ * general rule, then three examples), in program.md order, and each one must tip the way program.md concludes
  * (tests check it). Weights are illustrative (示意): only the direction is
  * taken from the source.
  * opts.card: 'all' (tour, default) or '1'..'4' (that card on the scale for the
@@ -18,7 +18,7 @@
   // gain / cost in illustrative units; `says` is program.md's conclusion
   var CARDS = [
     { id: 'ugly', gain: 1, cost: 3, says: 'reject' },     // "A small improvement that adds ugly complexity is not worth it."
-    { id: 'hacky', gain: 1, cost: 3, says: 'reject' },    // "...adds 20 lines of hacky code? Probably not worth it."
+    { id: 'hacky', gain: 1, cost: 3, says: 'reject', hedged: true },  // "...adds 20 lines of hacky code? Probably not worth it."
     { id: 'delete', gain: 1, cost: -2, says: 'keep' },    // "...improvement from deleting code? Definitely keep."
     { id: 'simpler', gain: 0, cost: -3, says: 'keep' }    // "An improvement of ~0 but much simpler code? Keep."
   ];
@@ -31,6 +31,13 @@
   function weighs(c, scoreOnly) { return net(c, scoreOnly) > 0 ? 'keep' : 'reject'; }
   // SVG rotate(): positive = clockwise = the right (cost) pan goes down
   function tiltFor(c, scoreOnly) { return T.clamp(-net(c, scoreOnly) * DEG_PER_UNIT, -MAX_TILT, MAX_TILT); }
+  // the word on the stamp and the deck badge: keep, reset (level beam: equal -> git reset), or
+  // reject; program.md hedges card 2 ("Probably not worth it"), so its badge is hedged too
+  function badgeOf(c, scoreOnly) {
+    if (weighs(c, scoreOnly) === 'keep') return 'keep';
+    if (Math.abs(tiltFor(c, scoreOnly)) < 1e-9) return 'reset';
+    return c.hedged ? 'probably' : 'reject';
+  }
 
   var INTRO = 1.8;
   var DROP = 0.38;    // weigh station: the weights land, then the beam tips
@@ -113,6 +120,6 @@
     return judged(s, idx);
   }
 
-  return { CARDS: CARDS, SCHED: SCHED, INTRO: INTRO, MAX_TILT: MAX_TILT, weighs: weighs, tiltFor: tiltFor,
+  return { CARDS: CARDS, SCHED: SCHED, INTRO: INTRO, MAX_TILT: MAX_TILT, weighs: weighs, tiltFor: tiltFor, badgeOf: badgeOf,
            duration: duration, stops: stops, stateAt: stateAt };
 });

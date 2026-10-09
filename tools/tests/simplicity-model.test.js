@@ -110,6 +110,26 @@ test('stage card text is the verbatim program.md quote', () => {
   });
 });
 
+test('badges say what program.md says: card 2 is only "probably" not worth it', () => {
+  assert.deepEqual(M.CARDS.map(c => M.badgeOf(c)), ['reject', 'probably', 'keep', 'keep']);
+  assert.deepEqual(M.CARDS.map(c => M.badgeOf(c, true)), ['keep', 'keep', 'keep', 'reset']);
+  const copy = require('../../explain-src/autoresearch/scenes/simplicity.json');
+  for (const k of ['reject', 'probably', 'keep', 'reset']) assert.ok(copy.stamps[k], k);
+  assert.equal(copy.stamps[M.badgeOf(M.CARDS[1])], copy.cards[1].says_zh);  // 大概不值 (Probably not worth it)
+});
+
+test('copy: card 1 is the general rule, not one of "four examples"; score-only says it treats ≈0 as equal', () => {
+  const copy = require('../../explain-src/autoresearch/scenes/simplicity.json');
+  assert.ok(!/四个例子/.test(JSON.stringify(copy)));
+  const toggle = copy.controls.find(c => c.option === 'scoreOnly');
+  assert.ok(/≈0/.test(toggle.note) && /持平/.test(toggle.note) && /假设/.test(toggle.note), toggle.note);
+});
+
+test('copy: the cards are not "on the right" (they sit under the scale on a phone)', () => {
+  const copy = require('../../explain-src/autoresearch/scenes/simplicity.json');
+  assert.ok(!/右边的卡片/.test(JSON.stringify(copy.controls)));
+});
+
 test('pure: order of calls does not matter', () => {
   const ts = [7.3, 0.2, 13.9, 3.1, M.duration(), 5.0, 11.2];
   for (const o of [{}, { card: '2' }]) {

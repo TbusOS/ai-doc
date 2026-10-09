@@ -1,4 +1,5 @@
-/* autoresearch scene "simplicity" drawing — a balance with program.md's four examples.
+/* autoresearch scene "simplicity" drawing — a balance with program.md's four cards
+ * (one general rule, then three examples).
  * State comes from SimplicityModel.stateAt(t, opts); this file only draws it.
  * Left pan: the val_bpb improvement; right pan: the complexity cost. Deleted
  * code is a balloon tied to the right pan. The beam angle comes from the
@@ -152,8 +153,7 @@
   function drawStamp(g, P, s, copy) {
     if (s.stamp <= 0 || s.card < 0 || !s.verdict) return '';
     var St = copy.stamps, Z = g.stamp, sp = s.stamp, keep = s.verdict === 'keep';
-    var level = Math.abs(M.tiltFor(M.CARDS[s.card], s.scoreOnly)) < 1e-9;
-    var txt = keep ? St.keep : level ? St.reset : St.reject;
+    var txt = St[M.badgeOf(M.CARDS[s.card], s.scoreOnly)];
     var out = tag('g', { transform: 'translate(' + Z.x + ' ' + Z.y + ') rotate(-7) scale(' + (1.6 - 0.6 * sp).toFixed(3) + ')', style: 'opacity:' + sp.toFixed(3) },
       tag('rect', { x: -78, y: -28, width: 156, height: 52, rx: 9, 'data-box': 'stamp', style: 'fill:var(--card);stroke:var(' + (keep ? '--keep' : '--discard') + ');stroke-width:3' }) +
       P.text(0, 10, txt, P.style(keep ? '--keep-ink' : '--ink-2', 26, '--font-hand', 700), { 'text-anchor': 'middle', 'data-on': 'stamp' }));
@@ -172,7 +172,7 @@
     return out;
   }
 
-  /* ---------- deck of the four examples ---------- */
+  /* ---------- deck of the four cards ---------- */
 
   function drawDeck(g, P, s, copy) {
     var Dk = g.deck, L = copy.labels, out = '';
@@ -189,8 +189,7 @@
       inner += P.fit(x + 14, y + 32 + 2 * lh + 4, L.cost_pan + '：' + c.cost_label, '--ink-2', Dk.lineSize, '--font-hand', 400, Dk.w - 28, id);
       if (s.done[i]) {
         var v = M.weighs(M.CARDS[i], s.scoreOnly), keep = v === 'keep';
-        var level = Math.abs(M.tiltFor(M.CARDS[i], s.scoreOnly)) < 1e-9;
-        var badge = keep ? copy.stamps.keep : level ? copy.stamps.reset : copy.stamps.reject;
+        var badge = copy.stamps[M.badgeOf(M.CARDS[i], s.scoreOnly)];
         inner += P.fit(x + 14, y + Dk.h - 14, badge, keep ? '--keep-ink' : '--ink-2', Dk.lineSize + 1, '--font-hand', 700, Dk.w * 0.4, id);
         if (v !== M.CARDS[i].says) {
           inner += P.fit(x + Dk.w - 14, y + Dk.h - 14, copy.stamps.wrong, '--crash-ink', Dk.lineSize, '--font-hand', 700, Dk.w * 0.55, id, 'end');
@@ -220,7 +219,6 @@
     (copy.controls || []).forEach(function (c) { if (c.value !== undefined) opts[c.option] = c.value; });
     var mode = 'landscape';
     var lastAngle = 0, tween = null;
-    var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
     function now() { return window.performance ? performance.now() : Date.now(); }
     function animate() {
@@ -243,7 +241,7 @@
       duration: M.duration(),
       stops: M.stops(),
       setOption: function (key, value) {
-        if (String(value) !== String(opts[key]) && !reduced) {
+        if (String(value) !== String(opts[key]) && !ctx.reduced) {
           tween = { from: lastAngle, t0: now(), drop: key === 'card' };
           window.requestAnimationFrame(animate);
         }
