@@ -85,3 +85,55 @@ test('pure: order of calls does not matter', () => {
   const b = [...ts].reverse().map(t => JSON.stringify(M.stateAt(t, { hours: 6 }))).reverse();
   assert.deepEqual(a, b);
 });
+
+test('copy: a run that did not pay off is "丢掉", as everywhere else on the page', () => {
+  const copy = require('../../explain-src/autoresearch/scenes/night.json');
+  assert.ok(!/撤掉/.test(JSON.stringify(copy)));
+  assert.ok(/丢掉/.test(copy.labels.cell_sub));
+});
+
+// Draw the scene in node (the drawing only writes an SVG string) and check that the
+// sleeping zZz never touches the "睡 h 小时" label, for every slider value and both layouts.
+test('drawing: the zZz stays clear of the "睡 h 小时" label (4 to 10 hours, both layouts)', () => {
+  const copy = require('../../explain-src/autoresearch/scenes/night.json');
+  let factory = null;
+  global.window = {
+    ExplainTimeline: global.ExplainTimeline, NightModel: M,
+    ExplainDraw: require('../../docs/assets/explain/draw.js'),
+    Explain: { register: (name, f) => { factory = f; } }
+  };
+  delete require.cache[require.resolve('../../docs/assets/explain/autoresearch/night.js')];
+  require('../../docs/assets/explain/autoresearch/night.js');
+  const svg = { innerHTML: '', setAttribute() {} };
+  const w = factory(svg, { copy, caption() {} });
+  // rough text box: CJK 1 em wide, Latin 0.6 em; glyphs from 0.85 em above the baseline to 0.15 em below
+  const box = (x, y, str, size, anchor) => {
+    let wd = 0;
+    for (const ch of str) wd += (ch.charCodeAt(0) > 0x2e80 ? 1 : 0.6) * size;
+    const x0 = anchor === 'middle' ? x - wd / 2 : anchor === 'end' ? x - wd : x;
+    return { x0, x1: x0 + wd, y0: y - 0.85 * size, y1: y + 0.15 * size };
+  };
+  const texts = html => [...html.matchAll(/<text x="([\d.-]+)" y="([\d.-]+)" style="[^"]*font-size:(\d+)px[^"]*"([^>]*)>([^<]*)<\/text>/g)]
+    .map(m => ({ x: +m[1], y: +m[2], size: +m[3], anchor: (m[4].match(/text-anchor="(\w+)"/) || [])[1], str: m[5] }));
+  for (const width of [400, 1200]) {
+    w.layout(width);
+    for (let h = 4; h <= 10; h++) {
+      w.setOption('hours', h);
+      const label = copy.labels.sleep.replace('{h}', h);
+      const a = M.SCHED.find(s => s.key === 'first').start, b = M.SCHED.find(s => s.key === 'night').end;
+      for (let k = 0; k < 60; k++) {
+        w.render(a + (b - a) * k / 60);
+        const all = texts(svg.innerHTML);
+        const lab = all.find(t => t.str === label);
+        assert.ok(lab, `label ${label}`);
+        const L = box(lab.x, lab.y, lab.str, lab.size, lab.anchor);
+        for (const z of all.filter(t => t.str === 'z' || t.str === 'Z')) {
+          const Z = box(z.x, z.y, z.str, z.size, z.anchor);
+          const hit = Z.x0 < L.x1 && Z.x1 > L.x0 && Z.y0 < L.y1 && Z.y1 > L.y0;
+          assert.ok(!hit, `${width}px, ${h} h, frame ${k}: ${z.str} at (${z.x}, ${z.y}) overlaps "${label}"`);
+        }
+      }
+    }
+  }
+  delete global.window;
+});

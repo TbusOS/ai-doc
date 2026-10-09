@@ -23,7 +23,7 @@
       human: { y: 190, h: 66, labelX: 40, labelY: 231, countX: 1066, countY: 238 },
       ai: { y: 304, h: 66, labelX: 40, labelY: 345, countX: 1066, countY: 352 },
       label: 23, count: 40, unit: 18,
-      zzz: { x: 150, y: 196 },
+      zzz: { x: 150, y: 196, rise: 26 },
       legend: { x: 34, y: 260, size: 15, stack: true },
       brackets: { y: 386, labelY: 405, size: 14 },
       callout: { w: 420, h: 80, y: 490, title: 22, sub: 17 },
@@ -38,7 +38,8 @@
       human: { y: 346, h: 84, labelX: 24, labelY: 330, countX: 516, countY: 334, countAnchor: 'end' },
       ai: { y: 598, h: 84, labelX: 24, labelY: 582, countX: 516, countY: 586, countAnchor: 'end' },
       label: 23, count: 36, unit: 17,
-      zzz: { x: 150, y: 318 },
+      // below the "睡 h 小时" label (it slides over x = 150 for short nights), right of "你自己做"
+      zzz: { x: 132, y: 340, rise: 20 },
       legend: { x: 24, y: 452, size: 15 },
       brackets: { y: 702, labelY: 726, size: 15 },
       callout: { w: 460, h: 90, y: 818, title: 23, sub: 18, left: 40, handY: 448 },
@@ -165,7 +166,7 @@
       var ph = (s.minute / 30) % 1, Zz = g.zzz;
       [['z', 15, 0], ['z', 18, 0.33], ['Z', 22, 0.66]].forEach(function (z, i) {
         var p = (ph + z[2]) % 1;
-        out += P.text(Zz.x + i * 14, Zz.y - p * 26, z[0], P.style('--ink-2', z[1], '--font-hand', 700),
+        out += P.text(Zz.x + i * 14, Zz.y - p * Zz.rise, z[0], P.style('--ink-2', z[1], '--font-hand', 700),
           { style: P.style('--ink-2', z[1], '--font-hand', 700) + ';opacity:' + (1 - Math.abs(p - 0.5) * 1.6).toFixed(3) });
       });
     }

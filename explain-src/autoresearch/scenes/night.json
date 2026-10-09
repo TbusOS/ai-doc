@@ -26,7 +26,7 @@
     "human_cell_title": "你自己做一次：约 30 分钟（示意）",
     "human_cell_sub": "改代码 15 分钟 → 训练 5 分钟 → 看结果 10 分钟",
     "cell_title": "一格 = 一次完整实验",
-    "cell_sub": "改代码 → 训练 5 分钟 → 留下或撤掉",
+    "cell_sub": "改代码 → 训练 5 分钟 → 留下或丢掉",
     "per_hour": "12",
     "formula": "每小时约 12 次 × {h} 小时 = {n} 次",
     "readme": "README：睡一觉约 100 次",
