@@ -3,12 +3,14 @@
 // Needs Playwright: tools/node_modules (cd tools && npm install), else sky-skills' copy;
 // PLAYWRIGHT=<path to index.mjs> overrides.
 // Pages are opened over file://, the same way check_objective.mjs opens them.
-import test from 'node:test';
+import test, { after } from 'node:test';
 import assert from 'node:assert';
 import { existsSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { homedir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+// behind a proxy: pass it to Chromium and serve the web fonts from disk
+import { launchOptions, useFontCache, closeFontCache } from '../net.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 // PAGE=docs/zh/explain/<slug>--<tag>.html checks a preview page with only some scenes
@@ -19,16 +21,19 @@ const PW = process.env.PLAYWRIGHT || [
   join(homedir(), 'claude-tools/sky-skills/node_modules/playwright/index.mjs'),
 ].find(existsSync) || resolve(here, '../node_modules/playwright/index.mjs');
 const skip = existsSync(PW) ? false : `playwright not found at ${PW}`;
-const { chromium } = skip ? {} : await import(PW);
+const pw = skip ? {} : await import(PW);
+const { chromium } = pw;
+after(closeFontCache);
 
 async function withPage(opts, fn) {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(launchOptions());
   try {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce', ...opts });
+    await useFontCache(ctx, pw);
     const page = await ctx.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
-    await page.goto(opts.url || PAGE, { waitUntil: 'load' });
+    await page.goto(opts.url || PAGE, { waitUntil: 'load', timeout: 180000 });  // first run fills the font cache
     await fn(page);
     assert.deepEqual(errors, []);
   } finally {
@@ -217,3 +222,85 @@ test('without JavaScript the stage is replaced by a readable transcript', { skip
     assert.ok((await tr.textContent()).trim().length > 40);
   });
 });
+
+// ---- picks made inside a playing scene stay (ctx.pause) ----
+
+const hasScene = (page, id) => page.locator(sceneSel(id)).count().then(n => n > 0);
+const playing = (page, id) => page.locator(`${sceneSel(id)} .stage-controls .play`).getAttribute('aria-label').then(l => l === '暂停');
+const svgText = (page, id) => page.locator(`${sceneSel(id)} .stage-svg text`).allTextContents();
+
+async function startPlaying(page, id, permille) {
+  const sec = sceneSel(id);
+  const toStage = () => page.evaluate(sel => {
+    const st = document.querySelector(sel + ' .stage');
+    window.scrollTo(0, st.getBoundingClientRect().top + window.scrollY - 40);
+  }, sec);
+  await toStage();
+  await page.waitForTimeout(300);  // scrolled into view, the scene starts by itself
+  await page.locator(`${sec} .scrub`).fill(String(permille));  // pauses and seeks
+  if (!(await playing(page, id))) await page.locator(`${sec} .stage-controls .play`).click();
+  await toStage();  // using the controls below the stage may have scrolled it up
+  await page.waitForTimeout(150);
+  assert.ok(await playing(page, id), `${id} should be playing`);
+}
+
+test('where: before it plays, the first frame is the intro, not "your problem"', { skip }, async t => {
+  await withPage({ reducedMotion: 'no-preference' }, async page => {
+    if (!(await hasScene(page, 'where'))) return t.skip('no where scene on this page');
+    const cap = await page.locator(`${sceneSel('where')} .stage-caption`).textContent();
+    assert.doesNotMatch(cap, /^你的问题/);
+    assert.match(await page.locator(`${sceneSel('where')} .clock`).textContent(), /^0\.0 /);
+  });
+});
+
+test('where: answering while it plays shows "your problem" within 300 ms and keeps it until play or scrub', { skip }, async t => {
+  await withPage({ reducedMotion: 'no-preference', viewport: { width: 1280, height: 1200 } }, async page => {
+    if (!(await hasScene(page, 'where'))) return t.skip('no where scene on this page');
+    const sec = sceneSel('where');
+    await startPlaying(page, 'where', 100);
+    await page.locator(`${sec} button[data-option="fast"][data-value="no"]`).click();
+    await page.waitForTimeout(300);
+    assert.match(await page.locator(`${sec} .stage-caption`).textContent(), /^你的问题/);
+    assert.equal(await playing(page, 'where'), false, 'the pick pauses the scene');
+    await page.waitForTimeout(400);
+    assert.match(await page.locator(`${sec} .stage-caption`).textContent(), /^你的问题/);
+    await page.locator(`${sec} .scrub`).fill('0');
+    assert.doesNotMatch(await page.locator(`${sec} .stage-caption`).textContent(), /^你的问题/);
+  });
+});
+
+test('progress: tapping a green dot while it plays opens its card and keeps it (touch)', { skip }, async t => {
+  await withPage({ reducedMotion: 'no-preference', hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } }, async page => {
+    if (!(await hasScene(page, 'progress'))) return t.skip('no progress scene on this page');
+    const m = (await mounted(page)).find(x => x.id === 'progress');
+    await startPlaying(page, 'progress', Math.ceil(1000 * (m.stops[4] + 0.3) / m.duration));  // on the 4th kept dot (#8)
+    // the svg is redrawn every frame: read the dot's place in one go (the first green dot is #0, the baseline)
+    const dot = await page.evaluate(sel => {
+      const r = document.querySelector(sel + ' circle[data-dot="keep"]').getBoundingClientRect();
+      return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    }, sceneSel('progress'));
+    await page.touchscreen.tap(dot.x, dot.y);
+    await page.waitForTimeout(300);
+    assert.ok((await svgText(page, 'progress')).some(s => s.includes('实验 #0')), 'card of #0 shown');
+    assert.equal(await playing(page, 'progress'), false, 'the tap pauses the scene');
+    await page.waitForTimeout(400);
+    assert.ok((await svgText(page, 'progress')).some(s => s.includes('实验 #0')), 'card of #0 still shown');
+  });
+});
+
+for (const width of [1280, 390]) {
+  test(`progress: the #39 card keeps "token" whole (${width}px)`, { skip }, async t => {
+    await withPage({ viewport: { width, height: 900 } }, async page => {
+      if (!(await hasScene(page, 'progress'))) return t.skip('no progress scene on this page');
+      const m = (await mounted(page)).find(x => x.id === 'progress');
+      // stops: start, then one per kept dot (#0 #2 #6 #8 #14 #23 #28 #32 #38 #39 ...); a little past the
+      // stop, since the slider has 1000 steps and rounding may land just before it
+      await page.locator(`${sceneSel('progress')} .scrub`).fill(String(Math.ceil(1000 * (m.stops[10] + 0.3) / m.duration)));
+      const txt = await svgText(page, 'progress');
+      assert.ok(txt.some(s => s.includes('实验 #39')), txt.join(' | '));
+      assert.ok(txt.some(s => /\btoken。/.test(s)) && !txt.some(s => /toke$/.test(s)), txt.join(' | '));
+      // #38 already changed this line: the card says the code shown is the default
+      assert.ok(txt.some(s => s.includes('#38 已改过这一行')), txt.join(' | '));
+    });
+  });
+}

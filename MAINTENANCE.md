@@ -126,5 +126,6 @@ python3 tools/check_exports.py <目录>      # GIF ≤ 4 MB、MP4 ≤ 15 MB、�
 | 构建后 42 个原文页全变了,原文不变检查失败 | 系统自带的 markdown 3.1.1 跟仓库用的 3.10.2 渲染结果不同 | 用 `.venv` 和 `tools/requirements.txt` 的固定版本 |
 | 导出 MP4 时 ffmpeg 报 `Invalid argument` | 舞台是 1200×675,高是奇数,H.264 的 yuv420p 要求宽高都是偶数 | 导出脚本已裁掉最后一行像素 |
 | 浏览器测试显示 SKIP | 找不到 Playwright | `cd tools && npm install && npx playwright install chromium` |
+| 浏览器测试、导出、`check_objective` 全部 `page.goto: Timeout 30000ms` | 机器靠代理上外网,Playwright 启动的 Chromium 不读 `HTTPS_PROXY`,直连 Google Fonts 一直挂着;代理慢时一页也要 24–55 s(2026-10-09 实测) | 已处理:`tools/net.mjs` 把代理传给 Chromium,字体缓存在 `tools/.font-cache/`;sky-skills 那边是 `design-review/scripts/_net.mjs`,缓存在 `~/.cache/sky-skills/fonts`。第一次慢,之后不再下载 |
 | 单元测试在场景多了以后才失败 | 旧测试按「只有一个场景」写:只看第一个文字版、在文案里搜到了 `progress.js` | 已改;新测试要按多场景写 |
 | 深色模式下插画刺眼或意思反了 | 亮色插画直接放在深色页面上;反相会把夜空变成白天 | 另出夜间版,按主题切换 |

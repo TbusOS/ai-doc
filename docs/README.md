@@ -49,6 +49,7 @@ docs/assets/explain/<slug>/           # per-scene code: <id>-model.js (pure stat
 docs/scripts/explain_build.py         # json -> docs/zh/explain/<slug>.html
 docs/scripts/home_v2.py               # new homepage preview -> docs/sample/index.html
 tools/export_scene.mjs                # scenes -> GIF / MP4 for use outside the site
+tools/net.mjs                         # headless Chromium behind a proxy: proxy + web-font cache (tools/.font-cache)
 ```
 
 Build and check everything: `bash tools/check_all.sh` (must end with

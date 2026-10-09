@@ -17,6 +17,7 @@ import { existsSync, mkdirSync, rmSync, readdirSync, copyFileSync } from 'node:f
 import { resolve, dirname, join } from 'node:path';
 import { homedir, tmpdir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { launchOptions, useFontCache, closeFontCache } from './net.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -69,9 +70,11 @@ export function frameTimes(duration, fps, hold) {
   return times;
 }
 
-async function captureScene(browser, o, scene, dir) {
+async function captureScene(browser, pw, o, scene, dir) {
   const page = await browser.newPage({ viewport: { width: 1200, height: 675 }, deviceScaleFactor: 1,
     colorScheme: o.theme === 'dark' ? 'dark' : 'light', reducedMotion: 'no-preference' });
+  await useFontCache(page, pw);  // behind a proxy the web fonts would otherwise stall the load (see net.mjs)
+  page.setDefaultNavigationTimeout(180000);  // the first run downloads them
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
   const url = pathToFileURL(resolve(root, o.page)).href + '?capture=' + encodeURIComponent(scene);
@@ -109,15 +112,15 @@ async function main() {
   const out = resolve(o.out);
   mkdirSync(out, { recursive: true });
   const ff = findFfmpeg();
-  const { chromium } = await import(findPlaywright());
-  const browser = await chromium.launch();
+  const pw = await import(findPlaywright());
+  const browser = await pw.chromium.launch(launchOptions());
   const work = join(tmpdir(), 'aidoc-export-' + process.pid);
   const reelDir = join(work, '_reel');
   let reelIndex = 0;
   try {
     for (const scene of o.scenes) {
       const dir = join(work, scene);
-      const info = await captureScene(browser, o, scene, dir);
+      const info = await captureScene(browser, pw, o, scene, dir);
       encode(ff, o, dir, join(out, scene));
       console.log(`${scene}: ${info.duration.toFixed(1)}s, ${info.frames} frames -> ${scene}.mp4${o.noGif ? '' : ', ' + scene + '.gif'}`);
       if (o.reel) {
@@ -131,6 +134,7 @@ async function main() {
     }
   } finally {
     await browser.close();
+    await closeFontCache();
     rmSync(work, { recursive: true, force: true });
   }
 }
