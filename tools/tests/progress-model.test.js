@@ -112,3 +112,24 @@ test('pure: order of calls does not matter', () => {
   const b = [...ts].reverse().map(t => JSON.stringify(M.stateAt(t))).reverse();
   assert.deepEqual(a, b);
 });
+
+const progressCopy = require('../../explain-src/autoresearch/scenes/progress.json');
+
+test('copy: no crash that night (x runs #0–#82, 83 places = the 83 in the title); crashes are not a reason for the gaps', () => {
+  assert.ok(!/崩溃的不画/.test(progressCopy.captions.filter + progressCopy.transcript.join('')),
+    'analysis.ipynb drops crashes before reset_index, so a crash would not leave a gap');
+  assert.ok(/没有崩溃/.test(progressCopy.captions.filter));
+  assert.ok(progressCopy.body.some(p => /没有崩溃/.test(p) && /#82/.test(p)));
+});
+
+test('copy: a card whose line an earlier kept run already changed says so (#39, #65, #67)', () => {
+  const after = Object.fromEntries(progressCopy.cards.filter(c => c.after != null).map(c => [c.x, c.after]));
+  assert.deepEqual(after, { 39: 38, 65: 64, 67: 65 });
+  assert.ok(/\{x\}/.test(progressCopy.labels.card_code_after));
+});
+
+test('copy: no left / right in the text (the card sits under the chart on a phone)', () => {
+  for (const k of ['lead', 'body', 'stage_label', 'first_caption', 'captions', 'transcript', 'controls']) {
+    assert.ok(!/左边|右边/.test(JSON.stringify(progressCopy[k] || '')), k);
+  }
+});

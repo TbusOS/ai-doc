@@ -2,7 +2,7 @@
  * State comes from ProgressModel (data: datasets.progress); this file only draws.
  * Reader interaction: hover or tap a dot. A green dot opens its card (label from
  * the figure, the train.py line it changed, a plain-words note); a grey dot shows
- * a one-line tip. A tap pins the card until time moves (play / scrub / step).
+ * a one-line tip. A tap pauses the scene and pins the card until time moves (play / scrub / step).
  * Colors are CSS variables via style=; text on a card carries data-on / data-fit.
  * Landscape 1200×675, portrait 540×1080 (svg narrower than 780px). */
 (function () {
@@ -36,33 +36,6 @@
       bars: { size: 15 }, waffle: { cols: 21 }
     }
   };
-
-  var CLOSERS = '，。：；、）」』！？,.:;)';
-  var OPENERS = '（「『(';
-
-  // greedy line wrap by estimated width; Latin breaks at spaces, CJK anywhere,
-  // a line never starts with closing punctuation nor ends with an opening one
-  function wrap(P, str, size, avail) {
-    var words = [], buf = '';
-    for (var i = 0; i < str.length; i++) {
-      var ch = str[i];
-      if (ch.charCodeAt(0) > 0x2e80) { if (buf) words.push(buf); words.push(ch); buf = ''; }
-      else if (ch === ' ') { if (buf) words.push(buf); words.push(' '); buf = ''; }
-      else buf += ch;
-    }
-    if (buf) words.push(buf);
-    var lines = [], cur = '';
-    words.forEach(function (w) {
-      if (cur && P.width(cur + w, size) > avail) {
-        if (CLOSERS.indexOf(w) >= 0 && cur.length > 1) { lines.push(cur.slice(0, -1)); cur = cur.slice(-1) + w; return; }
-        if (OPENERS.indexOf(cur.slice(-1)) >= 0 && cur.length > 1) { lines.push(cur.slice(0, -1)); cur = cur.slice(-1) + w; return; }
-        lines.push(cur.replace(/ +$/, ''));
-        cur = w === ' ' ? '' : w;
-      } else cur += w;
-    });
-    if (cur) lines.push(cur.replace(/ +$/, ''));
-    return lines;
-  }
 
   function sx(g, x) { var p = g.plot; return p.l + (x - p.xMin) / (p.xMax - p.xMin) * (p.r - p.l); }
   function sy(g, v) { var p = g.plot; return p.b - (v - p.yMin) / (p.yMax - p.yMin) * (p.b - p.t); }
@@ -206,14 +179,16 @@
     y += 28;
     out += P.text(x, y, L.card_label, P.style('--ink-2', C.sec), { 'data-on': 'panel' });
     out += chip(P, x + P.width(L.card_label, C.sec) + 10, y, L.tag_quote, 'quote', 13);
-    var lab = wrap(P, card.label.quote, C.label, avail);
+    var lab = P.wrap(card.label.quote, C.label, avail);
     out += lines(P, x, y + C.labelLH + 2, lab, '--ink', C.label, C.labelLH, '--font-mono', 600, avail);
     y += C.labelLH * lab.length + 4;
     if (card.truncated) { y += C.labelLH - 2; out += P.fit(x, y, '↑ ' + L.card_truncated, '--accent-ink', 14, '--font-hand', 400, avail, 'panel'); }
 
     y += 34;
-    out += P.text(x, y, L.card_code, P.style('--ink-2', C.sec), { 'data-on': 'panel' });
-    out += chip(P, x + P.width(L.card_code, C.sec) + 10, y, L.tag_quote, 'quote', 13);
+    // an earlier kept run already changed this line: the code shown is the default, say so
+    var codeHead = card.after != null ? fmt(L.card_code_after, { x: card.after }) : L.card_code;
+    out += P.text(x, y, codeHead, P.style('--ink-2', C.sec), { 'data-on': 'panel' });
+    out += chip(P, x + P.width(codeHead, C.sec) + 10, y, L.tag_quote, 'quote', 13);
     var code = card.code.length ? card.code.map(function (c) { return c.quote; }) : [L.card_nocode];
     var ch = code.length * C.codeLH + 14;
     out += tag('rect', { x: x, y: y + 10, width: avail, height: ch, rx: 8, 'data-box': 'code', style: 'fill:var(--paper-2)' });
@@ -226,7 +201,7 @@
     y += 34;
     out += P.text(x, y, L.card_plain, P.style('--ink-2', C.sec), { 'data-on': 'panel' });
     out += chip(P, x + P.width(L.card_plain, C.sec) + 10, y, L.tag_interp, 'interp', 13);
-    out += lines(P, x, y + C.plainLH + 2, wrap(P, card.plain, C.plain, avail), '--ink', C.plain, C.plainLH, '--font-hand', 400, avail);
+    out += lines(P, x, y + C.plainLH + 2, P.wrap(card.plain, C.plain, avail), '--ink', C.plain, C.plainLH, '--font-hand', 400, avail);
     return out;
   }
 
@@ -244,7 +219,7 @@
       else if (r[0] === 'keep') out += tag('circle', { cx: x + 12, cy: y - 6, r: 11, style: 'fill:var(--keep);stroke:var(--card);stroke-width:2' });
       else out += tag('line', { x1: x, y1: y - 6, x2: x + 26, y2: y - 6, style: 'stroke:var(--keep);stroke-width:4' });
       out += P.fit(x + 40, y, r[1], '--ink', 19, '--font-hand', 700, avail - 40, 'panel');
-      var w = wrap(P, r[2], 16, avail - 40);
+      var w = P.wrap(r[2], 16, avail - 40);
       out += lines(P, x + 40, y + 26, w, '--ink-2', 16, 24, '--font-hand', 400, avail - 40);
       y += 26 + w.length * 24 + 26;
     });
@@ -421,6 +396,9 @@
       var p = hitTest(ev);
       ui.pick = p && p !== ui.pick ? p : null;
       ui.pickT = ui.lastT;
+      // a pick while playing pauses: the next frame would move t and drop the card
+      // (on a touch screen there is no hover to keep it up)
+      if (ui.pick) ctx.pause();
       ctx.redraw();
     });
 
