@@ -91,3 +91,22 @@ test('pure: order of calls does not matter', () => {
   const b = [...ts].reverse().map(t => JSON.stringify(M.stateAt(t, { start: 'far' }))).reverse();
   assert.deepEqual(a, b);
 });
+
+const copy = require('../../explain-src/autoresearch/scenes/limits.json');
+
+test('copy: only cards 3 and 4 are written in the original; card 2 is our reading', () => {
+  assert.ok(!copy.body.some(p => /后三条/.test(p)), 'card 2 is tagged 解读, README only says "in that time budget"');
+  assert.equal(copy.cards[1].tag, '解读');
+  assert.ok(copy.body.some(p => /第三、四条/.test(p) && /第二条是我们/.test(p)));
+});
+
+test('copy: card 1 does not say "a little at a time" (program.md asks for radical changes too)', () => {
+  const all = JSON.stringify(copy);
+  assert.ok(!/只改一点|附近小步试/.test(all), 'program.md: try more radical architectural changes');
+  assert.ok(/马上变好/.test(copy.cards[0].title));
+});
+
+test('copy: README lists forks for macOS, Windows and AMD; it does not say Windows needs one', () => {
+  assert.ok(!/要用社区/.test(JSON.stringify(copy)));
+  assert.ok(/README 列了 macOS、Windows、AMD/.test(copy.cards[3].body));
+});
