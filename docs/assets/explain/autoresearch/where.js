@@ -3,7 +3,7 @@
  * gate swings its arm open (green); a failed gate keeps it shut (grey ✗) and is
  * circled in orange — that is where the problem gets stuck. The last station is
  * the reader's own problem, answered with the three yes / no buttons; pressing a
- * button shows that result at once (until time moves again).
+ * button pauses the scene and shows that result until the reader plays or scrubs.
  * Colors are CSS variables via style=; text on a card carries data-on / data-fit.
  * Landscape 1200×675 (road left to right), portrait 540×1080 (road top to bottom). */
 (function () {
@@ -37,33 +37,6 @@
       readme: [{ x: 20, y: 140, w: 500, h: 420 }, { x: 20, y: 590, w: 500, h: 420 }]
     }
   };
-
-  var CLOSERS = '，。：；、）」』！？,.:;)';
-  var OPENERS = '（「『(';
-
-  // greedy line wrap by estimated width; Latin words stay whole, CJK breaks anywhere,
-  // a line never starts with closing punctuation nor ends with an opening one
-  function wrapCJK(P, str, size, avail) {
-    var words = [], buf = '';
-    for (var i = 0; i < str.length; i++) {
-      var ch = str[i];
-      if (ch.charCodeAt(0) > 0x2e80) { if (buf) words.push(buf); words.push(ch); buf = ''; }
-      else if (ch === ' ') { if (buf) words.push(buf); words.push(' '); buf = ''; }
-      else buf += ch;
-    }
-    if (buf) words.push(buf);
-    var lines = [], cur = '';
-    words.forEach(function (w) {
-      if (cur && P.width(cur + w, size) > avail) {
-        if (CLOSERS.indexOf(w) >= 0 && cur.length > 1) { lines.push(cur.slice(0, -1)); cur = cur.slice(-1) + w; return; }
-        if (OPENERS.indexOf(cur.slice(-1)) >= 0 && cur.length > 1) { lines.push(cur.slice(0, -1)); cur = cur.slice(-1) + w; return; }
-        lines.push(cur.replace(/ +$/, ''));
-        cur = w === ' ' ? '' : w;
-      } else cur += w;
-    });
-    if (cur) lines.push(cur.replace(/ +$/, ''));
-    return lines;
-  }
 
   // map (along, across) road coordinates to svg x, y
   function pt(g, along, across) {
@@ -139,7 +112,7 @@
     out += P.text(lx, ly, lab, P.style(hot ? '--accent-ink' : '--ink', L.size, '--font-hand', 700), { 'text-anchor': anchor, 'data-on': 'stage' });
     if (note && (state === 'pass' || state === 'fail')) {
       var mark = state === 'pass' ? '✓ ' : '✗ ';
-      var lines = wrapCJK(P, mark + note, L.note, L.width);
+      var lines = P.wrap(mark + note, L.note, L.width);
       var box = 'note' + k, top = ly + 12, h = lines.length * L.lh + 12;
       var bx = anchor === 'middle' ? lx - L.width / 2 - 8 : lx - 8;
       out += tag('rect', { x: bx, y: top, width: L.width + 16, height: h, rx: 8, 'data-box': box,
@@ -176,7 +149,7 @@
       tag('rect', { x: -w / 2, y: -S.size - 6, width: w, height: S.size + 24, rx: 10, 'data-box': 'stamp', style: 'fill:var(--card);stroke:var(' + color + ');stroke-width:3' }) +
       P.text(0, 2, text, P.style(ink, S.size, '--font-hand', 700), { 'text-anchor': 'middle', 'data-on': 'stamp' }));
     if (fix) {
-      var lines = wrapCJK(P, fix, F.size, F.width);
+      var lines = P.wrap(fix, F.size, F.width);
       lines.forEach(function (l, i) {
         out += P.text(F.x, F.y + i * (F.size + 8), l, P.style('--ink-2', F.size), { 'text-anchor': 'middle', 'data-on': 'stage' });
       });
@@ -215,7 +188,7 @@
       var id = 'readme' + i, inner = '';
       inner += tag('rect', { x: B.x, y: B.y, width: B.w, height: B.h, rx: 16, 'data-box': id, style: 'fill:var(--card);stroke:var(--line);stroke-width:1.5' });
       inner += P.fit(B.x + 24, B.y + 44, (i === 0 ? '① ' : '② ') + it.head, '--ink', 24, '--font-hand', 700, B.w - 48, id);
-      wrapCJK(P, it.body, 18, B.w - 48).forEach(function (l, j) {
+      P.wrap(it.body, 18, B.w - 48).forEach(function (l, j) {
         inner += P.fit(B.x + 24, B.y + 78 + j * 26, l, '--ink-2', 18, '--font-hand', 400, B.w - 48, id);
       });
       var cx = B.x + B.w / 2, cy = B.y + B.h / 2 + 50;
@@ -254,7 +227,7 @@
     var opts = {};
     copy.controls.forEach(function (c) { opts[c.option] = c.value; });
     var mode = 'landscape';
-    var ui = { lastT: 0, mine: false, mineT: null };
+    var ui = { lastT: 0, mine: false, mineT: null, started: false };
 
     function scenario(s) {
       if (s.phase === 'mine') {
@@ -290,7 +263,11 @@
       stops: M.stops(),
       setOption: function (key, value) {
         opts[key] = value;
-        ui.mine = true; ui.mineT = ui.lastT;  // show the reader's problem right away
+        if (!ui.started) return;  // the engine telling the buttons' starting values, not a reader's answer
+        // show the reader's problem right away, and pause: the next frame of a playing scene
+        // would move t and wipe it out. It stays until the reader plays or scrubs again.
+        ui.mine = true; ui.mineT = ui.lastT;
+        ctx.pause();
       },
       layout: function (width) {
         mode = width > 0 && width < 780 ? 'portrait' : 'landscape';
@@ -298,7 +275,7 @@
       },
       render: function (t) {
         if (ui.mine && t !== ui.mineT) ui.mine = false;
-        ui.lastT = t;
+        ui.lastT = t; ui.started = true;
         var g = GEO[mode], P = Painter(g);
         var s = ui.mine ? M.stateAt(M.duration(), opts) : M.stateAt(t, opts);
         var out = DEFS;

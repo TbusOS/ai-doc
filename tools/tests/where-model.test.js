@@ -94,3 +94,24 @@ test('pure: order of calls does not matter', () => {
   const b = [...ts].reverse().map(t => JSON.stringify(M.stateAt(t, o))).reverse();
   assert.deepEqual(a, b);
 });
+
+const all = JSON.stringify(SCENE);
+
+test('copy: prepare.py is off-limits by a rule, not locked; no fix uses it as the model of a lock', () => {
+  assert.ok(!/AI 改不了；没变好|prepare\.py，AI 改不了/.test(all), 'program.md: What you CANNOT do; nothing locks the file');
+  assert.ok(/规定 AI 不许改/.test(SCENE.examples[0].notes[1]));
+  assert.ok(!/像 prepare\.py 那样/.test(all), 'prepare.py is read-only by a rule, not by file permissions');
+});
+
+test('copy: the gate-3 example has a score the AI cannot push down by other means', () => {
+  // the error rate of a live service drops when the AI turns off the failing feature or rejects requests
+  assert.ok(!/出错率/.test(all));
+  const ex = SCENE.examples[4];
+  assert.deepEqual(ex.gates, [true, true, false]);
+  assert.ok(/计时器/.test(ex.notes[1]));
+});
+
+test('copy: a 原文 claim says only what its quote says', () => {
+  const c = SCENE.claims.find(x => x.quote && x.quote.startsWith('If a run exceeds 10 minutes'));
+  assert.ok(!/所以/.test(c.text), '"so we write 5–10 minutes" is our reading');
+});

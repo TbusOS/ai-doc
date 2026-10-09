@@ -23,7 +23,7 @@
       "title": "autoresearch 自己",
       "what": "改 train.py，看 val_bpb",
       "gates": [true, true, true],
-      "notes": ["每次训练固定 5 分钟", "打分代码在 prepare.py，AI 改不了", "没变好就 git reset"],
+      "notes": ["每次训练固定 5 分钟", "打分代码在 prepare.py，规定 AI 不许改", "没变好就 git reset"],
       "verdict": "三关都过：它就是这么做的"
     },
     {
@@ -31,7 +31,7 @@
       "title": "让一段程序跑得更快",
       "what": "AI 改代码，分数是跑一遍用几秒",
       "gates": [true, true, true],
-      "notes": ["跑一遍只要几秒", "计时和结果核对都锁住，AI 改不了", "改的是代码，git 能退回"],
+      "notes": ["跑一遍只要几秒", "计时和核对用文件权限锁死，AI 改不了", "改的是代码，git 能退回"],
       "verdict": "三关都过：可以套这个循环"
     },
     {
@@ -41,7 +41,7 @@
       "gates": [true, false, null],
       "notes": ["跑一遍测试只要几分钟", "删掉没过的测试，也能「全过」"],
       "verdict": "卡在第 2 关：AI 会去讨好分数",
-      "fix": "修法：把测试锁起来，像 prepare.py 那样只读"
+      "fix": "修法：把测试列为不许改，再用文件权限锁死"
     },
     {
       "short": "新药",
@@ -53,13 +53,13 @@
       "fix": "修法：先找一个几分钟就能算出来的替代分数"
     },
     {
-      "short": "线上配置",
-      "title": "直接改线上服务的配置",
-      "what": "分数是线上监控里的出错率",
+      "short": "真机器人",
+      "title": "给真机器人调走路的参数",
+      "what": "分数是走完 10 米用的时间",
       "gates": [true, true, false],
-      "notes": ["几分钟就能看到出错率", "出错率由监控统计，AI 改不了", "改坏的那几分钟，用户已经受影响"],
+      "notes": ["走一趟只要几分钟", "场边的计时器测时间，AI 碰不到", "摔坏的零件，git 退不回来"],
       "verdict": "卡在第 3 关：坏结果收不回来",
-      "fix": "修法：先在测试环境里跑"
+      "fix": "修法：先在仿真里跑"
     }
   ],
   "readme": {
@@ -126,11 +126,11 @@
   ],
   "transcript": [
     "想把 autoresearch 搬到别的问题上？问题得先过三关：① 5–10 分钟内出分；② 分数钻不了空子；③ 改坏了能退回。卡片从左往右过关，过不去就停在那道关前。",
-    "autoresearch 自己（改 train.py，看 val_bpb）：每次训练固定 5 分钟；打分代码在 prepare.py，AI 改不了；没变好就 git reset。三关都过：它就是这么做的。",
-    "让一段程序跑得更快（AI 改代码，分数是跑一遍用几秒）：跑一遍只要几秒；计时和结果核对都锁住，AI 改不了；改的是代码，git 能退回。三关都过：可以套这个循环。",
-    "让 AI 修 bug，测试全过就算好（可测试文件 AI 也能改）：第 1 关能过，跑一遍测试只要几分钟；第 2 关过不去，删掉没过的测试也能「全过」。卡在第 2 关：AI 会去讨好分数。修法：把测试锁起来，像 prepare.py 那样只读。",
+    "autoresearch 自己（改 train.py，看 val_bpb）：每次训练固定 5 分钟；打分代码在 prepare.py，规定 AI 不许改；没变好就 git reset。三关都过：它就是这么做的。",
+    "让一段程序跑得更快（AI 改代码，分数是跑一遍用几秒）：跑一遍只要几秒；计时和核对用文件权限锁死，AI 改不了；改的是代码，git 能退回。三关都过：可以套这个循环。",
+    "让 AI 修 bug，测试全过就算好（可测试文件 AI 也能改）：第 1 关能过，跑一遍测试只要几分钟；第 2 关过不去，删掉没过的测试也能「全过」。卡在第 2 关：AI 会去讨好分数。修法：把测试列为不许改，再用文件权限锁死。",
     "找新药配方（分数是临床试验的结果）：一轮试验要好几个月。卡在第 1 关：一晚上一轮都跑不完。修法：先找一个几分钟就能算出来的替代分数。",
-    "直接改线上服务的配置（分数是线上监控里的出错率）：几分钟就能看到出错率；出错率由监控统计，AI 改不了；可改坏的那几分钟，用户已经受影响。卡在第 3 关：坏结果收不回来。修法：先在测试环境里跑。",
+    "给真机器人调走路的参数（分数是走完 10 米用的时间）：走一趟只要几分钟；场边的计时器测时间，AI 碰不到；可摔坏的零件，git 退不回来。卡在第 3 关：坏结果收不回来。修法：先在仿真里跑。",
     "karpathy 在 README 里说：人可以反复改 program.md，找出让研究进展最快的「研究组织代码」；还可以加更多 agent。",
     "最后一站换成你的问题：用动画下面三排按钮回答，卡片会停在第一道过不去的关前。"
   ],
@@ -138,7 +138,7 @@
     {
       "tag": "解读",
       "text": "三关是我们从 autoresearch 的三个设计里归纳的，原文没有列这样一张清单。",
-      "basis": "固定 5 分钟（README「Design choices」）、打分代码 AI 不许改（program.md「What you CANNOT do」）、没变好就 git reset（program.md 循环第 9 步）。"
+      "basis": "固定 5 分钟（README「Design choices」）、打分代码 AI 不许改（program.md「What you CANNOT do」）、没变好就 git reset（program.md 循环第 9 步）。第 1 关写「5–10 分钟」：5 分钟是固定的训练时长，超过 10 分钟算失败。"
     },
     {
       "tag": "原文",
@@ -148,7 +148,7 @@
     },
     {
       "tag": "原文",
-      "text": "超过 10 分钟没跑完就算失败，所以写「5–10 分钟」。",
+      "text": "超过 10 分钟没跑完，就停掉、算失败。",
       "quote": "If a run exceeds 10 minutes, kill it and treat it as a failure (discard and revert).",
       "source": "program.md"
     },
@@ -157,6 +157,11 @@
       "text": "第 2 关的来历：prepare.py 只读，AI 不许改。",
       "quote": "Modify `prepare.py`. It is read-only.",
       "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "autoresearch 自己的第 2 关靠 AI 守规矩：prepare.py 并没有被锁住，打分时调用的模型计算和最后打印的分数也都在 train.py 里。",
+      "basis": "program.md 把改 prepare.py 列在「What you CANNOT do」里，是一条规定；prepare.py 的 evaluate_bpb 调用 model(x, y, reduction='none')，这个计算在 train.py 的 GPT.forward 里；val_bpb 那一行由 train.py 打印。"
     },
     {
       "tag": "原文",
@@ -178,8 +183,8 @@
     },
     {
       "tag": "解读",
-      "text": "程序提速、修 bug、新药、线上配置这四个例子是我们举的，用来说明三关各自拦住什么问题；过不了关时的修法也是我们的建议。",
-      "basis": "照 autoresearch 自己的做法类推：打分代码只读（prepare.py）、固定 5 分钟、在单独的分支上实验并用 git reset 撤销。"
+      "text": "程序提速、修 bug、新药、真机器人这四个例子是我们举的，用来说明三关各自拦住什么问题；过不了关时的修法也是我们的建议。",
+      "basis": "照 autoresearch 自己的做法类推：打分代码不许改（prepare.py）、固定 5 分钟、在单独的分支上实验并用 git reset 撤销。"
     },
     {
       "tag": "原文",
