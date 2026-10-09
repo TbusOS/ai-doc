@@ -269,7 +269,6 @@
     (copy.controls || []).forEach(function (c) { if (c.value !== undefined) opts[c.option] = c.value; });
     var mode = 'landscape';
     var lastLoss = null, tween = null;
-    var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
     function now() { return window.performance ? performance.now() : Date.now(); }
     function animate() {
@@ -293,7 +292,7 @@
       duration: M.duration(),
       stops: M.stops(),
       setOption: function (key, value) {
-        if (key === 'vocab' && String(value) !== String(opts.vocab) && lastLoss !== null && !reduced) {
+        if (key === 'vocab' && String(value) !== String(opts.vocab) && lastLoss !== null && !ctx.reduced) {
           tween = { from: lastLoss, t0: now() };
           window.requestAnimationFrame(animate);
         }

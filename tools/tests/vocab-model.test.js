@@ -115,6 +115,29 @@ test('outro shows the ruler marks of all four vocabularies', () => {
   assert.deepEqual(s.marks, [8192, 4096, 1024, 256]);
 });
 
+const copy = require('../../explain-src/autoresearch/scenes/vocab.json');
+const all = JSON.stringify(copy);
+
+test('copy: prepare.py is off-limits by a rule in program.md, nothing locks it', () => {
+  assert.ok(!/改不了/.test(all), 'program.md lists it under What you CANNOT do; the file is not locked');
+  const rule = copy.claims.find(c => c.quote && c.quote.startsWith('Modify `prepare.py`'));
+  assert.equal(rule.tag, '原文');
+  assert.ok(!/AI/.test(rule.text), 'a 原文 claim only says what the quoted line says');
+});
+
+test('copy: within one night both scores rank runs the same; bpb pays off when a person changes the vocabulary', () => {
+  assert.ok(!/用 bpb 的原因/.test(all), 'README gives the reason: vocab-size-independent');
+  assert.ok(/排出的先后一样/.test(all), 'with VOCAB_SIZE fixed, loss and bpb differ by a fixed factor');
+  const toggle = copy.controls.find(c => c.option === 'byLoss');
+  assert.ok(/换了词表/.test(toggle.note), 'the toggle says when such a comparison happens');
+});
+
+test('copy: no left / right in the text (the picture stacks on a phone)', () => {
+  for (const k of ['lead', 'body', 'stage_label', 'first_caption', 'captions', 'transcript', 'controls']) {
+    assert.ok(!/左边|右边/.test(JSON.stringify(copy[k])), k);
+  }
+});
+
 test('pure: order of calls does not matter', () => {
   const ts = [7.3, 0.2, 9.9, 3.1, M.duration(), 5.0, 11.2];
   const o = { vocab: '1024', byLoss: true };
