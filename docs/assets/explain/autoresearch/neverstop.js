@@ -2,8 +2,9 @@
  * State comes from NeverStopModel.stateAt(t, {allowAsk}); this file only draws
  * it. The sticky note on the screen is program.md's rule: with it, the agent
  * strikes its own question out and keeps going; with the reader's toggle on,
- * the question waits all night and the count stays at 1. The last four
- * stations list program.md's four things to try when out of ideas.
+ * the question waits all night and the count stays at 1. Four stations in the
+ * second half of the night list program.md's four things to try when out of
+ * ideas; the room stays asleep and the timeline keeps filling under them.
  * Colors are CSS variables: orange = a run on the GPU, hatching = waiting,
  * red = the cost of waiting. Landscape 1200×675, portrait 540×1080 (svg <
  * 780px wide, text ≥ 15px). */
@@ -236,10 +237,9 @@
     var st = s.station, ask = s.allowAsk;
     if (st === 'first') return c.first;
     if (st === 'ask') return ask ? c.ask_allow : c.ask_never;
-    if (st === 'night') return ask ? c.night_allow : c.night_never;
     if (st === 'wake') return ask ? c.wake_allow : fmt(c.wake_never, { n: s.done });
-    var k = s.ideas;
-    return fmt(c.idea, { k: k, cn: copy.ideas[k - 1].cn });
+    if (st === 'night' || !s.ideas) return ask ? c.night_allow : c.night_never;
+    return fmt(c.idea, { k: s.ideas, cn: copy.ideas[s.ideas - 1].cn });
   }
 
   var DEFS = '<defs><pattern id="ns-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +

@@ -4,8 +4,11 @@
  * With the reader's toggle `allowAsk` the agent stops after run 1 to ask
  * "should I keep going?"; the human is asleep, nobody answers, the count stays
  * at 1 until morning. Without it (the real rule) the agent may think of asking,
- * strikes the question out and keeps going. The last four stations show the
- * four things program.md tells it to do when it runs out of ideas.
+ * strikes the question out and keeps going. Four stations in the second half
+ * of the night (02:00 -> 06:00) show the four things program.md tells it to do
+ * when it runs out of ideas -- at any time in the loop, so they sit inside the
+ * night, with the person asleep and the runs still counting, not after waking.
+ * With allowAsk on the agent is still waiting there, so no cards show.
  * Stage clock = minutes since 22:00. One absolute schedule. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(root.ExplainTimeline || global.ExplainTimeline);
@@ -17,16 +20,18 @@
   var NIGHT_MIN = 8 * 60;      // 22:00 -> 06:00
   var START_CLOCK = 22 * 60;
   var IDEAS = 4;
+  var IDEAS_AT = 4 * 60;                          // 02:00: the cards fill the second half of the night
+  var IDEA_MIN = (NIGHT_MIN - IDEAS_AT) / IDEAS;  // one hour of runs under each card
 
   var SEGMENTS = [
     { key: 'first', dur: 1.8 },
     { key: 'ask', dur: 1.8 },
-    { key: 'night', dur: 5.0 },
-    { key: 'wake', dur: 2.2 },
-    { key: 'idea1', dur: 1.0 },
-    { key: 'idea2', dur: 1.0 },
-    { key: 'idea3', dur: 1.0 },
-    { key: 'idea4', dur: 1.0 }
+    { key: 'night', dur: 5.0 },   // 22:10 -> 02:00, about 46 stage minutes a second
+    { key: 'idea1', dur: 1.3 },   // the same pace: 60 minutes in 1.3 s
+    { key: 'idea2', dur: 1.3 },
+    { key: 'idea3', dur: 1.3 },
+    { key: 'idea4', dur: 1.3 },
+    { key: 'wake', dur: 2.2 }
   ];
   var INTRO = 1.2;
   var SCHED = T.schedule(SEGMENTS, INTRO);
@@ -48,7 +53,8 @@
       station = at.item.key; local = at.local;
       if (station === 'first') minute = RUN_MIN * local;
       else if (station === 'ask') minute = RUN_MIN + RUN_MIN * local;
-      else if (station === 'night') minute = 2 * RUN_MIN + (NIGHT_MIN - 2 * RUN_MIN) * local;
+      else if (station === 'night') minute = 2 * RUN_MIN + (IDEAS_AT - 2 * RUN_MIN) * local;
+      else if (station.indexOf('idea') === 0) minute = IDEAS_AT + IDEA_MIN * (+station.slice(4) - 1 + local);
       else minute = NIGHT_MIN;
     }
     var free = Math.floor(minute / RUN_MIN + 1e-9);
@@ -60,19 +66,20 @@
     if (asking) bubble = 'ask';
     else if (station === 'ask') bubble = 'struck';
     var isIdea = !!station && station.indexOf('idea') === 0;
-    var ideas = isIdea ? +station.slice(4) : 0;  // card k appears at the start of station ideak
+    // card k appears at the start of station ideak; a waiting agent has no use for them
+    var ideas = isIdea && !allowAsk ? +station.slice(4) : 0;
     return {
-      phase: station ? (isIdea || station === 'wake' ? 'outro' : 'run') : 'intro',
+      phase: station ? (station === 'wake' ? 'outro' : 'run') : 'intro',
       station: station, local: local, allowAsk: allowAsk,
       minute: minute, clock: clockText(minute),
       done: done, partial: partial, total: NIGHT_MIN / RUN_MIN,
       asking: asking, waitMin: asking ? minute - RUN_MIN : 0,
       bubble: bubble,
-      awake: station === 'wake' || isIdea,
+      awake: station === 'wake',
       ideas: ideas
     };
   }
 
-  return { RUN_MIN: RUN_MIN, NIGHT_MIN: NIGHT_MIN, IDEAS: IDEAS, SCHED: SCHED, INTRO: INTRO,
+  return { RUN_MIN: RUN_MIN, NIGHT_MIN: NIGHT_MIN, IDEAS: IDEAS, IDEAS_AT: IDEAS_AT, SCHED: SCHED, INTRO: INTRO,
            duration: duration, stops: stops, stateAt: stateAt, clockText: clockText };
 });
