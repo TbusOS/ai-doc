@@ -96,25 +96,20 @@ def stack_svg() -> str:
 
 
 def explainer_card() -> str:
+    art = f"{PREFIX}assets/explain/autoresearch/"
     mini = (
-        '<svg class="mini" viewBox="0 0 160 160" aria-hidden="true">'
-        '<circle cx="80" cy="80" r="56" style="fill:none;stroke:var(--line);stroke-width:3;stroke-dasharray:5 6"/>'
-        '<path d="M80 24 A56 56 0 1 1 31.5 108" style="fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round"/>'
-        + "".join(
-            f'<circle cx="{80 + 56 * x:.1f}" cy="{80 + 56 * y:.1f}" r="9" style="fill:var(--card);stroke:var(--ink);stroke-width:2.5"/>'
-            for x, y in [(0, -1), (0.866, -0.5), (0.866, 0.5), (0, 1), (-0.866, 0.5), (-0.866, -0.5)]
-        )
-        + '<circle cx="80" cy="80" r="22" style="fill:var(--keep)"/>'
-        '<path d="M70 80 l7 7 l13 -15" style="fill:none;stroke:var(--card);stroke-width:4;stroke-linecap:round;stroke-linejoin:round"/>'
-        "</svg>"
+        '<span class="ex-art">'
+        f'<img class="illo-light" src="{art}intro-night.webp" alt="" width="1672" height="941" loading="lazy">'
+        f'<img class="illo-dark" src="{art}intro-night-dark.webp" alt="" width="1672" height="941" loading="lazy">'
+        "</span>"
     )
     return f"""<a class="ex-card card rise" href="{PREFIX}zh/explain/autoresearch.html">
   {mini}
   <div>
     <span class="kicker">自我改进 Agent · Karpathy · 2026</span>
     <h3>autoresearch：睡一觉，AI 替你跑完约 100 次实验</h3>
-    <p class="muted">实验循环、为什么固定 5 分钟、为什么用 bpb 不用 loss……12 个场景讲清它每个设计为什么这样做。</p>
-    <div class="ex-card-meta"><span class="chip">12 个场景 · 已完成 1 个</span><span class="chip">约 9 分钟</span></div>
+    <p class="muted">实验循环、为什么固定 5 分钟、为什么用 bpb 不用 loss……13 个动画场景讲清它每个设计为什么这样做，还有作者那一夜 83 次实验的真实回放。</p>
+    <div class="ex-card-meta"><span class="chip">13 个动画场景</span><span class="chip">逐段批注 · 3 道自测</span><span class="chip">约 15 分钟</span></div>
   </div>
 </a>"""
 
@@ -150,7 +145,7 @@ def render_home_sample() -> str:
         <a class="btn btn--primary" href="{PREFIX}zh/explain/autoresearch.html">看图解：autoresearch →</a>
         <a class="btn" href="#topics">按主题浏览</a>
       </div>
-      <p class="hero-stats"><b>{total}</b> 篇原文 · <b>{len(CATEGORIES)}</b> 个主题 · <b>1</b> 篇图解（样张）</p>
+      <p class="hero-stats"><b>{total}</b> 篇原文 · <b>{len(CATEGORIES)}</b> 个主题 · <b>1</b> 篇图解</p>
     </div>
     <div class="hero-art grid-paper">
       <p class="art-note">AI 工程栈 · 按你卡住的那一层直接跳进去</p>

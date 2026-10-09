@@ -1,0 +1,144 @@
+{
+  "id": "context",
+  "chapter": "why",
+  "widget": "context",
+  "title": "别让日志淹了自己",
+  "lead": "AI 一次能看到的文字有上限，训练程序每跑一轮却要打印一大串进度。program.md 要求把输出全部写进文件 run.log，再用 grep 只捞出分数和显存两行；不然日志会把 AI 的上下文淹没。",
+  "body": [
+    "上下文就是 AI 此刻能看到的全部文字：读过的文件、自己写的代码、命令的输出。它有上限。命令的输出要是直接回到 AI 面前，也会挤进去。",
+    "train.py 每训练一步打印一条进度；program.md 的输出示例里，5 分钟跑了 953 步。用 tee 的话，这些进度会一边写进文件、一边全部回到 AI 面前，program.md 第 4 步专门写了不要这样做。",
+    "重定向（>）把输出全写进 run.log，什么也不回到 AI 面前；第 5 步再用 grep 读出两行。训练崩了、grep 什么也没读到时，第 6 步也只看日志最后 50 行。图里只算训练输出这一项：AI 自己改代码、想点子也占上下文，但两种写法一样多，所以没画。"
+  ],
+  "stage_label": "上下文容量动画：训练输出流进 run.log，下方的容量条显示 AI 的上下文用了多少",
+  "first_caption": "AI 的上下文有上限（示意：100 格）。开头读进来的 program.md 等规则先占了 10 格。",
+  "controls": [
+    {
+      "type": "toggle",
+      "option": "tee",
+      "label": "改用 tee：输出也回到 AI 面前",
+      "tag": "解读",
+      "note": "勾上后重新播放：每一轮的全部输出都挤进上下文，第 3 轮就满了（格数是示意）。tee 的命令是我们按常见写法补的示意，program.md 只说了不要用 tee。",
+      "basis": "program.md 第 4 步：redirect everything — do NOT use tee or let output flood your context。"
+    }
+  ],
+  "commands": {
+    "redirect": "uv run train.py > run.log 2>&1",
+    "grep": "grep \"^val_bpb:\\|^peak_vram_mb:\" run.log",
+    "tee": "uv run train.py 2>&1 | tee run.log"
+  },
+  "labels": {
+    "round": "第 {n} 轮",
+    "of_total": "/ 100",
+    "context": "AI 的上下文",
+    "cap": "能装 100 格（示意）",
+    "used": "用了 {n} 格",
+    "full": "满了",
+    "rules": "规则",
+    "log_block": "第 {n} 轮输出",
+    "file": "run.log",
+    "output": "train.py 的输出",
+    "dropped_rules": "被挤掉了：最早读的规则",
+    "dropped_more": "被挤掉了：规则和更早的输出",
+    "legend_rules": "开头读进来的规则",
+    "legend_log": "一轮的全部输出（tee）",
+    "legend_grep": "grep 读到的两行",
+    "plus_lines": "+2 行",
+    "plus_tee": "+35 格",
+    "progress": "step {step} ({pct}%) | loss: {loss}",
+    "to_ai": "回到 AI 面前",
+    "to_file": "只进文件"
+  },
+  "captions": {
+    "intro": "AI 的上下文有上限（示意：100 格）。开头读进来的 program.md 等规则先占了 10 格。",
+    "cmd": "第 {n} 轮：开始训练，输出全部重定向进 run.log。",
+    "cmd_tee": "第 {n} 轮：用 tee，输出一边写进 run.log，一边回到 AI 面前。",
+    "stream": "5 分钟里，训练程序每一步打印一条进度，全进了文件，AI 一行也没看到。",
+    "stream_tee": "每一步的进度都挤进了上下文：一轮就占掉 35 格。",
+    "grep": "grep 只捞出两行：分数和显存。上下文只多了 2 行。",
+    "settle_tee": "一轮的输出全进了上下文，现在用了 {n} 格。",
+    "full_tee": "第 3 轮：装不下了，最早读的规则被挤了出去。AI 开始忘事。",
+    "ff": "照这样一轮轮跑下去……",
+    "outro": "100 轮以后，上下文才用了 20 格，规则还在。",
+    "outro_tee": "从第 3 轮起上下文一直是满的：新输出进来，旧内容就被挤掉。program.md 的规则早就不在了。"
+  },
+  "transcript": [
+    "AI 的上下文有上限（示意：100 格）。开头读进来的 program.md 等规则先占了 10 格。",
+    "每一轮先运行 uv run train.py > run.log 2>&1：训练的全部输出写进文件 run.log，AI 一行也看不到。",
+    "训练完运行 grep \"^val_bpb:\\|^peak_vram_mb:\" run.log，只捞出分数和显存两行，上下文只多了 2 行。",
+    "照这样跑完 100 轮，上下文才用了 20 格，最早读的规则还在。",
+    "如果改用 tee：每一轮的全部输出都挤进上下文，一轮占掉 35 格。第 3 轮就装不下，最早读的规则被挤了出去，AI 开始忘事；之后每一轮都在挤掉更早的内容。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "第 4 步：训练的输出全部重定向进 run.log，不要用 tee，不要让输出淹没上下文。",
+      "quote": "Run the experiment: `uv run train.py > run.log 2>&1` (redirect everything — do NOT use tee or let output flood your context)",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "第 5 步：用 grep 只读出分数和显存两行。",
+      "quote": "Read out the results: `grep \"^val_bpb:\\|^peak_vram_mb:\" run.log`",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "第 6 步：grep 什么也没读到就是崩了，也只看日志最后 50 行。",
+      "quote": "If the grep output is empty, the run crashed. Run `tail -n 50 run.log` to read the Python stack trace and attempt a fix.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "train.py 训练时每一步都打印一条进度：步数、完成百分比、loss 等。",
+      "quote": "print(f\"\\rstep {step:05d} ({pct_done:.1f}%) | loss: {debiased_smooth_loss:.6f} | lrm: {lrm:.2f} | dt: {dt*1000:.0f}ms",
+      "source": "train.py"
+    },
+    {
+      "tag": "原文",
+      "text": "program.md 的输出示例里，一轮训练跑了 953 步。",
+      "quote": "num_steps:        953",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "第一轮 grep 读到的两行，来自 program.md 给的输出示例。",
+      "quote": "val_bpb: 0.997900\ntraining_seconds: 300.1\ntotal_seconds: 325.9\npeak_vram_mb: 45060.2",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "第 2、3 轮的分数 0.993200 和 1.005000，来自 results.tsv 的示例。",
+      "quote": "b2c3d4e\t0.993200\t44.2\tkeep\tincrease LR to 0.04\nc3d4e5f\t1.005000\t44.0\tdiscard\tswitch to GeLU activation",
+      "source": "program.md"
+    },
+    {
+      "tag": "示意",
+      "text": "第 2、3 轮的 peak_vram_mb 是按 results.tsv 里的 memory_gb × 1024 倒推的。"
+    },
+    {
+      "tag": "解读",
+      "text": "上下文就是 AI 当下能看到的全部文字，有上限；命令的输出会回到 AI 面前，也算在里面。",
+      "basis": "program.md 第 4 步警告「do NOT use tee or let output flood your context」：输出能淹没上下文，前提就是输出会进上下文。"
+    },
+    {
+      "tag": "解读",
+      "text": "tee 把输出复制两份：一份写进文件，一份照常显示出来，显示的那份就回到 AI 面前。所以用 tee 等于把整份日志塞进上下文。",
+      "basis": "tee 命令的通常用法（同时写文件和标准输出），加上 program.md 第 4 步的警告。"
+    },
+    {
+      "tag": "解读",
+      "text": "上下文塞满以后，较早的内容会被挤掉或压缩，具体怎么处理看用的 agent 工具；图里画成最早读的规则先被挤掉。",
+      "basis": "上下文容量有限；program.md 没写满了以后会怎样，这里按「先进先出」画成示意。"
+    },
+    {
+      "tag": "解读",
+      "text": "图里只算训练输出。AI 自己改代码、想点子也占上下文，两种写法一样多，所以没画。",
+      "basis": "两种写法只在循环第 4、5 步不同，其余步骤相同。"
+    },
+    {
+      "tag": "示意",
+      "text": "容量 100 格、规则 10 格、tee 每轮 35 格、grep 每轮 0.1 格，都是演示用的假设，只用来比较两种写法差多少，不是实测。tee 的命令也是我们补的写法，program.md 里没有。终端里滚动的进度行照 train.py 的格式画，步数和 loss 是示意。"
+    }
+  ],
+  "original_anchor": "3-the-experimentation-loop"
+}

@@ -38,58 +38,8 @@
 
   var STATION_DEG = M.STATIONS.map(function (_, k) { return -90 + k * 360 / N; });
 
-  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-  function tag(name, attrs, inner) {
-    var a = '';
-    for (var k in attrs) if (attrs[k] !== undefined && attrs[k] !== null) a += ' ' + k + '="' + attrs[k] + '"';
-    return '<' + name + a + (inner === undefined ? '/>' : '>' + inner + '</' + name + '>');
-  }
-
-  function lerp(a, b, p) { return a + (b - a) * p; }
-
-  function polar(cx, cy, R, deg) {
-    var r = deg * Math.PI / 180;
-    return [cx + R * Math.cos(r), cy + R * Math.sin(r)];
-  }
-
-  function fmt(template, vars) {
-    return template.replace(/\{(\w+)\}/g, function (_, k) { return vars[k] !== undefined ? vars[k] : ''; });
-  }
-
-  // one drawing pass: knows the layout, so it can enforce the minimum font size
-  function Painter(g) {
-    var P = {};
-
-    P.size = function (n) { return Math.max(n, g.minFont); };
-
-    P.style = function (color, size, fam, weight) {
-      return 'fill:var(' + color + ');font-size:' + P.size(size) + 'px;font-family:var(' + (fam || '--font-hand') + ')' +
-        (weight ? ';font-weight:' + weight : '');
-    };
-
-    P.text = function (x, y, str, style, extra) {
-      var attrs = { x: x, y: y, style: style };
-      for (var k in extra || {}) attrs[k] = extra[k];
-      return tag('text', attrs, esc(str));
-    };
-
-    // estimated advance width: mono Latin is 0.6em, CJK is 1em
-    P.width = function (str, size) {
-      var w = 0;
-      for (var i = 0; i < str.length; i++) w += (str.charCodeAt(i) > 0x2e80 ? 1 : 0.6);
-      return w * P.size(size);
-    };
-
-    // text that must stay inside box `id`: squeeze it with textLength when it would overflow
-    P.fit = function (x, y, str, color, size, fam, weight, avail, id, anchor) {
-      var extra = { 'data-fit': id, 'data-on': id };
-      if (anchor) extra['text-anchor'] = anchor;
-      if (P.width(str, size) > avail) { extra.textLength = avail; extra.lengthAdjust = 'spacingAndGlyphs'; }
-      return P.text(x, y, str, P.style(color, size, fam, weight), extra);
-    };
-    return P;
-  }
+  var D = window.ExplainDraw;
+  var tag = D.tag, lerp = D.lerp, polar = D.polar, fmt = D.fmt, Painter = D.Painter;
 
   /* ---------- pieces ---------- */
 
@@ -302,9 +252,13 @@
       var y = nodeY(g, s, n);
       if (y < B.drop - 1) return;
       var x = xs(n.round), hx = xs(n.resetTo);
-      out += tag('path', { d: 'M' + (x - 18) + ' ' + (y - 6) + ' C' + (x - 50) + ' ' + (y - 10) + ' ' + (hx + 30) + ' ' + (B.y + 40) + ' ' + (hx + 12) + ' ' + (B.y + 20),
+      // end on the right edge of the HEAD node, above its commit label (the label sits at B.y + 38)
+      out += tag('path', { d: 'M' + (x - 18) + ' ' + (y - 6) + ' C' + (x - 50) + ' ' + (y - 10) + ' ' + (hx + 64) + ' ' + (B.y + 10) + ' ' + (hx + 20) + ' ' + (B.y + 3),
         style: 'fill:none;stroke:var(--discard);stroke-width:2;stroke-dasharray:5 5', 'marker-end': 'url(#loop-arrow)' });
-      out += P.text(x + 24, y + 6, 'git reset', P.style('--ink-2', B.hash, '--font-mono'));
+      // portrait: the next node's commit label sits right of this one and the arrow leaves from
+      // the top left, so write under this node's own commit label
+      if (g.H > g.W) out += P.text(x, y + 62, 'git reset', P.style('--ink-2', B.hash, '--font-mono'), { 'text-anchor': 'middle' });
+      else out += P.text(x + 24, y + 6, 'git reset', P.style('--ink-2', B.hash, '--font-mono'));
     });
     s.nodes.forEach(function (n) {
       var x = xs(n.round), y = nodeY(g, s, n), st = n.status;

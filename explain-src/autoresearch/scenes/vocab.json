@@ -1,0 +1,165 @@
+{
+  "id": "vocab",
+  "chapter": "why",
+  "widget": "vocab",
+  "title": "为什么用 bpb，不用 loss",
+  "lead": "同一句话，换个词表就会被切成不同数量的 token。每个 token 平均的 loss 会跟着切法变，每个字节的比特数（bpb）不会。README 说 bpb 跟词表大小无关，改了结构也能公平比较。一晚上词表不变，两种打分排出的先后一样；等人换了词表，每个 token 的 loss 就没法直接比，bpb 还能比。",
+  "body": [
+    "loss 是模型对每个 token 平均猜错了多少。词表越小，同一句话切出的 token 越多、每段越短，每段要猜的东西越少，平均 loss 就往下走，哪怕模型猜得一样准。bpb 把整段文字的猜错程度加起来，除以文字的字节数。字节数只看文字本身，跟怎么切无关，所以 bpb 不随词表变。",
+    "prepare.py 的 evaluate_bpb 就是这么算的：把每个 token 的交叉熵（单位 nats）加起来，再除以 ln 2 和总字节数。动画里把 loss 也换算成比特，只是为了让两根量柱用同一把尺子；训练程序打印的 loss 单位是 nats，数字会小一些，结论不变。",
+    "在 autoresearch 里，词表大小写死在 prepare.py（VOCAB_SIZE = 8192），而 program.md 规定 prepare.py 只读，AI 不许改。所以一晚上词表不变，每个 token 的 loss 和 bpb 只差一个固定倍数，留下还是丢掉，按哪个打分判得都一样。bpb 的好处要等人换了词表才用得上：README 给小机器的建议里提到，可以试着把 vocab_size 调小，最低到按字节切（256）。换了词表的两次运行放在一起比，每个 token 的 loss 没法直接比，bpb 还能比。"
+  ],
+  "stage_label": "词表对比动画：同一句话被剪刀切成不同数量的 token，两根量柱分别是每个 token 的 loss 和每字节比特数",
+  "first_caption": "同一句话，32 个字节。假设模型读完它一共「猜错」30 比特，一颗豆子算 1 比特（数字是示意）。",
+  "controls": [
+    {
+      "type": "choice",
+      "option": "vocab",
+      "label": "从 8192 换成",
+      "value": "256",
+      "choices": [
+        {
+          "value": "8192",
+          "label": "8192（不换）"
+        },
+        {
+          "value": "4096",
+          "label": "4096"
+        },
+        {
+          "value": "1024",
+          "label": "1024"
+        },
+        {
+          "value": "256",
+          "label": "256（按字节）"
+        }
+      ],
+      "note": "选一个词表，看剪刀多切几刀以后两根量柱怎么变。也可以直接点图里量柱旁的刻度。"
+    },
+    {
+      "type": "toggle",
+      "option": "byLoss",
+      "label": "改用每个 token 的 loss 打分会怎样",
+      "tag": "解读",
+      "note": "勾上后看「比一比」那一步：换小词表会被判成「变好」，可模型猜得一样准。这种比较发生在人换了词表的两次运行之间；一晚上词表不变，碰不到这种情况。program.md 没有演示它，是按两种算法反推的。",
+      "basis": "README 说 bpb 与词表大小无关；按 token 平均的 loss 会随切法变（见下面「loss = bpb × 每个 token 的字节数」那条推算）。词表写死在 prepare.py（VOCAB_SIZE = 8192），program.md 不许 AI 改这个文件，所以只有人改了词表，前后两次运行之间才会出现这种比较。"
+    }
+  ],
+  "labels": {
+    "header_intro": "同一句话：{bytes} 个字节",
+    "header_cut": "词表 {v}：切成 {n} 个 token",
+    "header_recut": "词表 {from} → {v}：切成 {n} 个 token",
+    "bytes_ruler": "{bytes} 个字节",
+    "bead_legend": "= 1 比特的「猜错」（示意）",
+    "loss_name": "每个 token 的 loss",
+    "bpb_name": "每字节比特数",
+    "bpb_short": "bpb",
+    "loss_formula": "{bits} 比特 ÷ {n} 个 token",
+    "bpb_formula": "{bits} 比特 ÷ {bytes} 个字节",
+    "judge_title": "跟词表 8192 比一比",
+    "judge_by_bpb": "按 bpb 比",
+    "judge_by_loss": "按 loss 比",
+    "all_here": "四种词表都在这",
+    "pick_hint": "点刻度换词表"
+  },
+  "stamps": {
+    "same": "持平",
+    "better": "变好 ✓",
+    "warn": "模型其实没变好"
+  },
+  "captions": {
+    "intro": "同一句话，32 个字节。假设模型读完它一共「猜错」30 比特，一颗豆子算 1 比特（数字是示意）。",
+    "cut": "词表 8192：切成 6 个 token。loss 按 token 平均：30 ÷ 6 = 5.000 比特；bpb 按字节平均：30 ÷ 32 ≈ 0.938 比特。",
+    "recut": "换成词表 {v}：多切几刀，变成 {n} 个 token。豆子一颗没少，每个 token 分到的变少，loss 降到 {loss}；bpb 还是 {bpb}。",
+    "recut_same": "还是词表 8192：一刀也不用多切，两个读数都不动。",
+    "judge_bpb": "按 bpb 跟 8192 比：{bpb} 对 {base_bpb}，持平。模型本来就没变好，判对了。",
+    "judge_loss": "按每个 token 的 loss 比：{loss} 比 {base_loss} 低，判成「变好」。可模型猜得一样准，只是切法变了。",
+    "judge_same": "词表没换，按哪个比都是持平。",
+    "outro": "loss 跟着切法走，bpb 只看整句猜错多少、句子多长。所以换了词表，也能拿 bpb 公平比较。",
+    "outro_loss": "按 loss 打分，缩小词表就能让分数「变好」，换了词表的两次运行就没法比了。这就是 bpb 的好处。一晚上词表不变时，两种打分排出的先后一样。"
+  },
+  "transcript": [
+    "同一句话「the agent trains while you sleep」，32 个字节。假设模型读完它一共「猜错」30 比特（数字是示意）。",
+    "词表 8192：切成 6 个 token。每个 token 的 loss = 30 ÷ 6 = 5.000 比特；每字节比特数 = 30 ÷ 32 ≈ 0.938。",
+    "换成词表 256：按字节切，多切 26 刀，变成 32 个 token。猜错的总量一点没少，每个 token 分到的变少，loss 降到 0.938；bpb 还是 0.938。换成 4096 是 8 个 token，loss 3.750；换成 1024 是 12 个 token，loss 2.500；bpb 都是 0.938。",
+    "选 8192（不换）：一刀也不用多切，两个读数都不动，按哪个比都是持平。",
+    "按 bpb 跟词表 8192 比：0.938 对 0.938，持平。模型本来就没变好，判对了。",
+    "如果改用每个 token 的 loss 打分：0.938 比 5.000 低，会被判成「变好」，可模型猜得一样准，只是切法变了。按 loss 打分，缩小词表就能让分数「变好」，换了词表的两次运行就没法比了。这就是 bpb 的好处：词表一变（比如人按 README 的建议在小机器上改小词表），每个 token 的 loss 就没法直接比，bpb 还能比。一晚上词表不变时，两种打分排出的先后一样。",
+    "结论：loss 跟着切法走，bpb 只看整句猜错多少、句子多长，所以换了词表也能公平比较。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "autoresearch 的分数是 val_bpb（验证集上每字节的比特数），越低越好，而且跟词表大小无关，所以改了结构也能公平比较。",
+      "quote": "The metric is **val_bpb** (validation bits per byte) — lower is better, and vocab-size-independent so architectural changes are fairly compared.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "evaluate_bpb 把每个 token 的交叉熵（nats）加总，把字节数加总，再把「每字节 nats」换成「每字节比特」。",
+      "quote": "Bits per byte (BPB): vocab size-independent evaluation metric.\n    Sums per-token cross-entropy (in nats), sums target byte lengths,\n    then converts nats/byte to bits/byte.",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "最后一步：总 nats ÷（ln 2 × 总字节数）。",
+      "quote": "return total_nats / (math.log(2) * total_bytes)",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "训练程序里的 loss 就是交叉熵（F.cross_entropy）；按 evaluate_bpb 文档串，交叉熵的单位是 nats。",
+      "quote": "loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1),",
+      "source": "train.py"
+    },
+    {
+      "tag": "原文",
+      "text": "autoresearch 默认的词表大小是 8192，写在 prepare.py 里。",
+      "quote": "VOCAB_SIZE = 8192",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "program.md 列在「不能做的事」里：不许改 prepare.py，它是只读的，里面有固定的评估、数据加载、tokenizer 和训练常量。",
+      "quote": "Modify `prepare.py`. It is read-only. It contains the fixed evaluation, data loading, tokenizer, and training constants",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "README 给小机器的建议里提到，可以试着调小 vocab_size：从 8192 降到 4096、2048、1024，甚至直接按字节切（256 个取值）。",
+      "quote": "You might experiment with decreasing `vocab_size`, e.g. from 8192 down to 4096, 2048, 1024, or even - simply byte-level tokenizer with 256 possibly bytes after utf-8 encoding.",
+      "source": "README.md"
+    },
+    {
+      "tag": "解读",
+      "text": "每个 token 的 loss（换算成比特）= bpb × 平均每个 token 的字节数。bpb 不变时，token 越短，loss 越低。",
+      "basis": "由 evaluate_bpb 的算法推出：总比特数 ÷ token 数 =（总比特数 ÷ 总字节数）×（总字节数 ÷ token 数）。"
+    },
+    {
+      "tag": "解读",
+      "text": "动画假设换词表不改变整句猜错的总量，好把「切法」单独拿出来看。真换了词表，模型猜错的总量也会变，那才是 bpb 要比的东西。",
+      "basis": "bpb 是拿模型对整段文字猜错的总量，除以文字的字节数；字节数只跟文字有关。"
+    },
+    {
+      "tag": "解读",
+      "text": "动画把 loss 从 nats 换算成比特（÷ ln 2），只是让两根量柱用同一把尺子；单位不影响结论。",
+      "basis": "prepare.py evaluate_bpb 文档串：交叉熵按 nats 加总，再换成每字节比特；1 比特 = ln 2 nats。"
+    },
+    {
+      "tag": "解读",
+      "text": "如果按每个 token 的 loss 打分，缩小词表本身就会让分数「变好」，词表不同的两次运行就没法公平比较。",
+      "basis": "README 说 bpb 与词表大小无关；反过来，按 token 平均的 loss 会随切法变（上一条推算）。"
+    },
+    {
+      "tag": "解读",
+      "text": "一晚上词表不变，评估的是同一段验证文字时，每个 token 的 loss（nats）= bpb × ln 2 × 总字节数 ÷ 总 token 数，后面这个倍数固定。所以留下还是丢掉，按哪个打分判得都一样；bpb 的好处要等人换了词表才用得上。",
+      "basis": "prepare.py evaluate_bpb：bpb = 总 nats ÷（ln 2 × 总字节数），每个 token 的 loss = 总 nats ÷ 总 token 数；VOCAB_SIZE = 8192 写在 prepare.py，program.md 不许 AI 改。验证文字取 EVAL_TOKENS // (batch_size × MAX_SEQ_LEN) 批，AI 把 DEVICE_BATCH_SIZE 改成整除不了 10240 的数时，取到的验证数据会略有不同，这个倍数也会跟着差一点。"
+    },
+    {
+      "tag": "示意",
+      "text": "例句、每个字节「猜错」的比特数、四种词表的切法，都是演示用的假设，不是真实 tokenizer 和模型的输出。"
+    }
+  ],
+  "original_anchor": "4-the-metric"
+}

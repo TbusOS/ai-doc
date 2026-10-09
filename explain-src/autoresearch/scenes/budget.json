@@ -1,0 +1,191 @@
+{
+  "id": "budget",
+  "chapter": "why",
+  "widget": "budget",
+  "title": "为什么每次都只给 5 分钟",
+  "lead": "不管 AI 把模型改大、改小还是换结构，训练都只跑 5 分钟，时间一到就停。比的是：同样 5 分钟，谁的分数最好。",
+  "body": [
+    "实验一次只跑一个，每次独占这块 GPU 跑 5 分钟。动画假设三个候选改动各跑了一次：把模型改小（小模型）、不改（默认模型）、把模型改大（大模型），再把这三次并排画出来比。小模型每一步算得快，5 分钟能走更多步；大模型每一步慢，走的步数少。每次都是 5 分钟一到就停，再比 val_bpb，越低越好。",
+    "README 写了这么设计的几点：每次正好 5 分钟，所以一小时约 12 次；不管 AI 改了什么，结果都能直接比；找到的是在你这台机器上、5 分钟内最好的模型。代价也写了：换一台机器，结果就没法跟别人的比。",
+    "勾上「改成固定步数」看反过来会怎样：三个都要走满 953 步，小模型 3 分钟就完，大模型要 9 分钟。大模型分数最好，可它多跑了 4 分钟；每次用时还跟着改动变，「一小时约 12 次」就不成立了。",
+    "再点「慢 3 倍的一台」：同样 5 分钟，每个候选只走三分之一的步数，这时小模型反而最好。同一套代码，在不同机器上选出来的最好的那个可能不一样。"
+  ],
+  "stage_label": "三条跑道：小模型、默认模型、大模型各自独占 GPU 跑 5 分钟，并排画在一起比；时钟记的是每次训练的时间，每条跑道旁标着各自的分数",
+  "first_caption": "三个候选改动：模型改小、不改、改大。假设它们各自独占这块 GPU 跑 5 分钟（实际是一次跑一个），并排画出来比。",
+  "cands": {
+    "small": { "name": "小模型", "note": "改小 · 每步快" },
+    "default": { "name": "默认模型", "note": "不改 · 原文的示例" },
+    "big": { "name": "大模型", "note": "改大 · 每步慢" }
+  },
+  "labels": {
+    "clock": "每次计时",
+    "budget": "5 分钟预算",
+    "over": "超出 {m}",
+    "fast_forward": "快进",
+    "steps_title": "走了几步",
+    "steps": "{n} 步",
+    "finish": "终点 953 步",
+    "stop": "停",
+    "done_at": "{m} 跑完",
+    "running": "还在跑",
+    "score": "val_bpb",
+    "lower": "越低越好",
+    "best": "最好",
+    "used": "用了 {m}",
+    "compare_time": "比的是：同样 5 分钟，谁的 val_bpb 最低",
+    "compare_steps": "比的是：同样 953 步，谁的 val_bpb 最低",
+    "hour_title": "一小时能跑几次",
+    "hour_end": "60 分钟",
+    "per_hour": "约 {n} 次",
+    "hour_ok": "每次都是 5 分钟：一小时约 12 次",
+    "hour_broken": "一小时约 12 次",
+    "hour_broken_note": "不成立了",
+    "illus": "数字为示意",
+    "machine_this": "原来这台机器",
+    "machine_slow": "慢 3 倍的机器"
+  },
+  "captions": {
+    "intro": "三个候选改动：模型改小、不改、改大。假设它们各自独占这块 GPU 跑 5 分钟（实际是一次跑一个），并排画出来比。",
+    "race_time": "每条都从 0:00 计时，走满 5 分钟。小模型每步快，大模型每步慢，走的步数差得很远。",
+    "race_steps": "这回终点是 953 步，谁先走到谁先停。每步快的先到，每步慢的还在半路。",
+    "after_time": "每次都是 5:00 一到就停，不管走了几步。",
+    "after_steps": "大模型还没走完，只能接着等：它要 {m} 分钟才走到 953 步。",
+    "score_time": "停下以后再评分。同样 5 分钟，{winner}的 val_bpb 最低。",
+    "score_steps": "{winner}的分数最低，可它跑了 {m} 分钟，最快的只要 {f} 分钟。比的已经不是同样的时间。",
+    "hour_time": "每次都是 5 分钟，所以不管 AI 改了什么，一小时都是约 12 次。",
+    "hour_steps": "每次用时跟着改动变：一小时可能约 {a} 次，也可能只有约 {c} 次。「一小时约 12 次」不成立了。",
+    "outro_time": "固定 5 分钟：次数心里有数，改什么都能直接比。找到的是这台机器上 5 分钟内最好的模型。",
+    "outro_time_slow": "换一台慢 3 倍的机器，5 分钟里走的步数少了，最好的从默认模型变成了小模型。所以结果只对这台机器算数。",
+    "outro_steps": "固定步数：谁跑得久谁占便宜，一晚能跑几次也说不准。所以 autoresearch 固定的是时间。",
+    "outro_steps_slow": "固定步数时，换机器分数不变，可每次要跑 {f} 到 {m} 分钟，一晚能跑的次数少了一大截。"
+  },
+  "controls": [
+    {
+      "type": "toggle",
+      "option": "fixedSteps",
+      "label": "改成固定步数（不限时间会怎样）",
+      "tag": "解读",
+      "note": "勾上后重新播放：三个都要走满 953 步才停。用时和分数都是演示用的假设数字。",
+      "basis": "由 README「Fixed time budget」一条反推：固定时间带来「一小时约 12 次」和「改什么都能直接比」，改成固定步数后这两点都靠不住。"
+    },
+    {
+      "type": "choice",
+      "option": "machine",
+      "label": "换一台机器",
+      "tag": "解读",
+      "value": "this",
+      "choices": [
+        { "value": "this", "label": "原来这台" },
+        { "value": "slow", "label": "慢 3 倍的一台" }
+      ],
+      "note": "机器慢了，同样 5 分钟走的步数变少，最好的候选可能换人。机器快慢和分数都是示意。",
+      "basis": "README：固定时间找到的是「你这个平台上」5 分钟内最好的模型，代价是结果跟别的平台上的人没法比。"
+    }
+  ],
+  "transcript": [
+    "三个候选改动：模型改小、不改、改大。假设它们各自独占这块 GPU 跑 5 分钟（实际是一次跑一个），并排画出来比。",
+    "每条都从 0:00 计时，走满 5 分钟。小模型每步快，大模型每步慢：5 分钟里小模型走了 1588 步，默认模型 953 步，大模型 529 步。",
+    "每次都是 5:00 一到就停，不管走了几步。",
+    "停下以后再评分（val_bpb，越低越好）：小模型 1.012，默认模型 0.998，大模型 1.014。同样 5 分钟，默认模型的 val_bpb 最低。",
+    "每次都是 5 分钟，所以不管 AI 改了什么，一小时都是约 12 次。",
+    "固定 5 分钟：次数心里有数，改什么都能直接比。找到的是这台机器上 5 分钟内最好的模型。",
+    "改成固定步数：终点是 953 步，谁先走到谁先停。小模型 3 分钟就到，默认模型 5 分钟，大模型要 9 分钟。",
+    "大模型的分数最低（0.985），可它跑了 9 分钟，最快的只要 3 分钟。比的已经不是同样的时间。",
+    "每次用时跟着改动变：一小时可能约 20 次，也可能只有约 7 次。「一小时约 12 次」不成立了。谁跑得久谁占便宜，所以 autoresearch 固定的是时间。",
+    "换一台慢 3 倍的机器：同样 5 分钟，小模型 529 步、默认模型 317 步、大模型 176 步，分数是 1.032、1.040、1.098，最好的从默认模型变成了小模型。所以结果只对这台机器算数。",
+    "慢机器上再改成固定步数：分数跟原来那台一样，可每次要跑 9 到 27 分钟，一晚能跑的次数少了一大截。",
+    "以上步数、分数和机器快慢都是示意；只有默认模型 5 分钟走 953 步、分数约 0.998，取自 program.md 的输出示例。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "每次实验在一块 GPU 上跑。",
+      "quote": "Each experiment runs on a single GPU.",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "三个候选改动实际是一次跑一个：循环每一轮只跑一次实验。动画假设三次各自独占 GPU 跑 5 分钟，再并排画在一起，只是为了好比。",
+      "basis": "program.md：Each experiment runs on a single GPU；实验循环每一轮只有一步「Run the experiment」，跑完、记下结果才进下一轮。"
+    },
+    {
+      "tag": "原文",
+      "text": "训练每次正好 5 分钟，跟用什么机器无关。",
+      "quote": "Training always runs for exactly 5 minutes, regardless of your specific platform.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "5 分钟写在 prepare.py 的常量里：300 秒。",
+      "quote": "TIME_BUDGET = 300        # training time budget in seconds (5 minutes)",
+      "source": "prepare.py"
+    },
+    {
+      "tag": "原文",
+      "text": "train.py 的停止条件看时间，不看步数：开头几步不计时（避开编译），之后训练时间累计满 300 秒就停。",
+      "quote": "# Time's up — but only stop after warmup steps so we don't count compilation\n    if step > 10 and total_training_time >= TIME_BUDGET:\n        break",
+      "source": "train.py"
+    },
+    {
+      "tag": "原文",
+      "text": "所以一小时约 12 次，睡一觉约 100 次。",
+      "quote": "This means you can expect approx 12 experiments/hour and approx 100 experiments while you sleep.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "好处一：不管 AI 改了什么（模型大小、batch 大小、结构），实验结果都能直接比。",
+      "quote": "First, this makes experiments directly comparable regardless of what the agent changes (model size, batch size, architecture, etc).",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "好处二：找到的是在你这台机器上、5 分钟内最好的模型。",
+      "quote": "Second, this means that autoresearch will find the most optimal model for your platform in that time budget.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "代价：你的结果没法跟别的机器上的人比。",
+      "quote": "The downside is that your runs (and results) become not comparable to other people running on other compute platforms.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "时间固定，AI 就不用操心训练时长，只管把分数降下来。",
+      "quote": "Since the time budget is fixed, you don't need to worry about training time — it's always 5 minutes.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "默认模型 5 分钟走 953 步、分数 0.997900，来自 program.md 的输出示例；动画里默认模型的 953 步和 0.998 取自这里。",
+      "quote": "val_bpb:          0.997900\ntraining_seconds: 300.1\ntotal_seconds:    325.9\npeak_vram_mb:     45060.2\nmfu_percent:      39.80\ntotal_tokens_M:   499.6\nnum_steps:        953",
+      "source": "program.md"
+    },
+    {
+      "tag": "示意",
+      "text": "小模型、大模型每分钟走几步，三个候选的分数，以及「慢 3 倍的机器」，都是演示用的假设数字。"
+    },
+    {
+      "tag": "解读",
+      "text": "改成固定步数后，每次用时随改动变化（动画里 3 到 9 分钟），「一小时约 12 次」就不成立了。",
+      "basis": "README 的「approx 12 experiments/hour」是从「每次正好 5 分钟」推出来的。"
+    },
+    {
+      "tag": "解读",
+      "text": "固定步数时大模型分数最好，是因为它多跑了时间；这样比不出「同样的时间里怎么训最好」。",
+      "basis": "README：固定时间让实验「directly comparable regardless of what the agent changes」，比的是同一时间预算内的结果。"
+    },
+    {
+      "tag": "解读",
+      "text": "换一台机器，同样 5 分钟能走的步数变了，最好的候选可能跟着变。",
+      "basis": "README：找到的是「for your platform」的最好模型，结果跟别的平台「not comparable」。"
+    },
+    {
+      "tag": "解读",
+      "text": "反过来，固定步数时同样的代码在哪台机器上都走一样多步，结果更好跨机器比；代价是每次用时跟着机器和改动变。",
+      "basis": "README 把「跟别的平台没法比」列为固定时间的代价，反推出来就是这一点。动画里分数只跟步数有关，是简化。"
+    }
+  ],
+  "original_anchor": "5-the-fixed-time-budget"
+}

@@ -4,7 +4,10 @@
  *   Explain.register('loop', function (svg, ctx) {
  *     return { duration, stops, render(t), setOption?(key, value), layout?(widthPx) };
  *   });
- * ctx = { copy: <this scene's object from zh.json>, data: <whole zh.json>, caption(text) }.
+ * ctx = { copy: <this scene's object from zh.json>, data: <whole zh.json>, caption(text),
+ *         redraw(), pause(), reduced }.
+ * pause(): a scene calls it when the reader picks something inside the picture (a card, a
+ * point, an answer) while it plays, so the next frame does not wipe the pick out.
  *
  * The engine owns time: play / pause / step / scrub / speed, pauses scenes that
  * leave the viewport, shows the final frame when the reader asked for reduced
@@ -15,6 +18,7 @@
 
   var T = window.ExplainTimeline;
   var registry = {};
+  var mounted = [];  // every mounted scene; only one plays at a time
   var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   var captureId = new URLSearchParams(window.location.search).get('capture');
   var SPEEDS = [1, 2, 0.5];
@@ -46,7 +50,20 @@
       data: data,
       caption: function (text) { if (capEl && capEl.textContent !== text) capEl.textContent = text; }
     };
-    var w = factory(svg, ctx);
+    var w;
+    try {
+      w = factory(svg, ctx);
+    } catch (err) {
+      // a broken scene must not take the others down: show its text version instead
+      section.classList.add('scene-broken');
+      var tr = section.querySelector('.stage-transcript');
+      if (tr) tr.open = true;
+      console.error('scene "' + section.dataset.scene + '" failed to start:', err);
+      return null;
+    }
+    ctx.redraw = function () { paint(); };
+    ctx.pause = function () { if (s.playing) pause(); };
+    ctx.reduced = reduced;
     var transcript = section.querySelector('.stage-transcript');
     if (transcript) transcript.open = false;  // the animation is running; the text version stays one click away
     var s = { t: 0, playing: false, played: false, pausedByView: false, speedIdx: 0, last: 0 };
@@ -81,6 +98,7 @@
     }
 
     function play() {
+      mounted.forEach(function (other) { if (other.widget !== w && other.state.playing) other.pause(); });
       if (s.t >= w.duration - 1e-6) s.t = 0;
       s.playing = true; s.played = true; s.pausedByView = false;
       s.last = performance.now();
@@ -117,12 +135,41 @@
       });
     }
 
-    var toggles = section.querySelectorAll('.ex-toggle input[data-option]');
-    Array.prototype.forEach.call(toggles, function (box) {
-      box.addEventListener('change', function () {
-        if (w.setOption) w.setOption(box.dataset.option, box.checked);
-        paint();
+    // scene controls: checkbox (bool), range slider (number), button group (string)
+    var options = {};  // what the scene was last told, per control (read by the browser tests)
+    function tell(key, value) { options[key] = value; if (w.setOption) w.setOption(key, value); }
+    function setOption(key, value) { tell(key, value); paint(); }
+    Array.prototype.forEach.call(section.querySelectorAll('input[type="checkbox"][data-option]'), function (box) {
+      box.addEventListener('change', function () { setOption(box.dataset.option, box.checked); });
+    });
+    Array.prototype.forEach.call(section.querySelectorAll('input[type="range"][data-option]'), function (range) {
+      var out = section.querySelector('output[data-for="' + range.dataset.option + '"]');
+      range.addEventListener('input', function () {
+        if (out) out.textContent = range.value;
+        setOption(range.dataset.option, +range.value);
       });
+    });
+    Array.prototype.forEach.call(section.querySelectorAll('button[data-option][data-value]'), function (btn) {
+      btn.addEventListener('click', function () {
+        Array.prototype.forEach.call(section.querySelectorAll('button[data-option="' + btn.dataset.option + '"]'), function (b) {
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
+        setOption(btn.dataset.option, btn.dataset.value);
+      });
+    });
+
+    // Push every control's starting value before the first frame: the scene must not rely on its
+    // own defaults matching the copy, and the browser may restore a checkbox state after "back".
+    Array.prototype.forEach.call(section.querySelectorAll('input[type="checkbox"][data-option]'), function (box) {
+      tell(box.dataset.option, box.checked);
+    });
+    Array.prototype.forEach.call(section.querySelectorAll('input[type="range"][data-option]'), function (range) {
+      var out = section.querySelector('output[data-for="' + range.dataset.option + '"]');
+      if (out) out.textContent = range.value;
+      tell(range.dataset.option, +range.value);
+    });
+    Array.prototype.forEach.call(section.querySelectorAll('button[data-option][aria-pressed="true"]'), function (btn) {
+      tell(btn.dataset.option, btn.dataset.value);
     });
 
     if (window.ResizeObserver) new ResizeObserver(relayout).observe(svg);
@@ -131,7 +178,7 @@
     relayout();
 
     return {
-      section: section, stage: stage || section, widget: w, state: s,
+      section: section, stage: stage || section, widget: w, state: s, options: options,
       play: play, pause: pause, seek: seek,
       onVisible: function (ratio) {
         if (reduced) return;
@@ -209,6 +256,7 @@
       target.classList.add('is-capture');
       var sc = mount(target, data);
       if (!sc) return;
+      mounted.push(sc);
       sc.seek(0);
       window.__explain = { duration: sc.widget.duration, seek: function (t) { sc.seek(t); } };
       return;
@@ -217,6 +265,10 @@
     initTheme();
     watchReveal();
     var scenes = sections.map(function (el) { return mount(el, data); }).filter(Boolean);
+    Array.prototype.push.apply(mounted, scenes);
+    window.Explain.mounted = scenes.map(function (sc) {
+      return { id: sc.section.dataset.scene, stops: sc.widget.stops, duration: sc.widget.duration, options: sc.options };
+    });
     watchViewport(scenes);
   }
 

@@ -1,0 +1,162 @@
+{
+  "id": "annotated",
+  "type": "annotated",
+  "chapter": "how",
+  "title": "program.md 逐段批注",
+  "lead": "整套方法就写在这一份 114 行的手册里。每段先摘原文（逐字），再配一句大白话。",
+  "body": [
+    "这份手册是人唯一要写的东西。想让 AI 换一种做法，就改这份手册，不用改训练代码。"
+  ],
+  "pairs": [
+    {
+      "quote": "This is an experiment to have the LLM do its own research.",
+      "source": "program.md",
+      "note": "开头一句话说清用途：这份文件是写给 AI 看的工作手册。人不写训练代码，只写这份手册，AI 照着它自己做研究。",
+      "group": "Setup",
+      "group_zh": "准备：开一条新分支，读三个文件",
+      "mark": "do its own research"
+    },
+    {
+      "quote": "The branch `autoresearch/<tag>` must not already exist — this is a fresh run.",
+      "source": "program.md",
+      "note": "每次开一条新分支，比如 autoresearch/mar5。一整晚的实验都记在这条分支上，早上看分支历史就知道哪些改动留下来了，主分支不受影响。",
+      "group": "Setup",
+      "group_zh": "准备：开一条新分支，读三个文件",
+      "mark": "fresh run"
+    },
+    {
+      "quote": "`prepare.py` — fixed constants, data prep, tokenizer, dataloader, evaluation. Do not modify.",
+      "source": "program.md",
+      "note": "prepare.py 像考场和考卷：数据、分词、打分都在里面，不许改。考卷一变，前后的分数就没法比了。",
+      "group": "Setup",
+      "group_zh": "准备：开一条新分支，读三个文件",
+      "mark": "Do not modify."
+    },
+    {
+      "quote": "`train.py` — the file you modify. Model architecture, optimizer, training loop.",
+      "source": "program.md",
+      "note": "train.py 是 AI 唯一能改的文件：模型结构、优化器、训练过程都在这里。能改的范围只有一个文件，哪次改坏了也好查。",
+      "group": "Setup",
+      "group_zh": "准备：开一条新分支，读三个文件",
+      "mark": "the file you modify"
+    },
+    {
+      "quote": "Since the time budget is fixed, you don't need to worry about training time — it's always 5 minutes.",
+      "source": "program.md",
+      "note": "不管改了什么，每次训练都只给 5 分钟。比的是「5 分钟内谁学得最好」，所以小模型和大模型能放在一起公平地比。",
+      "group": "Experimentation",
+      "group_zh": "规矩：能改什么、不能改什么、比什么",
+      "mark": "it's always 5 minutes"
+    },
+    {
+      "quote": "Install new packages or add dependencies. You can only use what's already in `pyproject.toml`.",
+      "source": "program.md",
+      "note": "这一条在「不许做」的清单里：不许装新的包。工具箱是固定的，AI 只能用现有的东西想办法。",
+      "group": "Experimentation",
+      "group_zh": "规矩：能改什么、不能改什么、比什么",
+      "mark": "Install new packages"
+    },
+    {
+      "quote": "The `evaluate_bpb` function in `prepare.py` is the ground truth metric.",
+      "source": "program.md",
+      "note": "打分函数是唯一的裁判，手册规定 AI 不许改它。不过这道防线靠 AI 守规矩：文件并没有被锁住，而且打分时调用的模型计算和最后打印出来的分数都在 train.py 里。",
+      "group": "Experimentation",
+      "group_zh": "规矩：能改什么、不能改什么、比什么",
+      "mark": "ground truth metric"
+    },
+    {
+      "quote": "Some increase is acceptable for meaningful val_bpb gains, but it should not blow up dramatically.",
+      "source": "program.md",
+      "note": "显存是软限制：为了明显的进步多用一点可以，但不能涨得太离谱。",
+      "group": "Experimentation",
+      "group_zh": "规矩：能改什么、不能改什么、比什么",
+      "mark": "should not blow up dramatically"
+    },
+    {
+      "quote": "All else being equal, simpler is better.",
+      "source": "program.md",
+      "note": "简单优先：分数差不多时，代码少的赢。多 20 行乱代码只换来 0.001，大概不值；删掉代码还能涨 0.001，一定留下。",
+      "group": "Experimentation",
+      "group_zh": "规矩：能改什么、不能改什么、比什么",
+      "mark": "simpler is better"
+    },
+    {
+      "quote": "Your very first run should always be to establish the baseline, so you will run the training script as is.",
+      "source": "program.md",
+      "note": "第一轮什么都不改，原样跑一遍，先拿到基线分数。之后每一轮都跟分支上当前的版本比。",
+      "group": "Experimentation",
+      "group_zh": "规矩：能改什么、不能改什么、比什么",
+      "mark": "establish the baseline"
+    },
+    {
+      "quote": "tab-separated, NOT comma-separated — commas break in descriptions",
+      "source": "program.md",
+      "note": "每轮结果记一行：提交号、分数、显存、留下 / 丢掉 / 崩溃、一句话说明。用 Tab 分隔，因为说明里常有逗号。",
+      "group": "Logging results",
+      "group_zh": "记账：每一轮记一行",
+      "mark": "tab-separated"
+    },
+    {
+      "quote": "redirect everything — do NOT use tee or let output flood your context",
+      "source": "program.md",
+      "note": "训练日志全部写进文件，AI 只用 grep 读出两行关键数字。要是近千条训练进度（示例里是 953 步）都读进来，几轮之后 AI 的上下文就满了。",
+      "group": "The experiment loop",
+      "group_zh": "实验循环：只进不退",
+      "mark": "do NOT use tee"
+    },
+    {
+      "quote": "If val_bpb improved (lower), you \"advance\" the branch, keeping the git commit",
+      "source": "program.md",
+      "note": "只进不退的关键：分数变好（更低）就把这次提交留在分支上；没变好就按第 9 步 git reset 退回这一轮开始的地方。分支上基本只留下让分数变好的改动（「简单优先」和偶尔回退是例外）。",
+      "group": "The experiment loop",
+      "group_zh": "实验循环：只进不退",
+      "mark": "keeping the git commit"
+    },
+    {
+      "quote": "If a run exceeds 10 minutes, kill it and treat it as a failure (discard and revert).",
+      "source": "program.md",
+      "note": "超过 10 分钟就当失败处理，免得某个改动让训练卡住，一整晚停在这一轮。",
+      "group": "The experiment loop",
+      "group_zh": "实验循环：只进不退",
+      "mark": "exceeds 10 minutes"
+    },
+    {
+      "quote": "If the idea itself is fundamentally broken, just skip it, log \"crash\" as the status in the tsv, and move on.",
+      "source": "program.md",
+      "note": "崩了怎么办：拼写错、漏了 import 这种小错就修好重跑；点子本身不行就记一笔 crash，换下一个。",
+      "group": "The experiment loop",
+      "group_zh": "实验循环：只进不退",
+      "mark": "just skip it"
+    },
+    {
+      "quote": "do NOT pause to ask the human if you should continue.",
+      "source": "program.md",
+      "note": "不许停下来问「要继续吗」。人可能在睡觉，一问就停一整晚。想不出点子时手册也给了办法：读代码里引用的论文、重读这几个文件、把之前差一点成功的改动组合起来、试更大胆的结构。",
+      "group": "NEVER STOP",
+      "group_zh": "不许停下来问人",
+      "mark": "do NOT pause"
+    },
+    {
+      "quote": "If each experiment takes you ~5 minutes then you can run approx 12/hour, for a total of about 100 over the duration of the average human sleep.",
+      "source": "program.md",
+      "note": "算一笔账：5 分钟一轮，一小时约 12 轮，睡一觉约 100 轮。早上醒来，结果都在 results.tsv 里。",
+      "group": "NEVER STOP",
+      "group_zh": "不许停下来问人",
+      "mark": "about 100"
+    }
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "这份手册是人写给 AI 的工作说明，AI 照着它自己做研究。",
+      "quote": "This is an experiment to have the LLM do its own research.",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "批注是我们的大白话解释，不是原文。",
+      "basis": "逐段对照 program.md 原文写成；跟原文意思冲突的地方以原文为准。"
+    }
+  ],
+  "original_anchor": "8-programmd-skill-programmd-as-a-lightweight-skill"
+}

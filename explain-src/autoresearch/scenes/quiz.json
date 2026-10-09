@@ -1,0 +1,42 @@
+{
+  "id": "quiz",
+  "type": "quiz",
+  "chapter": "quiz",
+  "title": "自测：看懂了吗",
+  "lead": "三道题，点选项就能看对错，答案下面有解析。",
+  "questions": [
+    {
+      "q": "分数为什么用 val_bpb（每字节多少比特），而不用每个 token 的 loss？",
+      "options": [
+        "bpb 算得更快",
+        "bpb 的数字看起来更小、更好看",
+        "每个 token 的 loss 会随词表大小变，按字节算才能公平比较",
+        "GPU 只能算 bpb"
+      ],
+      "answer": 2,
+      "explain": "README 原话：val_bpb 跟词表大小无关（vocab-size-independent），所以不同的结构改动能公平比较。同一句话切成多少个 token 取决于词表，每个 token 的 loss 会跟着变；按字节算就跟怎么切无关。"
+    },
+    {
+      "q": "AI 能不能修改 prepare.py？",
+      "options": [
+        "不能，它是只读的：数据、分词和打分都在里面",
+        "能，想改什么都行",
+        "只能改里面的打分函数",
+        "训练崩溃时才能改"
+      ],
+      "answer": 0,
+      "explain": "program.md 把它列在「不许做」里：Modify prepare.py. It is read-only. 考卷和裁判都在这个文件里，要是能改，分数就没法前后比，也能靠改打分来抬高分数。"
+    },
+    {
+      "q": "某一轮的改动让分数变差了，接下来会怎样？",
+      "options": [
+        "留下这次改动，下一轮再说",
+        "停下来问人要不要继续",
+        "删掉 results.tsv 重新开始",
+        "git reset 退回这一轮开始时的版本，结果照样记进 results.tsv，接着试下一个点子"
+      ],
+      "answer": 3,
+      "explain": "program.md 第 9 步：分数一样或更差就 git reset 回到开始的地方；第 7 步照样把这一轮记进表里（状态写 discard）。它不会停下来问人，因为手册要求 NEVER STOP。"
+    }
+  ]
+}

@@ -117,6 +117,13 @@ html:not(.js) .stage, html:not(.js) .stage-controls, html:not(.js) .ex-toggle { 
 
 .to-original { display: inline-flex; margin-top: 22px; font-family: var(--font-head); font-weight: 650; font-size: 0.95rem; }
 
+/* ---------- illustrations inside a stage (theme switching: .illo-light / .illo-dark in theme.css) ---------- */
+/* --illo-screen: the flat screen colour measured in the autoresearch intro drawings
+   (light #feb359, dark #fda847), so text drawn on the screen has a known background */
+:root { --illo-screen: #feb359; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --illo-screen: #fda847; } }
+:root[data-theme="dark"] { --illo-screen: #fda847; }
+
 /* ---------- capture mode (GIF / MP4 export) ---------- */
 body.capture { background: var(--card); }
 body.capture > *:not(main), body.capture main > *:not(.chapter), body.capture .chapter > *:not(.wrap) { display: none !important; }
@@ -126,10 +133,13 @@ body.capture .stage-controls, body.capture .ex-toggle, body.capture .claims, bod
 body.capture .to-original { display: none !important; }
 body.capture .wrap { max-width: none; padding: 0; }
 body.capture .scene.is-capture { margin: 0; }
-body.capture .stage { width: 1200px; height: 675px; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+body.capture .stage { width: 1200px; height: auto; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+/* the caption sits under the picture, never on it (scenes draw down to the bottom edge);
+   a fixed two-line height keeps every exported frame the same size */
 body.capture .stage-caption {
-  position: absolute; left: 0; right: 0; bottom: 0; border: 0; min-height: 0;
-  background: color-mix(in srgb, var(--card) 88%, transparent); font-size: 1.35rem; text-align: center;
+  position: static; height: 92px; min-height: 0; box-sizing: border-box; margin: 0; padding: 0 48px;
+  display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden;
+  border-top: 1px dashed var(--line); background: var(--card); font-size: 1.3rem; line-height: 1.45;
 }
 
 @media (max-width: 560px) {
@@ -141,3 +151,50 @@ body.capture .stage-caption {
   .chapter { padding-top: 44px; }
   .stage-caption { font-size: 1.02rem; padding: 10px 14px 12px; }
 }
+
+/* ---------- scene controls: slider and button group ---------- */
+.ex-slider, .ex-choice {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; padding: 12px 16px;
+  border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--card);
+  font-family: var(--font-head); font-size: 0.92rem;
+}
+.ex-slider label, .choice-label { font-weight: 700; }
+.ex-slider input[type="range"] { flex: 1 1 200px; accent-color: var(--accent); min-width: 140px; }
+.ex-slider output { font-family: var(--font-mono); font-weight: 600; min-width: 3ch; text-align: right; }
+.ex-slider .unit { color: var(--ink-2); }
+.ex-slider .toggle-note, .ex-choice .toggle-note { flex-basis: 100%; font-family: var(--font-body); color: var(--ink-2); font-size: 0.92rem; }
+.ex-choice button {
+  height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--paper-2); color: var(--ink); font: inherit; font-weight: 650; cursor: pointer;
+}
+.ex-choice button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.scene-broken .stage, .scene-broken .stage-controls { display: none; }
+
+/* ---------- program.md, paragraph by paragraph ---------- */
+.annotated { display: grid; gap: 10px; margin-top: 22px; }
+/* one heading per program.md section, written the way the file writes it */
+.ann-group { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin: 26px 0 2px; font-size: 1.05rem; }
+.ann-group:first-child { margin-top: 0; }
+.ann-md { font-family: var(--font-mono); font-size: 0.84rem; font-weight: 600; color: var(--ink-2); }
+.ann-row { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; align-items: start;
+  padding: 14px 16px; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--card); }
+/* the left column reads like the handbook itself: serif English, inline code, one key phrase marked */
+.ann-row blockquote { margin: 0; padding-left: 14px; border-left: 3px solid var(--line);
+  font-family: var(--font-body); font-size: 0.98rem; line-height: 1.6; color: var(--ink); }
+.ann-row blockquote code { font-size: 0.82em; }
+.ann-row blockquote mark { background: var(--accent-soft); color: inherit; padding: 0 3px; border-radius: 3px;
+  box-shadow: inset 0 -2px 0 var(--accent); }
+.ann-note { margin: 0; font-family: var(--font-hand); font-size: 1.08rem; line-height: 1.6; color: var(--ink); }
+.ann-note::before { content: "✎ "; color: var(--accent); }
+@media (max-width: 720px) { .ann-row { grid-template-columns: 1fr; } }
+
+/* ---------- quiz ---------- */
+.quiz { display: grid; gap: 14px; margin-top: 22px; max-width: 820px; }
+.quiz-q { margin: 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--card); }
+.quiz-q legend { font-family: var(--font-head); font-weight: 700; padding: 0 6px; }
+.quiz-opt { display: flex; gap: 10px; align-items: baseline; padding: 6px 4px; cursor: pointer; }
+.quiz-opt input { accent-color: var(--accent); }
+.quiz-opt.is-right span { color: var(--keep-ink); font-weight: 700; }
+.quiz-opt.is-wrong span { color: var(--crash-ink); text-decoration: line-through; }
+.quiz-explain summary { cursor: pointer; font-family: var(--font-head); font-size: 0.88rem; color: var(--ink-2); margin-top: 6px; }
+.quiz-explain p { margin: 8px 0 0; color: var(--ink); }

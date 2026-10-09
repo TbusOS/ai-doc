@@ -1,0 +1,208 @@
+{
+  "id": "where",
+  "chapter": "where",
+  "widget": "where",
+  "title": "还能套到哪：先过三关",
+  "lead": "autoresearch 的循环不只能训练 GPT。别的问题想套上它，要先过三关：几分钟就能出分、分数钻不了空子、改坏了能退回。",
+  "body": [
+    "这三关是我们从 autoresearch 的三个设计里归纳出来的：每次训练固定 5 分钟；打分代码放在 prepare.py 里，AI 不许改；没变好就 git reset。原文没有列这样一张清单，下面几个例子也是我们举的。",
+    "karpathy 自己在 README 里提了两个方向：人去反复改 program.md，找出让研究进展最快的「研究组织代码」；再往里加更多 agent。",
+    "动画最后一站换成你的问题。用动画下面三排按钮回答，看它卡在哪一关。"
+  ],
+  "stage_label": "三道关卡动画：一张问题卡片从左往右依次经过「5–10 分钟内出分」「分数钻不了空子」「改坏了能退回」三道关，过不去就停在那道关前",
+  "first_caption": "想把 autoresearch 搬到别的问题上？问题得先过三关。",
+  "original_anchor": "10-key-takeaways-for-engineers",
+  "gates": [
+    { "key": "fast", "num": "①", "label": "5–10 分钟内出分" },
+    { "key": "honest", "num": "②", "label": "分数钻不了空子" },
+    { "key": "undo", "num": "③", "label": "改坏了能退回" }
+  ],
+  "examples": [
+    {
+      "short": "训练 GPT",
+      "title": "autoresearch 自己",
+      "what": "改 train.py，看 val_bpb",
+      "gates": [true, true, true],
+      "notes": ["每次训练固定 5 分钟", "打分代码在 prepare.py，规定 AI 不许改", "没变好就 git reset"],
+      "verdict": "三关都过：它就是这么做的"
+    },
+    {
+      "short": "程序提速",
+      "title": "让一段程序跑得更快",
+      "what": "AI 改代码，分数是跑一遍用几秒",
+      "gates": [true, true, true],
+      "notes": ["跑一遍只要几秒", "计时和核对用文件权限锁死，AI 改不了", "改的是代码，git 能退回"],
+      "verdict": "三关都过：可以套这个循环"
+    },
+    {
+      "short": "修 bug",
+      "title": "让 AI 修 bug，测试全过就算好",
+      "what": "可测试文件 AI 也能改",
+      "gates": [true, false, null],
+      "notes": ["跑一遍测试只要几分钟", "删掉没过的测试，也能「全过」"],
+      "verdict": "卡在第 2 关：AI 会去讨好分数",
+      "fix": "修法：把测试列为不许改，再用文件权限锁死"
+    },
+    {
+      "short": "新药",
+      "title": "找新药配方",
+      "what": "分数是临床试验的结果",
+      "gates": [false, null, null],
+      "notes": ["一轮试验要好几个月"],
+      "verdict": "卡在第 1 关：一晚上一轮都跑不完",
+      "fix": "修法：先找一个几分钟就能算出来的替代分数"
+    },
+    {
+      "short": "真机器人",
+      "title": "给真机器人调走路的参数",
+      "what": "分数是走完 10 米用的时间",
+      "gates": [true, true, false],
+      "notes": ["走一趟只要几分钟", "场边的计时器测时间，AI 碰不到", "摔坏的零件，git 退不回来"],
+      "verdict": "卡在第 3 关：坏结果收不回来",
+      "fix": "修法：先在仿真里跑"
+    }
+  ],
+  "readme": {
+    "title": "karpathy 说的两个方向",
+    "items": [
+      { "head": "反复改 program.md", "body": "找出让研究进展最快的「研究组织代码」" },
+      { "head": "加更多 agent", "body": "让几个 AI 一起做研究" }
+    ],
+    "human": "人改 program.md",
+    "ai": "AI 改 train.py"
+  },
+  "mine": {
+    "short": "你的问题",
+    "title": "你的问题",
+    "what": "用动画下面三排按钮回答",
+    "yes_notes": ["能在 5–10 分钟内出分", "分数钻不了空子", "改坏了能退回"],
+    "no_notes": ["出分太慢", "分数钻得了空子", "改坏了退不回"],
+    "verdict_pass": "三关都过：可以套这个循环",
+    "verdict_fail": "卡在第 {n} 关",
+    "fixes": ["修法：先找一个几分钟就能算出来的替代分数", "修法：把打分的部分锁起来，AI 只能改别处", "修法：先在副本或测试环境里跑"]
+  },
+  "labels": {
+    "loop": "autoresearch 循环",
+    "start": "问题",
+    "stamp_pass": "能套 ✓",
+    "stamp_fail": "卡在第 {n} 关",
+    "round": "例 {n}",
+    "round_self": "先看它自己",
+    "round_mine": "换成你的"
+  },
+  "captions": {
+    "intro": "想把 autoresearch 搬到别的问题上？问题得先过三关。",
+    "walk": "{title}：{what}。",
+    "verdict": "{verdict}。",
+    "verdict_fix": "{verdict}。{fix}。",
+    "readme": "karpathy 在 README 里说：人可以反复改 program.md，找出让研究进展最快的「研究组织代码」；还可以加更多 agent。",
+    "mine_walk": "换成你的问题：用动画下面三排按钮回答。",
+    "mine_pass": "你的问题三关都过：可以套这个循环。",
+    "mine_fail": "你的问题卡在第 {n} 关。{fix}。"
+  },
+  "controls": [
+    {
+      "type": "choice",
+      "option": "fast",
+      "label": "① 你的问题 5–10 分钟内能给出分数吗？",
+      "value": "yes",
+      "choices": [{ "value": "yes", "label": "能" }, { "value": "no", "label": "不能" }],
+      "note": "按一下，动画就换成你的问题，看它卡在哪一关。"
+    },
+    {
+      "type": "choice",
+      "option": "honest",
+      "label": "② 分数钻得了空子吗？",
+      "value": "yes",
+      "choices": [{ "value": "yes", "label": "钻不了" }, { "value": "no", "label": "钻得了" }]
+    },
+    {
+      "type": "choice",
+      "option": "undo",
+      "label": "③ 改坏了能退回吗？",
+      "value": "yes",
+      "choices": [{ "value": "yes", "label": "能" }, { "value": "no", "label": "不能" }]
+    }
+  ],
+  "transcript": [
+    "想把 autoresearch 搬到别的问题上？问题得先过三关：① 5–10 分钟内出分；② 分数钻不了空子；③ 改坏了能退回。卡片从左往右过关，过不去就停在那道关前。",
+    "autoresearch 自己（改 train.py，看 val_bpb）：每次训练固定 5 分钟；打分代码在 prepare.py，规定 AI 不许改；没变好就 git reset。三关都过：它就是这么做的。",
+    "让一段程序跑得更快（AI 改代码，分数是跑一遍用几秒）：跑一遍只要几秒；计时和核对用文件权限锁死，AI 改不了；改的是代码，git 能退回。三关都过：可以套这个循环。",
+    "让 AI 修 bug，测试全过就算好（可测试文件 AI 也能改）：第 1 关能过，跑一遍测试只要几分钟；第 2 关过不去，删掉没过的测试也能「全过」。卡在第 2 关：AI 会去讨好分数。修法：把测试列为不许改，再用文件权限锁死。",
+    "找新药配方（分数是临床试验的结果）：一轮试验要好几个月。卡在第 1 关：一晚上一轮都跑不完。修法：先找一个几分钟就能算出来的替代分数。",
+    "给真机器人调走路的参数（分数是走完 10 米用的时间）：走一趟只要几分钟；场边的计时器测时间，AI 碰不到；可摔坏的零件，git 退不回来。卡在第 3 关：坏结果收不回来。修法：先在仿真里跑。",
+    "karpathy 在 README 里说：人可以反复改 program.md，找出让研究进展最快的「研究组织代码」；还可以加更多 agent。",
+    "最后一站换成你的问题：用动画下面三排按钮回答，卡片会停在第一道过不去的关前。"
+  ],
+  "claims": [
+    {
+      "tag": "解读",
+      "text": "三关是我们从 autoresearch 的三个设计里归纳的，原文没有列这样一张清单。",
+      "basis": "固定 5 分钟（README「Design choices」）、打分代码 AI 不许改（program.md「What you CANNOT do」）、没变好就 git reset（program.md 循环第 9 步）。第 1 关写「5–10 分钟」：5 分钟是固定的训练时长，超过 10 分钟算失败。"
+    },
+    {
+      "tag": "原文",
+      "text": "第 1 关的来历：每次训练固定跑 5 分钟。",
+      "quote": "Training always runs for exactly 5 minutes, regardless of your specific platform.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "超过 10 分钟没跑完，就停掉、算失败。",
+      "quote": "If a run exceeds 10 minutes, kill it and treat it as a failure (discard and revert).",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "第 2 关的来历：prepare.py 只读，AI 不许改。",
+      "quote": "Modify `prepare.py`. It is read-only.",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "autoresearch 自己的第 2 关靠 AI 守规矩：prepare.py 并没有被锁住，打分时调用的模型计算和最后打印的分数也都在 train.py 里。",
+      "basis": "program.md 把改 prepare.py 列在「What you CANNOT do」里，是一条规定；prepare.py 的 evaluate_bpb 调用 model(x, y, reduction='none')，这个计算在 train.py 的 GPT.forward 里；val_bpb 那一行由 train.py 打印。"
+    },
+    {
+      "tag": "原文",
+      "text": "打分函数 evaluate_bpb 就在 prepare.py 里，它说多少就是多少。",
+      "quote": "The `evaluate_bpb` function in `prepare.py` is the ground truth metric.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "分数本身也选成不受词表大小影响的 val_bpb，改结构的实验之间比得公平。",
+      "quote": "vocab-size-independent so architectural changes are fairly compared",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "第 3 关的来历：没变好就 git reset，退回这一轮开始的地方。",
+      "quote": "If val_bpb is equal or worse, you git reset back to where you started",
+      "source": "program.md"
+    },
+    {
+      "tag": "解读",
+      "text": "程序提速、修 bug、新药、真机器人这四个例子是我们举的，用来说明三关各自拦住什么问题；过不了关时的修法也是我们的建议。",
+      "basis": "照 autoresearch 自己的做法类推：打分代码不许改（prepare.py）、固定 5 分钟、在单独的分支上实验并用 git reset 撤销。"
+    },
+    {
+      "tag": "原文",
+      "text": "karpathy 说：人可以反复改 program.md，找出让研究进展最快的「研究组织代码」，还可以加更多 agent。",
+      "quote": "it's obvious how one would iterate on it over time to find the \"research org code\" that achieves the fastest research progress, how you'd add more agents to the mix, etc.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "仓库里的 program.md 故意写得很简单，只是一个起点。",
+      "quote": "The default `program.md` in this repo is intentionally kept as a bare bones baseline",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "分工：train.py 由 AI 改，program.md 由人改。",
+      "quote": "**This file is edited and iterated on by the human**",
+      "source": "README.md"
+    }
+  ]
+}

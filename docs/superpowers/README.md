@@ -12,6 +12,7 @@ This directory stores design specs and implementation plans for non-trivial init
 | Topic | Spec | Plan | Status |
 |---|---|---|---|
 | 水墨风论文漫画系列 | [2026-04-21-paper-comic-design.md](specs/2026-04-21-paper-comic-design.md) | [2026-04-21-paper-comic-pilot.md](plans/2026-04-21-paper-comic-pilot.md) | 设计完成，执行等 64GB Mac |
+| 论文图解 + 站点改版 | [2026-10-08-paper-explainers-design.md](specs/2026-10-08-paper-explainers-design.md) | 第三阶段:[2026-10-09-explainers-phase3-scenes.md](plans/2026-10-09-explainers-phase3-scenes.md)(agent 简报 [2026-10-09-phase3-agent-brief.md](plans/2026-10-09-phase3-agent-brief.md)) | autoresearch 场景制作中;做法见 `.claude/skills/paper-explainer/` |
 
 ## Convention
 
@@ -21,4 +22,6 @@ This directory stores design specs and implementation plans for non-trivial init
 
 ## Shipped
 
-(none yet)
+| Topic | Plan | Shipped |
+|---|---|---|
+| 论文图解 · 第一阶段样张(新视觉、首页预览、autoresearch 场景 4) | [2026-10-08-explainers-phase1-sample.md](plans/2026-10-08-explainers-phase1-sample.md) | 2026-10-09,main `4e01134` |

@@ -19,7 +19,7 @@
             <button type="button" aria-haspopup="true">主题</button>
             <div class="nav-dropdown-panel" role="menu">
               <p class="anth-caption" style="padding:0 var(--space-3); margin-bottom:var(--space-2);">浏览 6 条研究脉络</p>
-          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">5 篇</span></span></a>
+          <a href="../../zh/inference-optimization.html"><span class="dot" style="background:var(--anth-blue);"></span><span><span class="label">推理优化</span><br><span class="sub">6 篇</span></span></a>
           <a href="../../zh/self-improving-agents.html"><span class="dot" style="background:var(--anth-orange);"></span><span><span class="label">自我改进 Agent</span><br><span class="sub">10 篇</span></span></a>
           <a href="../../zh/agent-patterns.html"><span class="dot" style="background:var(--anth-green);"></span><span><span class="label">Agent 设计模式</span><br><span class="sub">6 篇</span></span></a>
           <a href="../../zh/training-techniques.html"><span class="dot" style="background:var(--anth-danger);"></span><span><span class="label">训练技术</span><br><span class="sub">6 篇</span></span></a>
@@ -113,7 +113,7 @@ pyproject.toml  — 依赖
 <hr>
 <h2 id="4-the-metric">4. 度量标准 / The Metric</h2>
 <p><strong>val_bpb</strong>（validation bits per byte），越低越好。</p>
-<p>选 bpb 而不是 val_loss 有一个精心的原因：<strong>bpb 与词表大小无关</strong>。这意味着 agent 可以自由地把 <code>vocab_size</code> 从 8192 改到 4096 或 1024，换掉 tokenizer 方案，而不同配置之间<strong>仍然可公平比较</strong>。如果用 val_loss，vocab 一变损失的可比性就丢了，agent 就可以"作弊式"地通过缩小词表来伪造进步。</p>
+<p>选 bpb 而不是 val_loss 有一个精心的原因：<strong>bpb 与词表大小无关</strong>，所以不同的结构改动之间<strong>仍然可公平比较</strong>。词表大小 <code>VOCAB_SIZE = 8192</code> 和 tokenizer 都在 <code>prepare.py</code> 里，agent 不许改（program.md 规定 prepare.py 只读）；README 建议在小机器上把 <code>vocab_size</code> 调小到 4096、1024 甚至 256，那是给换平台的人用的，调小之后 bpb 依然能和原来比。如果用每个 token 的 val_loss，词表一变，同一句话切出的 token 数就变，损失跟着变，分数就没法前后比了。</p>
 <p><strong>val_bpb (validation bits per byte), lower is better.</strong> The deliberate reason for choosing bpb over val_loss is that bpb is <strong>vocab-size-independent</strong> — architectural/tokenizer changes remain fairly comparable, which closes a whole class of "gaming the metric" failure modes.</p>
 <p>这是 Karpathy 式工程品味的体现：<strong>当你要把评估交给一个自主优化器时，选一个它无法通过"走捷径"来刷的指标</strong>。</p>
 <hr>

@@ -1,3 +1,7 @@
 .DS_Store
 .superpowers/
 __pycache__/
+docs/zh/explain/*--*.html
+tools/node_modules/
+.venv/
+tools/.font-cache/

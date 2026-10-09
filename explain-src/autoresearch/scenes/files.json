@@ -1,0 +1,275 @@
+{
+  "id": "files",
+  "chapter": "what",
+  "widget": "files",
+  "title": "三个文件，三个角色",
+  "lead": "整个仓库真正要紧的只有三个文件：prepare.py 是考场和考卷，做实验时谁都不动；train.py 是 AI 唯一改的文件；program.md 是人写给 AI 的工作手册。",
+  "body": [
+    "关键在分工。平常做研究，人亲手改 Python 代码；在这里，人改的是 program.md 这份说明，改代码、跑训练、判断好坏都交给 AI。",
+    "所以 autoresearch 不是一个新模型。训练代码本身是 nanochat 的简化版，它新在规则：让 AI 在一个固定的考场里，自己一次次做实验。",
+    "卡片上的代码都是原文。点一张卡片可以单独看它；勾上下面的开关，看看平常的做法是什么样。"
+  ],
+  "stage_label": "三张文件卡片：prepare.py、train.py、program.md，各自标出人和 AI 谁能改，并附原文代码片段",
+  "first_caption": "仓库里真正要紧的只有三个文件。一个一个看。",
+  "cards": {
+    "prepare": {
+      "name": "prepare.py",
+      "role": "考场和考卷",
+      "desc": "固定常量 · 数据准备 · 打分函数",
+      "code": [
+        {
+          "source": "prepare.py",
+          "quote": "MAX_SEQ_LEN = 2048       # context length",
+          "show": [
+            "MAX_SEQ_LEN = 2048"
+          ]
+        },
+        {
+          "source": "prepare.py",
+          "quote": "TIME_BUDGET = 300        # training time budget in seconds (5 minutes)",
+          "show": [
+            "TIME_BUDGET = 300"
+          ]
+        },
+        {
+          "source": "prepare.py",
+          "quote": "EVAL_TOKENS = 40 * 524288  # number of tokens for val eval",
+          "show": [
+            "EVAL_TOKENS = 40 * 524288"
+          ]
+        },
+        {
+          "source": "prepare.py",
+          "quote": "def evaluate_bpb(model, tokenizer, batch_size):",
+          "show": [
+            "def evaluate_bpb(model,",
+            "    tokenizer, batch_size):"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "line": 1,
+          "text": "300 秒：每次训练都只给 5 分钟"
+        },
+        {
+          "line": 3,
+          "text": "打分函数也在这里"
+        }
+      ],
+      "caption": "prepare.py：固定的常量、数据准备、打分函数都在这里。做实验时人和 AI 都不改它，每次都用同一套标准打分。"
+    },
+    "train": {
+      "name": "train.py",
+      "role": "学习方法",
+      "desc": "模型 · 优化器 · 训练循环",
+      "code": [
+        {
+          "source": "train.py",
+          "quote": "ASPECT_RATIO = 64       # model_dim = depth * ASPECT_RATIO",
+          "show": [
+            "ASPECT_RATIO = 64"
+          ]
+        },
+        {
+          "source": "train.py",
+          "quote": "WINDOW_PATTERN = \"SSSL\" # sliding window pattern: L=full, S=half context",
+          "show": [
+            "WINDOW_PATTERN = \"SSSL\""
+          ]
+        },
+        {
+          "source": "train.py",
+          "quote": "MATRIX_LR = 0.04        # learning rate for matrix parameters (Muon)",
+          "show": [
+            "MATRIX_LR = 0.04"
+          ]
+        },
+        {
+          "source": "train.py",
+          "quote": "WARMDOWN_RATIO = 0.5    # fraction of time budget for LR warmdown",
+          "show": [
+            "WARMDOWN_RATIO = 0.5"
+          ]
+        },
+        {
+          "source": "train.py",
+          "quote": "DEPTH = 8               # number of transformer layers",
+          "show": [
+            "DEPTH = 8"
+          ]
+        }
+      ],
+      "edit": {
+        "line": 3,
+        "from": "0.5",
+        "to": "0.7",
+        "note": "AI 改过这里：0.5 → 0.7，分数变低，留下",
+        "note_usual": "平常：研究员自己动手改，自己等结果"
+      },
+      "caption": "train.py：模型、优化器、训练循环都在这个文件里。AI 只改它，里面什么都能动。",
+      "caption_usual": "平常的做法：研究员自己改 train.py，自己等训练、看结果。"
+    },
+    "program": {
+      "name": "program.md",
+      "role": "给 AI 的工作手册",
+      "desc": "能改什么 · 不能改什么 · 怎么循环",
+      "code": [
+        {
+          "source": "program.md",
+          "quote": "**What you CAN do:**",
+          "show": [
+            "**What you CAN do:**"
+          ]
+        },
+        {
+          "source": "program.md",
+          "quote": "- Modify `train.py` — this is the only file you edit.",
+          "show": [
+            "- Modify `train.py` — this is",
+            "  the only file you edit."
+          ]
+        },
+        {
+          "source": "program.md",
+          "quote": "**What you CANNOT do:**",
+          "show": [
+            "**What you CANNOT do:**"
+          ]
+        },
+        {
+          "source": "program.md",
+          "quote": "- Modify `prepare.py`. It is read-only.",
+          "show": [
+            "- Modify `prepare.py`.",
+            "  It is read-only."
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "line": 1,
+          "text": "人写给 AI 的规矩：只许改 train.py"
+        }
+      ],
+      "caption": "program.md：人写给 AI 的工作手册，写明能改什么、不能改什么、怎么一轮轮做实验。人改的是它，不是 Python 代码。",
+      "caption_usual": "平常用不上 program.md：没有 AI 替你做实验，也就不用给它写手册。",
+      "unused": "用不上"
+    }
+  },
+  "perms": {
+    "human": "人",
+    "ai": "AI",
+    "edit": "{who} 改",
+    "none": "{who} 不改",
+    "absent": "没有 {who}"
+  },
+  "captions": {
+    "intro": "仓库里真正要紧的只有三个文件。一个一个看。",
+    "essence": "分工就这么简单：人只改手册，AI 只改训练代码，考卷谁都不碰。",
+    "essence_usual": "平常是人自己改代码；autoresearch 把改代码交给 AI，人只改 program.md。"
+  },
+  "banner": {
+    "essence": "它不是一个新模型，而是一套让 AI 自己做实验的规则。",
+    "essence_usual": "平常：人改 train.py。autoresearch：AI 改 train.py，人改 program.md。"
+  },
+  "controls": [
+    {
+      "type": "toggle",
+      "option": "usual",
+      "label": "换成平常的研究方式",
+      "tag": "原文",
+      "note": "勾上后：研究员自己改 train.py，没有 AI，program.md 也用不上。",
+      "quote": "The core idea is that you're not touching any of the Python files like you normally would as a researcher.",
+      "source": "README.md"
+    }
+  ],
+  "transcript": [
+    "仓库里真正要紧的只有三个文件。一个一个看。",
+    "prepare.py：固定的常量、数据准备、打分函数都在这里。做实验时人和 AI 都不改它，每次都用同一套标准打分。卡片上是原文代码：MAX_SEQ_LEN = 2048、TIME_BUDGET = 300（每次训练只给 300 秒）、EVAL_TOKENS = 40 * 524288，以及打分函数 evaluate_bpb。",
+    "train.py：模型、优化器、训练循环都在这个文件里。AI 只改它，里面什么都能动。卡片上是几行超参数，其中 WARMDOWN_RATIO = 0.5 被 AI 改成了 0.7：progress.png 上这次改动让分数变低，被保留了。",
+    "program.md：人写给 AI 的工作手册，写明能改什么、不能改什么、怎么一轮轮做实验。人改的是它，不是 Python 代码。卡片上是原文：能改的只有 train.py，prepare.py 只读。",
+    "它不是一个新模型，而是一套让 AI 自己做实验的规则。分工就这么简单：人只改手册，AI 只改训练代码，考卷谁都不碰。",
+    "勾上「换成平常的研究方式」后，train.py 这一站：平常的做法：研究员自己改 train.py，自己等训练、看结果。",
+    "program.md 这一站：平常用不上 program.md：没有 AI 替你做实验，也就不用给它写手册。",
+    "最后一站：平常是人自己改代码；autoresearch 把改代码交给 AI，人只改 program.md。"
+  ],
+  "claims": [
+    {
+      "tag": "原文",
+      "text": "仓库里真正要紧的只有三个文件。",
+      "quote": "The repo is deliberately kept small and only really has three files that matter:",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "prepare.py：固定常量、一次性的数据准备、运行时工具（读数据、评估），不改。",
+      "quote": "**`prepare.py`** — fixed constants, one-time data prep (downloads training data, trains a BPE tokenizer), and runtime utilities (dataloader, evaluation). Not modified.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "AI 不能改 prepare.py：它是只读的，里面有固定的评估、读数据、分词器和训练常量。",
+      "quote": "Modify `prepare.py`. It is read-only. It contains the fixed evaluation, data loading, tokenizer, and training constants (time budget, sequence length, etc).",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "打分函数 evaluate_bpb 也不能改，它给出的分数就是标准答案。",
+      "quote": "Modify the evaluation harness. The `evaluate_bpb` function in `prepare.py` is the ground truth metric.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "train.py：AI 唯一改的文件，模型、优化器、训练循环都在里面，什么都能动。",
+      "quote": "**`train.py`** — the single file the agent edits. Contains the full GPT model, optimizer (Muon + AdamW), and training loop. Everything is fair game: architecture, hyperparameters, optimizer, batch size, etc. **This file is edited and iterated on by the agent**.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "program.md 对 AI 说：你只能改 train.py。",
+      "quote": "Modify `train.py` — this is the only file you edit.",
+      "source": "program.md"
+    },
+    {
+      "tag": "原文",
+      "text": "program.md：给 AI 的说明，由人来改。",
+      "quote": "**`program.md`** — baseline instructions for one agent. Point your agent here and let it go. **This file is edited and iterated on by the human**.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "人不改 Python 代码，改的是 program.md。",
+      "quote": "Instead, you are programming the `program.md` Markdown files that provide context to the AI agents and set up your autonomous research org.",
+      "source": "README.md"
+    },
+    {
+      "tag": "原文",
+      "text": "train.py 卡片上 0.5 → 0.7 这一处，是 progress.png 上一次被保留的真实改动。",
+      "quote": "3. warmdown 0.5→0.7 (more cooldown helps)",
+      "source": "progress-transcript.md"
+    },
+    {
+      "tag": "原文",
+      "text": "训练代码本身是 nanochat 的单 GPU 简化版。",
+      "quote": "The training code here is a simplified single-GPU implementation of [nanochat](https://github.com/karpathy/nanochat).",
+      "source": "README.md"
+    },
+    {
+      "tag": "解读",
+      "text": "它不是一个新模型，而是一套让 AI 自己做实验的规则。",
+      "basis": "README：训练代码是 nanochat 的简化版；核心想法是人不再改 Python 文件，而是编写 program.md，让 AI 去改 train.py、做实验。"
+    },
+    {
+      "tag": "解读",
+      "text": "「考场和考卷」「学习方法」「工作手册」是我们打的比方。",
+      "basis": "README「How it works」对三个文件的描述：prepare.py 管数据和评估、不改；train.py 是模型和训练过程；program.md 是给 agent 的说明。"
+    },
+    {
+      "tag": "解读",
+      "text": "例外：README 建议在小机器上跑时，由人事先调小 prepare.py 里的 MAX_SEQ_LEN 和 EVAL_TOKENS。这是换平台时改一次，不是实验过程中改。",
+      "basis": "README「Platform support」第 3、4 条建议在 prepare.py 里调小这两个常量；program.md 规定实验中 prepare.py 只读。"
+    }
+  ],
+  "original_anchor": "2-repository-structure"
+}
