@@ -1,7 +1,9 @@
 /* autoresearch scene "budget" model — why every run gets exactly 5 minutes.
  *
- * Three candidate changes race on one GPU: a smaller model (fast steps), the
- * default model, a bigger model (slow steps). The default model's 953 steps
+ * Three candidate changes, each drawn as if it had the GPU to itself for its
+ * own 5-minute run (program.md: one experiment at a time on a single GPU), laid
+ * side by side: a smaller model (fast steps), the default model, a bigger model
+ * (slow steps). The default model's 953 steps
  * in 5 minutes and its ≈ 0.9979 val_bpb are the program.md output example;
  * every other number here is illustrative (marked 示意 on the page).
  *   fixed time (the real design): one 5:00 clock, everyone stops at 5:00
@@ -11,7 +13,10 @@
  * Score model (illustrative): val_bpb = a + b / sqrt(steps), a lower floor and
  * a slower start for bigger models. Scores depend only on steps, so with fixed
  * steps they come out the same on any machine.
- * Stage clock = minutes since the start of the race. One absolute schedule. */
+ * Stage clock = minutes since the start of each run. One absolute schedule.
+ * view: the race view and the hour view swap at the end of the score station,
+ * one fading out before the other fades in, and the caption flips at the same
+ * moment, so the hour stop opens on the hour view and its caption together. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(root.ExplainTimeline || global.ExplainTimeline);
   else root.BudgetModel = factory(root.ExplainTimeline);
@@ -32,7 +37,7 @@
   var SEGMENTS = [
     { key: 'race', dur: 5.0 },
     { key: 'after', dur: 3.2 },
-    { key: 'score', dur: 2.0 },
+    { key: 'score', dur: 2.6 },
     { key: 'hour', dur: 2.6 },
     { key: 'outro', dur: 2.0 }
   ];
@@ -40,9 +45,21 @@
   var SCHED = T.schedule(SEGMENTS, INTRO);
   var END = SCHED[SCHED.length - 1].end;
   var REVEAL_AT = 0.3;  // fraction of the score station where scores appear
+  var SWAP = 0.5;       // last seconds of the score station: race view out, then hour view in
+  var SCORE_END = SCHED.filter(function (s) { return s.key === 'score'; })[0].end;
 
   function duration() { return END; }
   function stops() { return [0].concat(SCHED.map(function (s) { return s.start; }), [END]); }
+
+  // which picture is on screen, and whose caption goes with it
+  function viewAt(t, station) {
+    if (station === 'hour' || station === 'outro') return { tracks: 0, hours: 1, caption: station };
+    if (station !== 'score') return { tracks: 1, hours: 0, caption: station || 'intro' };
+    var into = t - (SCORE_END - SWAP), half = SWAP / 2;
+    if (into <= 0) return { tracks: 1, hours: 0, caption: 'score' };
+    if (into < half) return { tracks: 1 - T.ease.inOut(into / half), hours: 0, caption: 'score' };
+    return { tracks: 0, hours: T.ease.inOut((into - half) / half), caption: 'hour' };
+  }
 
   function cand(key) { for (var i = 0; i < CANDS.length; i++) if (CANDS[i].key === key) return CANDS[i]; return null; }
   function bpb(key, steps) { var c = cand(key); return c.a + c.b / Math.sqrt(steps); }
@@ -92,11 +109,12 @@
       phase: station ? (station === 'outro' ? 'outro' : 'run') : 'intro',
       station: station, local: local, clock: clock, endMin: endMin,
       fixedSteps: o.fixedSteps, machine: o.machine,
-      lanes: lanes, revealed: revealed, winner: winner
+      lanes: lanes, revealed: revealed, winner: winner,
+      view: viewAt(t, station)
     };
   }
 
   return { BUDGET_MIN: BUDGET_MIN, TARGET_STEPS: TARGET_STEPS, CANDS: CANDS, MACHINES: MACHINES, MAX_STEPS: MAX_STEPS,
-           SCHED: SCHED, INTRO: INTRO, REVEAL_AT: REVEAL_AT,
+           SCHED: SCHED, INTRO: INTRO, REVEAL_AT: REVEAL_AT, SWAP: SWAP,
            duration: duration, stops: stops, stateAt: stateAt, bpb: bpb };
 });

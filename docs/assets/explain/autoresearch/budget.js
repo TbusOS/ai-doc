@@ -1,9 +1,12 @@
-/* autoresearch scene "budget" drawing — three candidates race on one clock.
+/* autoresearch scene "budget" drawing — three 5-minute runs side by side on one clock.
+ * Each lane is one run with the GPU to itself (program.md runs one experiment
+ * at a time); they are drawn side by side only to compare them.
  * State comes from BudgetModel.stateAt(t, {fixedSteps, machine}); this file
  * only draws it. Tracks share one absolute step scale (0 .. MAX_STEPS), so a
  * slower machine draws shorter bars and the fixed-steps finish line sits at
  * the same place in every option. In the "hour" station each track turns into
- * one hour filled with that candidate's runs. Colors are CSS variables:
+ * one hour filled with that candidate's runs; s.view says which of the two
+ * pictures is on screen and which caption goes with it. Colors are CSS variables:
  * orange = training, green = best score, red = over the 5-minute budget.
  * Landscape 1200×675, portrait 540×1080 (svg < 780px wide, text ≥ 15px). */
 (function () {
@@ -220,7 +223,7 @@
     out += P.text(Sc.x, Sc.headY, head, P.style('--ink-2', 16), { 'text-anchor': 'end', 'data-on': 'stage' });
     if (!s.revealed) return out;
     var p = s.station === 'score' ? T.ease.out((s.local - M.REVEAL_AT) / 0.25) : 1;
-    var pb = s.station === 'score' ? T.ease.out((s.local - 0.6) / 0.25) : 1;
+    var pb = s.station === 'score' ? T.ease.out((s.local - 0.5) / 0.2) : 1;
     s.lanes.forEach(function (ln, i) {
       var top = g.lanes[i], win = i === s.winner, val = ln.bpb.toFixed(3);
       var vs = P.style(win ? '--keep-ink' : '--ink-2', L.val.size, '--font-mono', win ? 700 : 400);
@@ -242,7 +245,7 @@
     if (s.phase === 'intro') return c.intro;
     var fin = s.lanes.map(function (l) { return l.finishMin; });
     var fastest = Math.min.apply(null, fin), slowest = Math.max.apply(null, fin);
-    var st = s.station, steps = s.fixedSteps;
+    var st = s.view.caption, steps = s.fixedSteps;
     if (st === 'race') return steps ? c.race_steps : c.race_time;
     if (st === 'after') return steps ? fmt(c.after_steps, { m: slowest }) : c.after_time;
     if (st === 'score') {
@@ -274,9 +277,8 @@
       render: function (t) {
         var g = GEO[mode], P = Painter(g);
         var s = M.stateAt(t, opts);
-        var h = s.station === 'hour' ? T.ease.inOut(s.local / 0.4) : s.station === 'outro' ? 1 : 0;
         svg.innerHTML = drawWatch(g, P, s, copy) + drawTitle(g, P, s, copy) + drawLaneHeads(g, P, s, copy) +
-          drawTracks(g, P, s, copy, 1 - h) + drawHours(g, P, s, copy, h) + drawScores(g, P, s, copy);
+          drawTracks(g, P, s, copy, s.view.tracks) + drawHours(g, P, s, copy, s.view.hours) + drawScores(g, P, s, copy);
         ctx.caption(captionFor(s, copy));
       }
     };

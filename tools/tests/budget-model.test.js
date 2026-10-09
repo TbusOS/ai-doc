@@ -86,6 +86,42 @@ test('scores stay hidden until the score station', () => {
   assert.equal(M.stateAt(st[3] + 1.0).revealed, true);
 });
 
+test('the hour stop shows the hour view alone, with its caption', () => {
+  const t = M.stops()[STATIONS.indexOf('hour') + 1];
+  for (const opts of [{}, { fixedSteps: true }]) {
+    const s = M.stateAt(t, opts);
+    assert.equal(s.view.tracks, 0);
+    assert.equal(s.view.hours, 1);
+    assert.equal(s.view.caption, 'hour');
+  }
+});
+
+test('race view and hour view never overlap, and the caption flips with the picture', () => {
+  const st = M.stops(), a = st[STATIONS.indexOf('score') + 1], b = st[STATIONS.indexOf('outro') + 1];
+  let sawHourCaptionBeforeStop = false;
+  for (let k = 0; k < 400; k++) {  // up to, not including, the outro stop
+    const t = a + (b - a) * k / 400, s = M.stateAt(t);
+    assert.ok(!(s.view.tracks > 0 && s.view.hours > 0), `t ${t}: both views visible`);
+    if (s.view.hours > 0) assert.equal(s.view.caption, 'hour', `t ${t}`);
+    if (s.view.tracks > 0) assert.notEqual(s.view.caption, 'hour', `t ${t}`);
+    if (s.station === 'score' && s.view.caption === 'hour') sawHourCaptionBeforeStop = true;
+  }
+  assert.ok(sawHourCaptionBeforeStop, 'the swap finishes before the hour stop');
+});
+
+test('the scores are on screen before the views swap', () => {
+  const sc = M.SCHED.find(s => s.key === 'score');
+  const s = M.stateAt(sc.start + M.REVEAL_AT * (sc.end - sc.start) + 1e-6);
+  assert.equal(s.view.tracks, 1);
+  assert.equal(s.revealed, true);
+});
+
+test('copy: one experiment at a time on the GPU, never "at the same time"', () => {
+  const copy = JSON.stringify(require('../../explain-src/autoresearch/scenes/budget.json'));
+  assert.ok(!/同时/.test(copy), 'program.md: each experiment runs on a single GPU, one after another');
+  assert.ok(/独占/.test(copy), 'the lanes are each a 5-minute run with the GPU to itself');
+});
+
 test('pure: order of calls does not matter', () => {
   const ts = [7.3, 0.2, 15.9, 3.1, END(), 10.0];
   const o = { fixedSteps: true, machine: 'slow' };
