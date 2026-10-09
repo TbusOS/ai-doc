@@ -239,7 +239,7 @@ for each skill:
 - **作者:** 花叔（Twitter: [@AlchainHust](https://x.com/AlchainHust)）
 - **安装:** `npx skills add alchaincyf/darwin-skill`
 - **直接灵感:** [Karpathy autoresearch](https://github.com/karpathy/autoresearch) ([本仓库解读](autoresearch.md))
-- **姊妹项目:** [女娲.skill (nuwa-skill)](../multi-agent-systems/nuwa-skill.md)（同作者，女娲造 skill，达尔文让 skill 进化）
+- **姊妹项目:** [女娲.skill (nuwa-skill)](../agent-patterns/nuwa-skill.md)（同作者，女娲造 skill，达尔文让 skill 进化）
 - **生态:** [skills.sh](https://skills.sh) — 2026 年跨 agent 工具的 Skill 标准
 - **本仓库相关:**
   - [autoresearch](autoresearch.md) — 本项目的直接灵感

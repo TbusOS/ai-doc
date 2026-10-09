@@ -161,7 +161,7 @@ Orchestrator ─┼─▶ Worker 2 ─┼─▶ Orchestrator (synthesize) → Ou
 - Orchestrator prompt 要明确"决定要派多少 worker、每个干什么"
 - Workers 应独立，不互相依赖
 - Synthesis 步骤要处理冲突的 worker 输出</p>
-<p><strong>这是 <a href="anthropic-multi-agent-research.md">Anthropic 多 agent 研究系统</a>的核心模式</strong>。</p>
+<p><strong>这是 <a href="anthropic-multi-agent-research.html">Anthropic 多 agent 研究系统</a>的核心模式</strong>。</p>
 <h3 id="25-evaluator-optimizer-">2.5 Evaluator-Optimizer（评估-优化循环）</h3>
 <pre><code>Generator LLM  →  Output  →  Evaluator LLM  →  (pass? → output | fail? → 反馈 → Generator)
                                                                                ↑____________________|
@@ -173,7 +173,7 @@ Orchestrator ─┼─▶ Worker 2 ─┼─▶ Orchestrator (synthesize) → Ou
 <p><strong>典型案例：</strong>
 - 文学翻译：翻译 → 母语人士视角评估 → 提出改进 → 重译
 - 复杂搜索：搜索结果 → 判断是否回答了问题 → 如果不够则再搜 → ...</p>
-<p><strong>这是 <a href="../self-improving-agents/reflexion.md">Reflexion</a>、<a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a> 的思想源头</strong>。</p>
+<p><strong>这是 <a href="reflexion.html">Reflexion</a>、<a href="darwin-skill.html">Darwin Skill</a> 的思想源头</strong>。</p>
 <hr>
 <h2 id="3-agent-true-agents">3. 真正的 Agent / True Agents</h2>
 <p>Anthropic 对"agent"的使用<strong>极其谨慎</strong>。只有在以下情况才推荐用 agent（而非 workflow）：</p>
@@ -254,27 +254,27 @@ Orchestrator ─┼─▶ Worker 2 ─┼─▶ Orchestrator (synthesize) → Ou
 </thead>
 <tbody>
 <tr>
-<td><a href="react.md">ReAct</a></td>
+<td><a href="react.html">ReAct</a></td>
 <td>ReAct 是"agent 循环"的原始实现；Anthropic 把它归为"True Agent"类别</td>
 </tr>
 <tr>
-<td><a href="anthropic-multi-agent-research.md">Anthropic Multi-Agent Research System</a></td>
+<td><a href="anthropic-multi-agent-research.html">Anthropic Multi-Agent Research System</a></td>
 <td>本文 5 个 pattern 在真实系统中的组合应用——orchestrator-workers + parallelization</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/reflexion.md">Reflexion</a></td>
+<td><a href="reflexion.html">Reflexion</a></td>
 <td>Evaluator-Optimizer pattern 的具体实现</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></td>
+<td><a href="agent-factory.html">AgentFactory</a></td>
 <td>把"多 Orchestrator-Worker trajectory 蒸馏为子 agent"——本文 pattern 的演化</td>
 </tr>
 <tr>
-<td><a href="coding-agents-landscape-2026.md">Coding Agents Landscape 2026</a></td>
+<td><a href="coding-agents-landscape-2026.html">Coding Agents Landscape 2026</a></td>
 <td>编码 agent 生态在 2026 全面对接本文的 pattern 语言</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a></td>
+<td><a href="darwin-skill.html">Darwin Skill</a></td>
 <td>Evaluator-Optimizer 在 skill 优化的具体落地</td>
 </tr>
 </tbody>
@@ -298,9 +298,9 @@ Orchestrator ─┼─▶ Worker 2 ─┼─▶ Orchestrator (synthesize) → Ou
 <li><a href="https://simonwillison.net/2024/Dec/20/building-effective-agents/">Simon Willison 读后笔记</a></li>
 <li><a href="https://huggingface.co/blog/Sri-Vigneshwar-DJ/building-effective-agents-with-anthropics-best-pra">HuggingFace smolagents 对本文 pattern 的实现</a></li>
 <li><strong>本仓库相关:</strong></li>
-<li><a href="anthropic-multi-agent-research.md">Anthropic Multi-Agent Research System</a></li>
-<li><a href="react.md">ReAct</a> · <a href="../self-improving-agents/reflexion.md">Reflexion</a></li>
-<li><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a> · <a href="../self-improving-agents/agent-factory.md">AgentFactory</a></li>
+<li><a href="anthropic-multi-agent-research.html">Anthropic Multi-Agent Research System</a></li>
+<li><a href="react.html">ReAct</a> · <a href="reflexion.html">Reflexion</a></li>
+<li><a href="darwin-skill.html">Darwin Skill</a> · <a href="agent-factory.html">AgentFactory</a></li>
 </ul>
           </article>
 

@@ -65,6 +65,7 @@ bash tools/check_all.sh        # 要看到 ALL CHECKS PASSED
 | 核对「原文」引用 | `python3 tools/check_sources.py explain-src/autoresearch [--scene <id>]` |
 | 中文标点 | `python3 tools/fix_cjk_punct.py --check <文案 json>`(只对文案跑,不能对代码跑) |
 | 原文页正文没变 | `python3 tools/check_articles_unchanged.py check`;**有意改了原文**才跑 `snapshot` |
+| 站内链接没断 | `python3 tools/check_links.py`(页面、图片、`#锚点`;指到 `docs/` 外面的也算断,Pages 只发布 `docs/`) |
 | 本地看 | `python3 -m http.server 8080 --directory docs`,打开 `http://localhost:8080/zh/explain/autoresearch.html` |
 
 ## 4. 做一篇新图解(摘要;细则以 skill 为准)
@@ -143,6 +144,7 @@ python3 tools/check_exports.py docs/assets/explain/autoresearch/media/
 
 | 现象 | 原因 | 办法 |
 |---|---|---|
+| 原文页的配图和原文之间的互相链接,线上全是 404(2026-10-09 查出 84 张图 + 520 条链接) | 原文 Markdown 里的相对链接是按「在 GitHub 上看仓库」写的(`react.md`、`images/x1.png`);Pages 只发布 `docs/`,原文页又都放在同一个 `articles/` 目录 | 已处理:`build.py` 生成时用 `site_link()` 改写链接、把图片复制到 `docs/assets/articles/`;`tools/check_links.py` 把关,已进 `check_all.sh` |
 | 构建后 42 个原文页全变了,原文不变检查失败 | 系统自带的 markdown 3.1.1 跟仓库用的 3.10.2 渲染结果不同 | 用 `.venv` 和 `tools/requirements.txt` 的固定版本 |
 | 导出 MP4 时 ffmpeg 报 `Invalid argument` | 舞台是 1200×675,高是奇数,H.264 的 yuv420p 要求宽高都是偶数 | 导出脚本已裁掉最后一行像素 |
 | 浏览器测试显示 SKIP | 找不到 Playwright | `cd tools && npm install && npx playwright install chromium` |

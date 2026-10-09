@@ -57,7 +57,7 @@
 - Musk 在 MIT 2014 年 AeroAstro 访谈
 - Sandy Munro 的 Tesla Model 3 / Model Y 拆解报告(Munro &amp; Associates)
 - SpaceX 公开火箭成本数据 + 行业对比
-- <a href="../training-techniques/scaling-laws.md">Kaplan Scaling Laws (2020)</a> 作为 AI 工程侧的第一性原理案例</p>
+- <a href="scaling-laws.html">Kaplan Scaling Laws (2020)</a> 作为 AI 工程侧的第一性原理案例</p>
 <p><strong>主题:</strong> "第一性原理"作为一个思维模式,如何在三个完全不同的工程领域——<strong>火箭、电池、神经网络训练</strong>——驱动数量级的成本 / 性能跳变。这不是泛泛的哲学讨论,而是<strong>把抽象的思维工具绑定到可验证的工程决策</strong>。</p>
 </blockquote>
 <hr>
@@ -201,7 +201,7 @@
 <li><strong>基于别人的决定做微小加码</strong></li>
 </ul>
 <h3 id="42-kaplan-scaling-laws">4.2 第一性原理推理 = Kaplan Scaling Laws</h3>
-<p><a href="../training-techniques/scaling-laws.md">Jared Kaplan (2020)</a> 的工作就是把 AI 训练从类比推理变成第一性原理:</p>
+<p><a href="scaling-laws.html">Jared Kaplan (2020)</a> 的工作就是把 AI 训练从类比推理变成第一性原理:</p>
 <ol>
 <li><strong>拆解到最底层不可再分变量:</strong>
    - 模型参数量 N
@@ -214,7 +214,7 @@
 <p><strong>这套方法第一次让 AI 训练的"要花多少钱、能得到什么"可被预先计算</strong>。GPT-3 175B 的 billion-dollar bet 就是基于这套预测做的。</p>
 <p><strong>类比推理得不到这个</strong> —— 没有前例可类比。</p>
 <h3 id="43">4.3 第一性原理会被下一轮第一性原理修正</h3>
-<p><a href="../training-techniques/chinchilla.md">Chinchilla (2022)</a> 用<strong>更严格的第一性原理实验设计</strong>(正确 tune 超参、多方法交叉)发现 Kaplan 错了——<strong>模型严重 undertrained</strong>,数据被低估。</p>
+<p><a href="chinchilla.html">Chinchilla (2022)</a> 用<strong>更严格的第一性原理实验设计</strong>(正确 tune 超参、多方法交叉)发现 Kaplan 错了——<strong>模型严重 undertrained</strong>,数据被低估。</p>
 <p><strong>这证明第一性原理不是一劳永逸的真理</strong>——是<strong>当前最好推理链</strong>。新数据进来,上一代"第一性原理"会被修正。</p>
 <p><strong>但方法论不变:拆到最底层 + 实证 + 外推</strong>。</p>
 <hr>
@@ -281,27 +281,27 @@ Kaplan / Chinchilla 这种"小实验外推大决策"2019 年被大多数 lab 看
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../training-techniques/scaling-laws.md">Kaplan Scaling Laws</a></strong></td>
+<td><strong><a href="scaling-laws.html">Kaplan Scaling Laws</a></strong></td>
 <td><strong>AI 工程里第一性原理的最成功案例</strong></td>
 </tr>
 <tr>
-<td><strong><a href="../training-techniques/chinchilla.md">Chinchilla</a></strong></td>
+<td><strong><a href="chinchilla.html">Chinchilla</a></strong></td>
 <td>第一性原理被<strong>下一轮更严格的第一性原理</strong>推翻的范例</td>
 </tr>
 <tr>
-<td><a href="bitter-lesson.md">Bitter Lesson</a></td>
+<td><a href="bitter-lesson.html">Bitter Lesson</a></td>
 <td>Sutton 的主张(scaling 胜出)是第一性原理得出的 —— "算力是不可再分的 resource,所以方法必须从算力扩展性出发"</td>
 </tr>
 <tr>
-<td><a href="software-2-0.md">Software 2.0</a></td>
+<td><a href="software-2-0.html">Software 2.0</a></td>
 <td>Karpathy 从"代码的本质是什么"出发重新定义编程 —— 第一性原理重塑概念</td>
 </tr>
 <tr>
-<td><a href="../agent-patterns/anthropic-building-effective-agents.md">Building Effective Agents</a></td>
+<td><a href="anthropic-building-effective-agents.html">Building Effective Agents</a></td>
 <td>Anthropic 从"单 agent 的极限是什么"出发,构建 5 个 workflow pattern —— 第一性原理驱动的 agent 工程</td>
 </tr>
 <tr>
-<td><a href="../agent-patterns/harness-design-long-running-apps.md">Harness Design</a></td>
+<td><a href="harness-design-long-running-apps.html">Harness Design</a></td>
 <td>从"generator 不能评价自己"这个基础原理推出 harness 架构</td>
 </tr>
 </tbody>
@@ -375,9 +375,9 @@ Kaplan / Chinchilla 这种"小实验外推大决策"2019 年被大多数 lab 看
 </ul>
 <h3 id="_4">本仓库相关</h3>
 <ul>
-<li><strong><a href="../training-techniques/scaling-laws.md">Kaplan Scaling Laws</a></strong> — AI 工程第一性原理的最成功案例</li>
-<li><strong><a href="../training-techniques/chinchilla.md">Chinchilla</a></strong> — 第一性原理的迭代修正</li>
-<li><strong><a href="bitter-lesson.md">Bitter Lesson</a></strong> · <strong><a href="software-2-0.md">Software 2.0</a></strong> — 本目录下其他范式文章</li>
+<li><strong><a href="scaling-laws.html">Kaplan Scaling Laws</a></strong> — AI 工程第一性原理的最成功案例</li>
+<li><strong><a href="chinchilla.html">Chinchilla</a></strong> — 第一性原理的迭代修正</li>
+<li><strong><a href="bitter-lesson.html">Bitter Lesson</a></strong> · <strong><a href="software-2-0.html">Software 2.0</a></strong> — 本目录下其他范式文章</li>
 </ul>
           </article>
 

@@ -237,7 +237,7 @@ Reflexion 的反思是<strong>情景记忆</strong>（episodic memory）——in
 <li><strong>失败率加权</strong>（反复失败的 lesson 保留更久）</li>
 <li><strong>定期蒸馏</strong>（N 条分散的反思 → 1 条综合 lesson）</li>
 </ul>
-<p>这和 <a href="../memory-systems/memorybank.md">MemoryBank</a> / <a href="../memory-systems/evo-memory.md">Evo-Memory</a> 的思路直接相关。</p>
+<p>这和 <a href="memorybank.html">MemoryBank</a> / <a href="evo-memory.html">Evo-Memory</a> 的思路直接相关。</p>
 <hr>
 <h2 id="6-relation-to-other-papers">6. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
 <table>
@@ -249,23 +249,23 @@ Reflexion 的反思是<strong>情景记忆</strong>（episodic memory）——in
 </thead>
 <tbody>
 <tr>
-<td><a href="../agent-patterns/react.md">ReAct</a></td>
+<td><a href="react.html">ReAct</a></td>
 <td>Reflexion 的 Actor 就是 ReAct 循环</td>
 </tr>
 <tr>
-<td><a href="agent-factory.md">AgentFactory</a></td>
+<td><a href="agent-factory.html">AgentFactory</a></td>
 <td>AgentFactory 把"成功 trajectory 保存为可执行代码"；Reflexion 把"失败 trajectory 保存为语言反思"——两种互补的经验载体</td>
 </tr>
 <tr>
-<td><a href="../memory-systems/memorybank.md">MemoryBank</a></td>
+<td><a href="memorybank.html">MemoryBank</a></td>
 <td>Reflexion 的反思池就是一种 memory；MemoryBank 讨论如何管理这种记忆池</td>
 </tr>
 <tr>
-<td><a href="rise.md">RISE</a></td>
+<td><a href="rise.html">RISE</a></td>
 <td>都是"失败后自我修正"，但 RISE 更聚焦单次推理内的递归，Reflexion 聚焦 trial 之间的记忆</td>
 </tr>
 <tr>
-<td><a href="evolver.md">EvolveR</a></td>
+<td><a href="evolver.html">EvolveR</a></td>
 <td>EvolveR 把反思进一步蒸馏为<strong>抽象策略原则</strong>——Reflexion 的下一层</td>
 </tr>
 </tbody>
@@ -275,7 +275,7 @@ Reflexion 的反思是<strong>情景记忆</strong>（episodic memory）——in
 <p>Reflexion 开启的"verbal RL"思想在 2025 年已经是 agent 系统的标配组件：</p>
 <ul>
 <li><strong>Claude Code / Codex</strong> 类 agent：每次 task 失败后 LLM 自动总结 "lesson.md"，下次读入</li>
-<li><strong><a href="autoresearch.md">autoresearch</a></strong>：Karpathy 的版本——Agent 跑实验，val_bpb 回退后"反思为什么这个改动没用"</li>
+<li><strong><a href="autoresearch.html">autoresearch</a></strong>：Karpathy 的版本——Agent 跑实验，val_bpb 回退后"反思为什么这个改动没用"</li>
 <li><strong>OpenAI o1/GPT-5</strong> 的 test-time thinking：内化了反思机制，不需要外部 loop</li>
 <li><strong>LangGraph 的 self-correcting chains</strong>：Reflexion 作为内置原语</li>
 </ul>
@@ -296,10 +296,10 @@ Reflexion 的反思是<strong>情景记忆</strong>（episodic memory）——in
 <li>Noah Shinn (<a href="https://x.com/noahshinn024">@noahshinn024 on X</a>)</li>
 <li>Shunyu Yao (<a href="https://x.com/ShunyuYao10">@ShunyuYao10 on X</a>) — ReAct 一作</li>
 <li><strong>本仓库相关:</strong></li>
-<li><a href="../agent-patterns/react.md">ReAct</a> — Reflexion 的基础循环</li>
-<li><a href="agent-factory.md">AgentFactory</a> — 互补的经验保存范式</li>
-<li><a href="autoresearch.md">autoresearch</a> — 2026 年的 verbal RL 应用</li>
-<li><a href="../memory-systems/memorybank.md">MemoryBank</a> — 管理反思记忆的方法论</li>
+<li><a href="react.html">ReAct</a> — Reflexion 的基础循环</li>
+<li><a href="agent-factory.html">AgentFactory</a> — 互补的经验保存范式</li>
+<li><a href="autoresearch.html">autoresearch</a> — 2026 年的 verbal RL 应用</li>
+<li><a href="memorybank.html">MemoryBank</a> — 管理反思记忆的方法论</li>
 </ul>
           </article>
 

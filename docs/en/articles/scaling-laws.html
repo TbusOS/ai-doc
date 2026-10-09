@@ -152,7 +152,7 @@ $$</p>
 <p>Kaplan 的 loss 预测不等于下游任务性能。GSM8K、MMLU、coding 这些具体能力和 loss 是<strong>强相关</strong>的,但不是<strong>确定性</strong>的。</p>
 <p>2024 年后的实践:<strong>用 Kaplan 预测训练 loss + 用小规模 eval 预测下游能力,两者结合做预算决策</strong>。</p>
 <h3 id="45-kaplan-chinchilla">4.5 Kaplan 的计算会被 Chinchilla 修正</h3>
-<p>2022 年 DeepMind 的 <a href="chinchilla.md">Chinchilla 论文</a> 指出 Kaplan 的数据配比<strong>低估了数据的重要性</strong>。2025 年的主流做法是 <strong>Chinchilla 配比,不是 Kaplan 配比</strong>。</p>
+<p>2022 年 DeepMind 的 <a href="chinchilla.html">Chinchilla 论文</a> 指出 Kaplan 的数据配比<strong>低估了数据的重要性</strong>。2025 年的主流做法是 <strong>Chinchilla 配比,不是 Kaplan 配比</strong>。</p>
 <p>但 Kaplan 的<strong>方法论</strong>(用幂律拟合 + 外推)<strong>依然是正确的</strong>——只是系数被重新校准。<strong>读 Chinchilla 的前提是先读懂 Kaplan</strong>。</p>
 <hr>
 <h2 id="5-ai-how-this-changed-the-industry">5. 对 AI 行业的改变 / How This Changed the Industry</h2>
@@ -206,31 +206,31 @@ $$</p>
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="chinchilla.md">Chinchilla</a></strong></td>
+<td><strong><a href="chinchilla.html">Chinchilla</a></strong></td>
 <td><strong>直接后续</strong> — 修正 Kaplan 的数据配比,必读对照</td>
 </tr>
 <tr>
-<td><a href="../ai-thinking/bitter-lesson.md">Sutton — Bitter Lesson</a></td>
+<td><a href="bitter-lesson.html">Sutton — Bitter Lesson</a></td>
 <td>Sutton 说"scaling 胜出",Kaplan 说"<strong>该怎么 scale</strong>"——互补</td>
 </tr>
 <tr>
-<td><a href="../ai-thinking/software-2-0.md">Karpathy — Software 2.0</a></td>
+<td><a href="software-2-0.html">Karpathy — Software 2.0</a></td>
 <td>Kaplan 告诉你 Software 2.0 的<strong>训练投资回报曲线</strong>长什么样</td>
 </tr>
 <tr>
-<td><a href="../ai-thinking/first-principles-engineering.md">First Principles in Engineering</a></td>
+<td><a href="first-principles-engineering.html">First Principles in Engineering</a></td>
 <td>Scaling Laws 是 AI 工程里<strong>第一性原理</strong>最成功的案例</td>
 </tr>
 <tr>
-<td><a href="lora.md">LoRA</a></td>
+<td><a href="lora.html">LoRA</a></td>
 <td>LoRA 节约 finetuning 成本,但<strong>基础模型预训练仍由 Scaling Law 决定</strong></td>
 </tr>
 <tr>
-<td><a href="deepseek-r1.md">DeepSeek-R1</a></td>
+<td><a href="deepseek-r1.html">DeepSeek-R1</a></td>
 <td>R1 的训练配方也受 Kaplan-Chinchilla 曲线影响</td>
 </tr>
 <tr>
-<td><a href="../open-source-models/README.md">开源模型目录</a></td>
+<td><a href="../open-source-models.html">开源模型目录</a></td>
 <td>GLM-5、Qwen3.5、Llama 4 的参数/数据比都在 Kaplan-Chinchilla 框架内</td>
 </tr>
 </tbody>
@@ -256,8 +256,8 @@ $$</p>
 <li><a href="https://arxiv.org/abs/2005.14165">GPT-3 paper (Brown et al. 2020)</a> —— 直接应用 Kaplan 结论的第一个 frontier 模型</li>
 <li><a href="https://arxiv.org/abs/2010.14701">Kaplan's follow-up: Scaling Laws for Autoregressive Generative Modeling (2020)</a></li>
 <li><strong>本仓库相关:</strong></li>
-<li><a href="chinchilla.md">Chinchilla</a> · <a href="lora.md">LoRA</a> · <a href="dpo.md">DPO</a> · <a href="deepseek-r1.md">DeepSeek-R1</a></li>
-<li><a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a> · <a href="../ai-thinking/first-principles-engineering.md">First Principles in Engineering</a></li>
+<li><a href="chinchilla.html">Chinchilla</a> · <a href="lora.html">LoRA</a> · <a href="dpo.html">DPO</a> · <a href="deepseek-r1.html">DeepSeek-R1</a></li>
+<li><a href="bitter-lesson.html">Bitter Lesson</a> · <a href="first-principles-engineering.html">First Principles in Engineering</a></li>
 </ul>
           </article>
 

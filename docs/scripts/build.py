@@ -961,6 +961,7 @@ def render_open_source_models_page(lang: str) -> str:
     readme_raw = re.sub(r"^# Open-Source Model Directory.*?\n", "", readme_raw)
     readme_raw = re.sub(r"^\[English\].*?\n", "", readme_raw, flags=re.MULTILINE)
     rendered = markdown.markdown(readme_raw, extensions=MD_EXTENSIONS, output_format="html5")
+    rendered = site_links(readme_path, rendered, in_articles=False)
 
     # Build a table-of-contents strip from the category list.
     #
@@ -1055,6 +1056,51 @@ MD_EXTENSIONS = [
     "attr_list",
 ]
 
+# Relative links in the article Markdown are written for reading the repo on GitHub
+# (`react.md`, `images/flashmoe/x1.png`). Pages publishes only docs/ and puts every
+# article page in one flat articles/ folder, so each such link is pointed at what the
+# site has instead. Only href / src change; the article text stays the same.
+GITHUB_BLOB = "https://github.com/TbusOS/ai-doc/blob/main/"
+ARTICLE_ASSETS = DOCS_DIR / "assets" / "articles"  # copies of the images the articles show
+MODELS_README = REPO_ROOT / "open-source-models" / "README.md"
+
+
+def site_link(md_file: Path, url: str, in_articles: bool = True) -> str:
+    """Where a link found in md_file points on the site, seen from the page that shows it:
+    an article page ({lang}/articles/x.html) or, in_articles=False, a page in {lang}/."""
+    if re.match(r"[a-z][a-z0-9+.-]*:|#|//", url, re.I):
+        return url
+    path, _, frag = url.partition("#")
+    hash_ = f"#{frag}" if frag else ""
+    target = (md_file.parent / path).resolve()
+    up = "../" if in_articles else ""  # to {lang}/
+    papers = {(REPO_ROOT / p.md_path).resolve(): p.slug for c in CATEGORIES for p in c.papers}
+    if target in papers:
+        return f"{'' if in_articles else 'articles/'}{papers[target]}.html{hash_}"
+    if target == MODELS_README:
+        # GitHub anchors look like `5-long-context--长上下文`; the page uses the README's own {#5-long-context}
+        return f"{up}open-source-models.html" + (f"#{frag.split('--')[0]}" if frag else "")
+    if target.is_dir() and any(c.key == target.name for c in CATEGORIES):
+        return f"{up}{target.name}.html"
+    if target.is_file() and REPO_ROOT in target.parents:
+        rel = target.relative_to(REPO_ROOT)
+        if target.suffix.lower() in (".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"):
+            copy = ARTICLE_ASSETS / rel
+            if not copy.exists() or copy.read_bytes() != target.read_bytes():
+                copy.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(target, copy)
+            return f"{up}../assets/articles/{rel.as_posix()}"
+        return f"{GITHUB_BLOB}{rel.as_posix()}{hash_}"  # in the repo but not on the site
+    return url  # tools/check_links.py reports it
+
+
+def site_links(md_file: Path, body_html: str, in_articles: bool = True) -> str:
+    def one(m: re.Match) -> str:
+        old = html.unescape(m[2])
+        new = site_link(md_file, old, in_articles)
+        return m[0] if new == old else f'{m[1]}="{html.escape(new)}"'  # untouched links keep their bytes
+    return re.sub(r'\b(href|src)="([^"]*)"', one, body_html)
+
 
 def render_article(lang: str, category: Category, paper: Paper, prev_next: tuple[Paper | None, Paper | None]) -> str:
     is_en = lang == "en"
@@ -1063,6 +1109,7 @@ def render_article(lang: str, category: Category, paper: Paper, prev_next: tuple
 
     # Markdown contains both EN and ZH paragraphs; render verbatim.
     body_html = markdown.markdown(raw, extensions=MD_EXTENSIONS, output_format="html5")
+    body_html = site_links(md_path, body_html)
 
     prev_p, next_p = prev_next
     nav_labels = {

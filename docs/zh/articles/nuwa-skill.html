@@ -372,7 +372,7 @@ Naval     ❯ 你列了三个欲望。每个欲望都是你跟不快乐签的一
 <h3 id="phase-5-agent">Phase 5: 双 Agent 精炼（标准后置工序）</h3>
 <p>Phase 4 验证通过后<strong>自动启动</strong>双 Agent 并行精炼：</p>
 <ul>
-<li><strong>Agent A（auto-skill-optimizer 视角，即 <a href="../self-improving-agents/darwin-skill.md">Darwin</a>）</strong> — 8 维度结构评估 + 3 个干跑测试 → 输出最弱 2 个维度的改进建议</li>
+<li><strong>Agent A（auto-skill-optimizer 视角，即 <a href="darwin-skill.html">Darwin</a>）</strong> — 8 维度结构评估 + 3 个干跑测试 → 输出最弱 2 个维度的改进建议</li>
 <li><strong>Agent B（skill-creator 视角）</strong> — 评审激活触发条件、角色扮演规则的可操作性</li>
 </ul>
 <p><strong>主 Agent 综合两份报告，应用不冲突的改进</strong>。这里的设计值得注意：<strong>女娲本身就内置了达尔文的评估体系</strong>——这也是女娲生成的 Skill 质量高的原因之一。Phase 5 是一次"<strong>出厂前的镀层</strong>"。</p>
@@ -512,27 +512,27 @@ Naval     ❯ 你列了三个欲望。每个欲望都是你跟不快乐签的一
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></strong></td>
+<td><strong><a href="agent-factory.html">AgentFactory</a></strong></td>
 <td>可执行 Python 子 agent</td>
 <td>AgentFactory 解决"重复任务的复利复用"；女娲解决"<strong>复制专家的认知框架</strong>"——两者的"经验单位"不同（代码 vs Skill）</td>
 </tr>
 <tr>
-<td><strong><a href="../self-improving-agents/autoresearch.md">autoresearch</a></strong></td>
+<td><strong><a href="autoresearch.html">autoresearch</a></strong></td>
 <td>单一 GPT 训练脚本</td>
 <td>autoresearch 优化<strong>同一个</strong> 代码资产；女娲<strong>批量生成新的</strong> Skill 资产</td>
 </tr>
 <tr>
-<td><strong><a href="../self-improving-agents/darwin-skill.md">darwin-skill</a></strong></td>
+<td><strong><a href="darwin-skill.html">darwin-skill</a></strong></td>
 <td>优化过的 SKILL.md</td>
 <td>同作者。女娲造 skill，达尔文让 skill 进化。Phase 5 就内嵌了达尔文</td>
 </tr>
 <tr>
-<td><strong><a href="../memory-systems/llm-knowledge-bases.md">LLM Knowledge Bases</a></strong></td>
+<td><strong><a href="llm-knowledge-bases.html">LLM Knowledge Bases</a></strong></td>
 <td>个人 Wiki</td>
 <td>Karpathy 的个人 Wiki 把<strong>自己的</strong>知识蒸馏成 Markdown；女娲把<strong>别人的</strong>思维蒸馏成 Skill。两者都是"写入侧综合"范式</td>
 </tr>
 <tr>
-<td><strong><a href="coding-agents-landscape-2026.md">Coding Agents Landscape 2026</a></strong></td>
+<td><strong><a href="coding-agents-landscape-2026.html">Coding Agents Landscape 2026</a></strong></td>
 <td>综述</td>
 <td>女娲是该综述所描述的"skill-centric 多 agent 系统"的具体例证</td>
 </tr>
@@ -567,14 +567,14 @@ Naval     ❯ 你列了三个欲望。每个欲望都是你跟不快乐签的一
 <li><strong>仓库:</strong> <a href="https://github.com/alchaincyf/nuwa-skill">github.com/alchaincyf/nuwa-skill</a></li>
 <li><strong>作者:</strong> 花叔（Twitter: <a href="https://x.com/AlchainHust">@AlchainHust</a>）</li>
 <li><strong>安装:</strong> <code>npx skills add alchaincyf/nuwa-skill</code></li>
-<li><strong>姊妹项目:</strong> <a href="../self-improving-agents/darwin-skill.md">达尔文.skill (darwin-skill)</a>（同作者，女娲造 skill，达尔文让 skill 进化）</li>
+<li><strong>姊妹项目:</strong> <a href="darwin-skill.html">达尔文.skill (darwin-skill)</a>（同作者，女娲造 skill，达尔文让 skill 进化）</li>
 <li><strong>先行工作:</strong> <a href="https://github.com/titanwings/colleague-skill">colleague-skill</a> — 蒸馏同事的可行性证明</li>
 <li><strong>生态:</strong> <a href="https://skills.sh">skills.sh</a> — 2026 年跨 agent 工具的 Skill 标准</li>
 <li><strong>本仓库相关:</strong></li>
-<li><a href="../self-improving-agents/agent-factory.md">AgentFactory</a> — "经验 = 代码"的相邻范式</li>
-<li><a href="../self-improving-agents/autoresearch.md">autoresearch</a> — Karpathy 的 skill 化自主研究原型（同被女娲 Phase 5 引用）</li>
-<li><a href="../memory-systems/llm-knowledge-bases.md">LLM Knowledge Bases</a> — Karpathy 的个人 Wiki 范式</li>
-<li><a href="coding-agents-landscape-2026.md">Coding Agents Landscape 2026</a> — 更广的生态综述</li>
+<li><a href="agent-factory.html">AgentFactory</a> — "经验 = 代码"的相邻范式</li>
+<li><a href="autoresearch.html">autoresearch</a> — Karpathy 的 skill 化自主研究原型（同被女娲 Phase 5 引用）</li>
+<li><a href="llm-knowledge-bases.html">LLM Knowledge Bases</a> — Karpathy 的个人 Wiki 范式</li>
+<li><a href="coding-agents-landscape-2026.html">Coding Agents Landscape 2026</a> — 更广的生态综述</li>
 </ul>
           </article>
 

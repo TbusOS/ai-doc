@@ -56,6 +56,7 @@ for d in explain-src/*/; do
   run "punctuation: ${d%/}" python3 tools/fix_cjk_punct.py --check "${d}zh.json" "${d}"scenes/*.json
 done
 run "original article text unchanged" python3 tools/check_articles_unchanged.py check
+run "site links (pages, images, anchors)" python3 tools/check_links.py
 
 # Published pages only: docs/zh/explain/<slug>--<tag>.html are local previews (git-ignored).
 pages=(docs/sample/index.html)
