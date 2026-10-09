@@ -11,9 +11,74 @@ html {
 /* Language picker buttons on landing */
 .lang-picker {
   display: flex;
+  flex-wrap: wrap;  /* two 200px buttons do not fit a 390px phone side by side */
   gap: var(--space-4);
   justify-content: center;
   margin-top: var(--space-7);
+}
+
+/* Root page: a card per illustrated explainer, under the language buttons */
+.explainer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 640px;
+  margin: var(--space-8) auto 0;
+  padding: var(--space-5);
+  background: #fff;
+  border: 1px solid var(--anth-light-gray);
+  border-radius: var(--radius-md);
+  color: var(--anth-text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.explainer-card:hover, .explainer-card:focus-within {
+  border-color: var(--anth-orange);
+  box-shadow: 0 6px 24px rgba(20, 20, 19, 0.08);
+}
+.explainer-card-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  color: inherit;
+  text-decoration: none;
+}
+.explainer-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--anth-light-gray);
+}
+.explainer-card-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.4;
+}
+.explainer-card-text {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--anth-text-secondary);
+}
+.explainer-card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+.explainer-card-go {
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  color: #b4532f;  /* deep orange: 4.5:1 on white, the brand orange is only ~3:1 */
+}
+.explainer-card-go:hover, .explainer-card-go:focus-visible { text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) {
+  .explainer-card { transition: none; }
 }
 
 .lang-picker .anth-button {
