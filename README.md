@@ -18,7 +18,7 @@ A curated, open-source knowledge base of high-quality AI papers, articles, and m
 
 [![autoresearch explainer: you sleep, an AI agent runs 83 experiments overnight](docs/assets/explain/autoresearch/media/intro.gif)](http://doc.tbusos.com/ai-doc/zh/explain/autoresearch.html)
 
-▶ [Watch an 84-second reel](http://doc.tbusos.com/ai-doc/assets/explain/autoresearch/media/autoresearch-reel.mp4) (silent, captions in Chinese): the opening, the experiment loop, the 5-minute budget and why the score is bpb.
+▶ [Watch a 3:26 reel](http://doc.tbusos.com/ai-doc/assets/explain/autoresearch/media/autoresearch-reel.mp4) (narrated in Chinese, with captions): the opening, the experiment loop, the 5-minute budget and why the score is bpb.
 
 **🗺️ Pending initiatives beyond the index:** See [ROADMAP.md](ROADMAP.md) (more explainers; the ink-wash paper-comic series). To continue the work on another machine, see [MAINTENANCE.md](MAINTENANCE.md).
 
@@ -206,7 +206,7 @@ AI 领域优质论文、文章与模型的中英双语知识库。为训练模�
 
 [![autoresearch 图解：你睡觉，AI 一夜跑了 83 次实验](docs/assets/explain/autoresearch/media/intro.gif)](http://doc.tbusos.com/ai-doc/zh/explain/autoresearch.html)
 
-▶ [看 84 秒短片](http://doc.tbusos.com/ai-doc/assets/explain/autoresearch/media/autoresearch-reel.mp4)（无声，有字幕）：开场、实验循环、5 分钟预算、为什么用 bpb 打分。
+▶ [看 3 分 26 秒短片](http://doc.tbusos.com/ai-doc/assets/explain/autoresearch/media/autoresearch-reel.mp4)（中文配音，有字幕）：开场、实验循环、5 分钟预算、为什么用 bpb 打分。
 
 **🗺️ 索引之外的进行中方向：** 见 [ROADMAP.md](ROADMAP.md)（更多论文图解；水墨风论文漫画系列）。换电脑接着做，见 [MAINTENANCE.md](MAINTENANCE.md)。
 

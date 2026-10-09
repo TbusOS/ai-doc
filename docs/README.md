@@ -50,6 +50,8 @@ docs/scripts/explain_build.py         # json -> docs/zh/explain/<slug>.html
 docs/scripts/home_v2.py               # new homepage preview -> docs/sample/index.html
 tools/export_scene.mjs                # scenes -> GIF / MP4 for use outside the site
 tools/net.mjs                         # headless Chromium behind a proxy: proxy + web-font cache (tools/.font-cache)
+explain-src/<slug>/reel.json          # narrated reel: shots, narration (subtitle + what is read aloud)
+tools/reel/                           # narrated reel builder: edge-tts voice, music and effects made in numpy (build.py)
 ```
 
 Build and check everything: `bash tools/check_all.sh` (must end with

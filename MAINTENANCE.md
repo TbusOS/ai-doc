@@ -103,6 +103,26 @@ python3 tools/check_exports.py <目录>      # GIF ≤ 4 MB、MP4 ≤ 15 MB、�
 
 导出是逐帧调用场景的 `seek(t)` 再截图,不是录屏,所以每次导出的结果都一样。ffmpeg 用 `tools/requirements.txt` 里 imageio-ffmpeg 自带的那个,不需要 root。
 
+### 配音短片
+
+```bash
+.venv/bin/python tools/reel/build.py explain-src/autoresearch/reel.json   # 约 13 分钟,写到 reel.json 里的 out
+python3 tools/check_exports.py docs/assets/explain/autoresearch/media/
+```
+
+- `reel.json`:每个镜头播场景的一段(`from` → `to`,场景里的秒数),讲解词没念完就停在最后一帧,镜头慢慢推近 5%。
+  `t` 是字幕,`say` 是念出来的写法(`train.py` 念「train 点 py」,`bpb` 念「b p b」)。
+  数字和说法只取场景字幕里已经核对过原文的那些。
+- 配音用 edge-tts(微软的在线语音,要联网,走 `HTTPS_PROXY`),声音 `zh-CN-XiaoyiNeural`,语速 +10%。
+  念过的句子缓存在 `tools/.tts-cache/`,改一句只重念那一句。
+- 音乐和音效由 `tools/reel/sound.py` 用 numpy 合成,不用外部素材;音效的时刻由 `tools/reel/scene_events.mjs`
+  从场景模型的状态变化算出来,所以跟画面对得上。
+- 推近不会切掉图里的字:`record.mjs` 按场景量出所有文字占的范围,推近的倍数和中心都限制在让这块范围
+  留在画面里(离边 12 像素);每帧截图前再查一次,有字被切就整次生成失败。
+- 生成完脚本自己检查:时长与计划一致、响度约 -16 LUFS、峰值 ≤ -1 dBFS、说话时音乐至少压低 6 dB。
+  好不好听脚本判断不了:换了声音、音乐或音效,要人听过再上线。
+- 网站上的 `autoresearch-reel.mp4` 是配音版。`export_scene.mjs --reel` 出的是无声版,不要写到这个路径。
+
 ## 7. 发布到 GitHub Pages
 
 1. 三个构建脚本都跑,生成的 HTML 一起提交;新图解要能从首页和对应原文页点进去。

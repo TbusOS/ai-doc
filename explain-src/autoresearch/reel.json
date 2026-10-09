@@ -1,0 +1,488 @@
+{
+ "about": "Narrated reel of the autoresearch explainer. Each shot plays a stretch of one scene (scene seconds, from -> to) at normal speed, then holds its last frame until the narration of that shot is done; while it holds the camera pushes in slowly toward `focus` (stage px, 1200x675). `t` is the subtitle, `say` what the voice reads when it differs (code names and file names read aloud). Every number and statement comes from the scene captions, which are checked against the original. Build: python3 tools/reel/build.py explain-src/autoresearch/reel.json",
+ "voice": "zh-CN-XiaoyiNeural",
+ "rate": "+10%",
+ "fps": 30,
+ "music": {
+  "key": "F",
+  "bpm": 72
+ },
+ "out": "docs/assets/explain/autoresearch/media/autoresearch-reel.mp4",
+ "end_card": {
+  "kicker": "autoresearch 图解",
+  "title": "睡一觉，\nAI 替你跑完约 100 次实验",
+  "items": [
+   "13 个能播放、能拖动的动画场景",
+   "program.md 逐段批注",
+   "3 道自测题"
+  ],
+  "url": "doc.tbusos.com/ai-doc",
+  "image": "docs/assets/explain/autoresearch/media/intro-poster.png"
+ },
+ "shots": [
+  {
+   "scene": "intro",
+   "from": 0,
+   "to": 2.45,
+   "focus": [
+    420,
+    330
+   ],
+   "mood": "night",
+   "lines": [
+    {
+     "t": "你睡觉的时候，AI 能替你做多少次实验？"
+    },
+    {
+     "t": "晚上 11 点，人让 AI 读完手册 program.md，自己去睡觉。",
+     "say": "晚上 11 点，人让 AI 读完手册 program 点 md，自己去睡觉。"
+    }
+   ]
+  },
+  {
+   "scene": "intro",
+   "from": 2.45,
+   "to": 4.2,
+   "focus": [
+    840,
+    200
+   ],
+   "mood": "night",
+   "lines": [
+    {
+     "t": "第 1 次什么都不改，原样跑一遍，拿到基线分数。"
+    }
+   ]
+  },
+  {
+   "scene": "intro",
+   "from": 4.2,
+   "to": 6.0,
+   "focus": [
+    840,
+    200
+   ],
+   "mood": "night",
+   "lines": [
+    {
+     "t": "之后每次：改代码、训练 5 分钟、比一比。第 2 次没变好，丢掉。"
+    }
+   ]
+  },
+  {
+   "scene": "intro",
+   "from": 6.0,
+   "to": 7.85,
+   "focus": [
+    840,
+    200
+   ],
+   "mood": "night",
+   "lines": [
+    {
+     "t": "第 3 次把每步的数据量减半，5 分钟能多走几步。分数变低，留下。"
+    }
+   ]
+  },
+  {
+   "scene": "intro",
+   "from": 7.85,
+   "to": 11.8,
+   "focus": [
+    840,
+    200
+   ],
+   "mood": "night",
+   "lines": [
+    {
+     "t": "接下来一夜快进。每个点是一次实验：灰点丢掉，绿点留下。"
+    }
+   ]
+  },
+  {
+   "scene": "intro",
+   "from": 11.8,
+   "to": 15.8,
+   "focus": [
+    840,
+    200
+   ],
+   "mood": "night",
+   "lines": [
+    {
+     "t": "绿线是目前最好的分数。分数越低越好，所以它只往下走。"
+    }
+   ]
+  },
+  {
+   "scene": "intro",
+   "from": 15.8,
+   "to": 19.4,
+   "focus": [
+    600,
+    300
+   ],
+   "mood": "morning",
+   "lines": [
+    {
+     "t": "早上 6 点：83 次实验，留下 15 次，最好分数从约 0.9979 降到约 0.9773。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 0,
+   "to": 1.0,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "这一夜，AI 在重复什么？拆开一轮看。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 1.0,
+   "to": 7.25,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "第一轮原样跑，拿到基线分数 0.9979。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 7.25,
+   "to": 8.25,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "第二轮，AI 想了个点子，直接改 train.py，这是它唯一能动的文件。",
+     "say": "第二轮，AI 想了个点子，直接改 train 点 py，这是它唯一能动的文件。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 8.25,
+   "to": 8.75,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "先提交，没变好还能 git reset 退回来。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 8.75,
+   "to": 10.1,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "然后训练，不管改了什么，都只给 5 分钟。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 10.1,
+   "to": 10.8,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "日志很长，它只用 grep 挑出分数和显存两行。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 10.8,
+   "to": 11.8,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "0.9932 比 0.9979 低，变好了。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 11.8,
+   "to": 13.4,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "在 results.tsv 里记一行，分支前进一格。",
+     "say": "在 results 点 tsv 里记一行，分支前进一格。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 13.4,
+   "to": 19.6,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "第三轮没变好：git reset，代码退回去，只在表里留一条记录。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 19.6,
+   "to": 25.8,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "第四轮训练崩了，显存不够。记一笔，换下一个点子。"
+    }
+   ]
+  },
+  {
+   "scene": "loop",
+   "from": 25.8,
+   "to": 27.8,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "人睡一觉，这个循环能转大约 100 圈。"
+    }
+   ]
+  },
+  {
+   "scene": "budget",
+   "from": 0,
+   "to": 1.2,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "为什么每次只给 5 分钟？看三个改动：模型改小、不改、改大。"
+    },
+    {
+     "t": "它们其实一次只跑一个，这里并排画出来比。"
+    }
+   ]
+  },
+  {
+   "scene": "budget",
+   "from": 1.2,
+   "to": 6.25,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "race",
+   "lines": [
+    {
+     "t": "小模型每步快，大模型每步慢，5 分钟走的步数差得很远。"
+    }
+   ]
+  },
+  {
+   "scene": "budget",
+   "from": 6.25,
+   "to": 10.2,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "可不管走了几步，5 分钟一到就停。"
+    }
+   ]
+  },
+  {
+   "scene": "budget",
+   "from": 10.2,
+   "to": 12.0,
+   "focus": [
+    900,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "停下再打分：不改的默认模型分数最低，也就是最好。"
+    }
+   ]
+  },
+  {
+   "scene": "budget",
+   "from": 12.0,
+   "to": 14.6,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "每次 5 分钟，一小时大约 12 次。"
+    }
+   ]
+  },
+  {
+   "scene": "budget",
+   "from": 14.6,
+   "to": 16.6,
+   "focus": [
+    600,
+    330
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "所以不管改了什么，结果都能直接比。找到的是这台机器上 5 分钟内最好的模型。"
+    }
+   ]
+  },
+  {
+   "scene": "vocab",
+   "from": 0,
+   "to": 1.8,
+   "focus": [
+    600,
+    300
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "最后：打分为什么用 bpb，不用 loss？",
+     "say": "最后：打分为什么用 b p b，不用 loss？"
+    },
+    {
+     "t": "举个例子：一句话 32 个字节，模型一共猜错 30 比特。"
+    }
+   ]
+  },
+  {
+   "scene": "vocab",
+   "from": 1.8,
+   "to": 4.85,
+   "focus": [
+    600,
+    300
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "词表 8192 切成 6 个 token：loss 按 token 平均是 5 比特，bpb 按字节平均约 0.938。",
+     "say": "词表 8192 切成 6 个 token：loss 按 token 平均是 5 比特，b p b 按字节平均约 0.938。"
+    }
+   ]
+  },
+  {
+   "scene": "vocab",
+   "from": 4.85,
+   "to": 8.25,
+   "focus": [
+    600,
+    300
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "换成词表 256，切成 32 个 token：猜错的总量没变，loss 却降到 0.938，bpb 不变。",
+     "say": "换成词表 256，切成 32 个 token：猜错的总量没变，loss 却降到 0.938，b p b 不变。"
+    }
+   ]
+  },
+  {
+   "scene": "vocab",
+   "from": 8.25,
+   "to": 11.0,
+   "focus": [
+    900,
+    300
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "按 bpb 比是持平：模型本来就没变好，判对了。",
+     "say": "按 b p b 比是持平：模型本来就没变好，判对了。"
+    }
+   ]
+  },
+  {
+   "scene": "vocab",
+   "from": 11.0,
+   "to": 13.6,
+   "focus": [
+    600,
+    300
+   ],
+   "mood": "work",
+   "lines": [
+    {
+     "t": "loss 跟着切法走，bpb 只看整句猜错多少。换了词表，也能拿 bpb 公平比较。",
+     "say": "loss 跟着切法走，b p b 只看整句猜错多少。换了词表，也能拿 b p b 公平比较。"
+    }
+   ]
+  },
+  {
+   "card": "end",
+   "mood": "end",
+   "lines": [
+    {
+     "t": "完整图解有 13 个能播放、能拖动的动画场景，还有原文逐段批注和 3 道自测题。"
+    },
+    {
+     "t": "网址在屏幕上。"
+    }
+   ]
+  }
+ ]
+}

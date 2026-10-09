@@ -9,3 +9,6 @@ numpy==2.4.4
 # imageio-ffmpeg ships a static ffmpeg (libx264, palettegen); no root needed.
 pillow==12.0.0
 imageio-ffmpeg==0.6.0
+
+# Narrated reel (tools/reel): the voice. Talks to Microsoft's online speech service.
+edge-tts==7.2.8
