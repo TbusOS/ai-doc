@@ -62,7 +62,7 @@
 <h2 id="_1">摘要</h2>
 <p>混合专家 (MoE) 模型因通过稀疏激活模式实现大语言模型的高效扩展而受到关注，这种模式允许模型的部分执行。然而，由于其巨大的参数量，在资源有限的边缘设备上部署这些模型仍然充满挑战。近期的 MoE 模型增长到数百 GB，使得基于 RAM 的 offloading 方案变得不切实际。FlashMoE 通过将不活跃的 MoE 专家 offload 到 SSD 存储来解决这一问题，并引入了一种轻量级的基于 ML 的缓存策略，自适应地结合时近性和频率信号以最大化专家复用，显著减少存储 I/O。在实际硬件上，FlashMoE 相比 LRU 和 LFU 等传统策略实现了高达 51% 的缓存命中率提升，以及相对于竞争 MoE 推理系统 2.6 倍的加速。</p>
 <hr>
-<p><img alt="Figure 1: Illustration of an MoE model decoder layer" src="images/flashmoe/x1.png"></p>
+<p><img alt="Figure 1: Illustration of an MoE model decoder layer" src="../../assets/articles/inference-optimization/images/flashmoe/x1.png"></p>
 <p><em>图 1：MoE 模型解码器层示意图</em></p>
 <h2 id="1-introduction">1. Introduction / 引言</h2>
 <p>As MoE models continue to scale, their parameter counts now reach hundreds of gigabytes. While previous approaches like Fiddler and DAOP rely on DRAM-based offloading, this becomes impractical on devices with only 16-64GB RAM. FlashMoE proposes moving expert weights to SSD storage, which offers much larger capacity at the cost of higher access latency. The key challenge then becomes minimizing SSD I/O through intelligent caching.</p>
@@ -73,7 +73,7 @@
 <p>Experts and non-expert components are stored separately. Experts are subdivided by layer and unit as individual PyTorch files, enabling fine-grained on-demand loading. Non-expert components (attention layers, embeddings) remain in DRAM.</p>
 <p>专家和非专家组件分开存储。专家按层和单元细分为单独的 PyTorch 文件，实现细粒度的按需加载。非专家组件（注意力层、嵌入层）保留在 DRAM 中。</p>
 <h3 id="22-ml-based-cache-replacement-policy-ml">2.2 ML-Based Cache Replacement Policy / 基于 ML 的缓存替换策略</h3>
-<p><img alt="Figure 2: Heatmap comparing LRU and Belady cache policies" src="images/flashmoe/x2.png"></p>
+<p><img alt="Figure 2: Heatmap comparing LRU and Belady cache policies" src="../../assets/articles/inference-optimization/images/flashmoe/x2.png"></p>
 <p><em>图 2：LRU 与 Belady 缓存策略的热力图对比。最深的颜色表示专家在该时间步被路由，颜色随时间向后变浅。</em></p>
 <p>Rather than relying on traditional LRU/LFU heuristics, FlashMoE trains a lightweight feedforward neural network to approximate Belady's optimal replacement algorithm (which requires future knowledge).</p>
 <p>FlashMoE 没有依赖传统的 LRU/LFU 启发式方法，而是训练了一个轻量级前馈神经网络来近似 Belady 最优替换算法（该算法需要未来知识）。</p>
@@ -89,10 +89,10 @@
 <li>Loss: MSE / 损失函数: MSE</li>
 <li>Optimizer: AdamW, learning rate 1e-3 / 优化器: AdamW，学习率 1e-3</li>
 </ul>
-<p><img alt="Figure 4: Overall training method illustration of FlashMoE" src="images/flashmoe/x5.png"></p>
+<p><img alt="Figure 4: Overall training method illustration of FlashMoE" src="../../assets/articles/inference-optimization/images/flashmoe/x5.png"></p>
 <p><em>图 4：FlashMoE 整体训练方法示意图</em></p>
 <h3 id="23-system-architecture">2.3 System Architecture / 系统架构</h3>
-<p><img alt="Figure 3: (a) Overall system of FlashMoE. (b) FlashMoE's prefill process" src="images/flashmoe/x3.png"></p>
+<p><img alt="Figure 3: (a) Overall system of FlashMoE. (b) FlashMoE's prefill process" src="../../assets/articles/inference-optimization/images/flashmoe/x3.png"></p>
 <p><em>图 3：(a) FlashMoE 整体系统架构。(b) FlashMoE 的预填充过程。</em></p>
 <p><strong>Initialization / 初始化:</strong></p>
 <p>Only non-expert components are loaded into memory initially, reducing load time by ~6.8x versus Fiddler/DAOP.</p>
@@ -103,7 +103,7 @@
 <p><strong>Decoding Stage / 解码阶段:</strong></p>
 <p>Expert loading accounts for over 70% of total decoding time, motivating the sophisticated cache policy. The ML-based cache predicts which experts are least likely to be reused and evicts them first.</p>
 <p>专家加载占总解码时间的 70% 以上，这推动了复杂缓存策略的开发。基于 ML 的缓存预测哪些专家最不可能被复用，并优先驱逐它们。</p>
-<p><img alt="Figure 5: Decoder layer computation pipeline of FlashMoE" src="images/flashmoe/x6.png"></p>
+<p><img alt="Figure 5: Decoder layer computation pipeline of FlashMoE" src="../../assets/articles/inference-optimization/images/flashmoe/x6.png"></p>
 <p><em>图 5：FlashMoE 解码器层计算流水线</em></p>
 <hr>
 <h2 id="3-experiments">3. Experiments / 实验</h2>
@@ -114,7 +114,7 @@
 <li>SSD: SK Hynix P51 NVMe (7.4 GB/s)</li>
 <li>RAM: 16GB DDR5</li>
 </ul>
-<p><img alt="Figure 6: Hit rate by cache size and replacement policy" src="images/flashmoe/x7.png"></p>
+<p><img alt="Figure 6: Hit rate by cache size and replacement policy" src="../../assets/articles/inference-optimization/images/flashmoe/x7.png"></p>
 <p><em>图 6：不同缓存大小与替换策略的命中率。(a) OLMoE-1B-7B，(b) Qwen3-30B-A3B。</em></p>
 <h3 id="32-cache-hit-rate-results">3.2 Cache Hit Rate Results / 缓存命中率结果</h3>
 <table>
@@ -165,7 +165,7 @@
 </tbody>
 </table>
 <hr>
-<p><img alt="Figure 7: Latency and speed benchmarks across systems and policies" src="images/flashmoe/x9.png"></p>
+<p><img alt="Figure 7: Latency and speed benchmarks across systems and policies" src="../../assets/articles/inference-optimization/images/flashmoe/x9.png"></p>
 <p><em>图 7：(a,d) MoE 推理系统的模型加载与预填充延迟。(b,e) 不同缓存替换策略下的 token 生成速度。(c,f) 不同推理系统的 token 生成速度。</em></p>
 <hr>
 <h2 id="4-key-insights">4. Key Insights / 核心洞察</h2>

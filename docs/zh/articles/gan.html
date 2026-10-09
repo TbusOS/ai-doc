@@ -71,9 +71,9 @@
 <p>两者交替优化，Nash 均衡时 Generator 生成的分布<strong>完美逼近</strong>真实数据分布——<strong>用对抗代替密度估计</strong>。</p>
 <p>这个想法影响了：
 - <strong>2014-2020 年整个生成模型浪潮</strong>（StyleGAN、BigGAN、CycleGAN、Pix2Pix 等）
-- <strong>Self-play RL</strong>（AlphaZero、<a href="../self-improving-agents/spin.md">SPIN</a>——模型 vs 上一版自己）
+- <strong>Self-play RL</strong>（AlphaZero、<a href="spin.html">SPIN</a>——模型 vs 上一版自己）
 - <strong>RLHF / DPO</strong>——本质都是"用一个判别者评价生成者"
-- <strong><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a></strong> (2026) ——generator agent + evaluator agent 就是 GAN 的 agent 层投射</p>
+- <strong><a href="harness-design-long-running-apps.html">Anthropic Harness Design</a></strong> (2026) ——generator agent + evaluator agent 就是 GAN 的 agent 层投射</p>
 <p><strong>GAN 的思想活了 12 年，从像素生成走到 agent 架构——是深度学习最深刻的 meta-pattern 之一</strong>。</p>
 <hr>
 <h2 id="1-the-core-idea">1. 核心思想 / The Core Idea</h2>
@@ -191,27 +191,27 @@ $$</p>
 <tbody>
 <tr>
 <td><strong>RL self-play</strong></td>
-<td><a href="../self-improving-agents/spin.md">SPIN</a> — 模型 vs 上一版自己</td>
+<td><a href="spin.html">SPIN</a> — 模型 vs 上一版自己</td>
 </tr>
 <tr>
 <td><strong>RLHF / DPO</strong></td>
-<td><a href="dpo.md">DPO</a> — policy 在参考模型对比下被 "discriminate"</td>
+<td><a href="dpo.html">DPO</a> — policy 在参考模型对比下被 "discriminate"</td>
 </tr>
 <tr>
 <td><strong>RL reasoning</strong></td>
-<td>GRPO（<a href="deepseek-r1.md">DeepSeek-R1</a>）—— group 中其他样本充当 discriminator baseline</td>
+<td>GRPO（<a href="deepseek-r1.html">DeepSeek-R1</a>）—— group 中其他样本充当 discriminator baseline</td>
 </tr>
 <tr>
 <td><strong>Agent harness</strong></td>
-<td><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a> — Generator Agent + Evaluator Agent</td>
+<td><a href="harness-design-long-running-apps.html">Anthropic Harness Design</a> — Generator Agent + Evaluator Agent</td>
 </tr>
 <tr>
 <td><strong>Skill 优化</strong></td>
-<td><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a> — 子 agent 独立评分</td>
+<td><a href="darwin-skill.html">Darwin Skill</a> — 子 agent 独立评分</td>
 </tr>
 <tr>
 <td><strong>Data quality</strong></td>
-<td><a href="../self-improving-agents/cherry-llm.md">Cherry LLM</a> — IFD 指标筛选 = 隐式的 discriminator</td>
+<td><a href="cherry-llm.html">Cherry LLM</a> — IFD 指标筛选 = 隐式的 discriminator</td>
 </tr>
 </tbody>
 </table>
@@ -258,31 +258,31 @@ $$</p>
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a></strong></td>
+<td><strong><a href="harness-design-long-running-apps.html">Anthropic Harness Design</a></strong></td>
 <td><strong>最直接的现代投射——GAN 的 generator-discriminator 在 2026 年变成 agent 层的 Generator-Evaluator</strong></td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/spin.md">SPIN</a></td>
+<td><a href="spin.html">SPIN</a></td>
 <td>用 GAN 思想做 LLM 自博弈微调</td>
 </tr>
 <tr>
-<td><a href="dpo.md">DPO</a></td>
+<td><a href="dpo.html">DPO</a></td>
 <td>把"discriminator"隐式内置到 log-ratio 的对比里</td>
 </tr>
 <tr>
-<td><a href="deepseek-r1.md">DeepSeek-R1 (GRPO)</a></td>
+<td><a href="deepseek-r1.html">DeepSeek-R1 (GRPO)</a></td>
 <td>Group baseline 就是隐式 discriminator</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/reflexion.md">Reflexion</a></td>
+<td><a href="reflexion.html">Reflexion</a></td>
 <td>Verbal RL 的外部 judge = discriminator 升级为 language-based</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/darwin-skill.md">Darwin Skill</a></td>
+<td><a href="darwin-skill.html">Darwin Skill</a></td>
 <td>独立子 agent 评分 = evaluator，这是对"generator 不能自评"原则的工程化</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/cherry-llm.md">Cherry LLM</a></td>
+<td><a href="cherry-llm.html">Cherry LLM</a></td>
 <td>IFD 指标充当 data-level 的 discriminator</td>
 </tr>
 </tbody>
@@ -312,9 +312,9 @@ $$</p>
 <li><strong>为什么 Diffusion 接管:</strong></li>
 <li><a href="https://arxiv.org/abs/2006.11239">DDPM (Ho et al. 2020)</a> — Diffusion 模型的奠基</li>
 <li><strong>本仓库相关:</strong></li>
-<li><strong><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a></strong> — GAN 2026 年的 agent-level 复活</li>
-<li><a href="../self-improving-agents/spin.md">SPIN</a> · <a href="dpo.md">DPO</a> · <a href="deepseek-r1.md">DeepSeek-R1</a> · <a href="../self-improving-agents/reflexion.md">Reflexion</a></li>
-<li><a href="../open-source-models/README.md#11-image-generation--图像生成">开源模型目录 — Image Generation</a> — GAN 后继（FLUX / SDXL）</li>
+<li><strong><a href="harness-design-long-running-apps.html">Anthropic Harness Design</a></strong> — GAN 2026 年的 agent-level 复活</li>
+<li><a href="spin.html">SPIN</a> · <a href="dpo.html">DPO</a> · <a href="deepseek-r1.html">DeepSeek-R1</a> · <a href="reflexion.html">Reflexion</a></li>
+<li><a href="../open-source-models.html#11-image-generation">开源模型目录 — Image Generation</a> — GAN 后继（FLUX / SDXL）</li>
 </ul>
           </article>
 

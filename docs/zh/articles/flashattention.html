@@ -210,23 +210,23 @@ output = F.scaled_dot_product_attention(Q, K, V, is_causal=True)
 </thead>
 <tbody>
 <tr>
-<td><a href="llm-in-a-flash.md">LLM in a Flash</a></td>
+<td><a href="llm-in-a-flash.html">LLM in a Flash</a></td>
 <td>都是 IO-aware 思维的工程实现——FlashAttention 是 GPU SRAM/HBM 层面，Apple 这篇是 RAM/Flash 层面</td>
 </tr>
 <tr>
-<td><a href="turboquant.md">TurboQuant</a></td>
+<td><a href="turboquant.html">TurboQuant</a></td>
 <td>都在压缩 attention 的开销；FlashAttention 改 attention 算法，TurboQuant 改 KV cache 表示</td>
 </tr>
 <tr>
-<td><a href="fast-inference-moe-offloading.md">Fast Inference of MoE with Offloading</a></td>
+<td><a href="fast-inference-moe-offloading.html">Fast Inference of MoE with Offloading</a></td>
 <td>IO-aware 思维的另一应用：专家权重也遵循内存层级</td>
 </tr>
 <tr>
-<td><a href="flashmoe.md">FlashMoE</a></td>
+<td><a href="flashmoe.html">FlashMoE</a></td>
 <td>Flash 思想从 attention 扩展到 MoE 路由</td>
 </tr>
 <tr>
-<td><a href="../open-source-models/README.md#5-long-context--长上下文">Long Context Models (Llama 4 Scout 等)</a></td>
+<td><a href="../open-source-models.html#5-long-context">Long Context Models (Llama 4 Scout 等)</a></td>
 <td>10M 上下文直接建立在 FlashAttention 的 O(N) 内存上</td>
 </tr>
 </tbody>
@@ -252,8 +252,8 @@ output = F.scaled_dot_product_attention(Q, K, V, is_causal=True)
 <li>Christopher Ré — Stanford HazyResearch 实验室</li>
 <li><strong>Tri Dao 的 PyTorch 集成博客:</strong> <a href="https://pytorch.org/blog/accelerated-pytorch-2/">PyTorch Blog — FlashAttention in PyTorch 2.0</a></li>
 <li><strong>本仓库相关:</strong></li>
-<li><a href="llm-in-a-flash.md">LLM in a Flash</a> / <a href="turboquant.md">TurboQuant</a> / <a href="flashmoe.md">FlashMoE</a></li>
-<li><a href="../open-source-models/README.md#5-long-context--长上下文">长上下文模型目录</a></li>
+<li><a href="llm-in-a-flash.html">LLM in a Flash</a> / <a href="turboquant.html">TurboQuant</a> / <a href="flashmoe.html">FlashMoE</a></li>
+<li><a href="../open-source-models.html#5-long-context">长上下文模型目录</a></li>
 </ul>
           </article>
 

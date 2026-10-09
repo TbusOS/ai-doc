@@ -68,7 +68,7 @@
 <hr>
 <h2 id="2-key-technical-contributions">2. Key Technical Contributions / 核心技术贡献</h2>
 <h3 id="21-expert-locality-observation">2.1 Expert Locality Observation / 专家局部性观察</h3>
-<p><img alt="Figure 1: Expert loading pattern in Mixtral-8x7B-Instruct" src="images/fast-inference-moe/x1.png"></p>
+<p><img alt="Figure 1: Expert loading pattern in Mixtral-8x7B-Instruct" src="../../assets/articles/inference-optimization/images/fast-inference-moe/x1.png"></p>
 <p><em>图 1：Mixtral-8x7B-Instruct 中的专家加载模式。蓝色单元格表示某个专家在编码某个 token 时被激活；蓝色越深表示门控权重越高。灰色小方块表示在 k=2 的 LRU 缓存中哪些专家被缓存。</em></p>
 <p>The researchers discovered that MoE models exhibit reusable experts across adjacent tokens. Some experts activate in sequences of 2-4 tokens, creating opportunities for caching rather than constant reloading from host RAM or SSD.</p>
 <p>研究者发现 MoE 模型在相邻 token 之间展现出可复用的专家。某些专家在连续 2-4 个 token 中被激活，这为缓存而非从主机 RAM 或 SSD 持续重新加载创造了机会。</p>
@@ -85,7 +85,7 @@
 <li><strong>k=4</strong>: 适用于 16GB GPU</li>
 </ul>
 <p>这通过保持频繁访问的专家随时可用，显著减少了 GPU-RAM 通信开销。</p>
-<p><img alt="Figure 2: LRU cache hit ratio and speculative loading recall" src="images/fast-inference-moe/x2.png"></p>
+<p><img alt="Figure 2: LRU cache hit ratio and speculative loading recall" src="../../assets/articles/inference-optimization/images/fast-inference-moe/x2.png"></p>
 <p><em>图 2：左图为不同缓存大小 k 的 LRU 缓存命中率；右图为预加载不同数量专家时的推测性加载召回率（实线=提前 1 层，虚线=提前 2 层，点线=提前 10 层）</em></p>
 <h3 id="23-speculative-expert-loading">2.3 Speculative Expert Loading / 推测性专家加载</h3>
 <p>Since traditional pre-fetching cannot work with MoE (experts are selected just-in-time by the gating function), the authors developed speculative loading: applying the next layer's gating function to the current layer's hidden states to predict likely experts ahead of time, enabling pre-loading before they are actually needed.</p>
@@ -111,7 +111,7 @@
 </ul>
 <hr>
 <h2 id="3-experiments">3. Experiments / 实验</h2>
-<p><img alt="Figure 3: System architecture and benchmark results" src="images/fast-inference-moe/x3.png"></p>
+<p><img alt="Figure 3: System architecture and benchmark results" src="../../assets/articles/inference-optimization/images/fast-inference-moe/x3.png"></p>
 <p><em>图 3：系统架构与基准测试结果</em></p>
 <h3 id="31-results">3.1 Results / 实验结果</h3>
 <table>

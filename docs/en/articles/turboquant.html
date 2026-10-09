@@ -106,8 +106,8 @@
 <p>乘积量化在索引阶段使用 k-means 变体构建量化码本，因此不适用于在线场景。基于网格的 PQ 方法消除了预处理，但存在次优的理论保证且缺乏 GPU 向量化支持。实验将证明，TurboQuant 的量化速度比 PQ 快 5-6 个数量级。</p>
 <hr>
 <h2 id="4-core-methodology">4. Core Methodology / 核心方法</h2>
-<p><img alt="Figure 1: Error distribution of TurboQuant for Inner Product Estimation" src="images/turboquant/x1.png">
-<img alt="" src="images/turboquant/x2.png"></p>
+<p><img alt="Figure 1: Error distribution of TurboQuant for Inner Product Estimation" src="../../assets/articles/inference-optimization/images/turboquant/x1.png">
+<img alt="" src="../../assets/articles/inference-optimization/images/turboquant/x2.png"></p>
 <p><em>图 1：TurboQuant_prod 和 TurboQuant_mse 的内积估计误差分布</em></p>
 <h3 id="41-key-insight-random-rotation-beta-distribution-beta">4.1 Key Insight: Random Rotation + Beta Distribution / 核心洞察：随机旋转 + Beta 分布</h3>
 <p>For a unit vector x on the unit sphere S^{d-1}, applying a random rotation Π creates Π·x uniformly distributed on the sphere. Each coordinate of the rotated vector follows a Beta distribution:</p>
@@ -189,8 +189,8 @@ Dequantize(idx, qjl, γ):
   x̃_qjl ← (√(π/2)/d) · γ · Sᵀ · qjl        // 通过 QJL 重构残差
   return x̃_mse + x̃_qjl                       // 合并两阶段
 </code></pre>
-<p><img alt="Figure 2: Variance of inner-product error comparison" src="images/turboquant/x3.png">
-<img alt="" src="images/turboquant/x4.png"></p>
+<p><img alt="Figure 2: Variance of inner-product error comparison" src="../../assets/articles/inference-optimization/images/turboquant/x3.png">
+<img alt="" src="../../assets/articles/inference-optimization/images/turboquant/x4.png"></p>
 <p><em>图 2：TurboQuant_prod 的内积误差方差保持恒定，而 TurboQuant_mse 的方差随平均内积增加。比特宽度 b=2。</em></p>
 <p><strong>Theorem 2 / 定理 2：</strong></p>
 <p>For b-bit inner-product TurboQuant:</p>
@@ -231,8 +231,8 @@ Dequantize(idx, qjl, γ):
 <p><strong>证明概要：</strong> 无偏性来自条件期望：E[⟨y, x̃⟩ | x̃_mse] = ⟨y, x̃_mse⟩ + ⟨y, r⟩ = ⟨y, x⟩。方差上界利用 QJL 方差界 (π/2d)·‖y‖₂²·‖r‖₂² 结合 (b−1)-bit MSE 量化器的 ‖r‖₂² ≤ D_mse。</p>
 <hr>
 <h2 id="5-theoretical-bounds">5. Theoretical Bounds / 理论界</h2>
-<p><img alt="Figure 3: Comparison of inner-product error and MSE against theoretical bounds" src="images/turboquant/x5.png">
-<img alt="" src="images/turboquant/x6.png"></p>
+<p><img alt="Figure 3: Comparison of inner-product error and MSE against theoretical bounds" src="../../assets/articles/inference-optimization/images/turboquant/x5.png">
+<img alt="" src="../../assets/articles/inference-optimization/images/turboquant/x6.png"></p>
 <p><em>图 3：不同比特率下内积误差和 MSE 与理论界的对比</em></p>
 <h3 id="51-shannon-lower-bound-shannon">5.1 Shannon Lower Bound / Shannon 下界</h3>
 <p>For a random vector x ∈ ℝᵈ with finite differential entropy h(x), the MSE distortion-rate function for total bit complexity B ≥ 0:</p>
@@ -292,12 +292,12 @@ Dequantize(idx, qjl, γ):
 <li>Average inner product error and MSE align with theoretical predictions. 平均内积误差和 MSE 与理论预测一致。</li>
 </ul>
 <h3 id="62-needle-in-a-haystack">6.2 Needle-In-A-Haystack / 大海捞针测试</h3>
-<p><img alt="Figure 4: Needle-In-A-Haystack test on Llama-3.1-8B-Instruct" src="images/turboquant/x7.png">
-<img alt="" src="images/turboquant/x8.png">
-<img alt="" src="images/turboquant/x9.png">
-<img alt="" src="images/turboquant/x10.png">
-<img alt="" src="images/turboquant/x11.png">
-<img alt="" src="images/turboquant/x12.png"></p>
+<p><img alt="Figure 4: Needle-In-A-Haystack test on Llama-3.1-8B-Instruct" src="../../assets/articles/inference-optimization/images/turboquant/x7.png">
+<img alt="" src="../../assets/articles/inference-optimization/images/turboquant/x8.png">
+<img alt="" src="../../assets/articles/inference-optimization/images/turboquant/x9.png">
+<img alt="" src="../../assets/articles/inference-optimization/images/turboquant/x10.png">
+<img alt="" src="../../assets/articles/inference-optimization/images/turboquant/x11.png">
+<img alt="" src="../../assets/articles/inference-optimization/images/turboquant/x12.png"></p>
 <p><em>图 4：Llama-3.1-8B-Instruct 在大海捞针测试上的评估，对比多种压缩方法（上下文长度 4K-104K，0.25 压缩比）</em></p>
 <table>
 <thead>
@@ -405,11 +405,11 @@ Dequantize(idx, qjl, γ):
 <p>TurboQuant 2.5-bit achieves 49.62 on Ministral-7B, virtually indistinguishable from full precision 49.89.</p>
 <p>TurboQuant 2.5 bit 在 Ministral-7B 上得分 49.62，与全精度 49.89 几乎无差异。</p>
 <h3 id="64-nearest-neighbor-search">6.4 Nearest Neighbor Search / 最近邻搜索</h3>
-<p><img alt="Figure 5a: Recall comparison on GloVe (d=200)" src="images/turboquant/x13.png"></p>
+<p><img alt="Figure 5a: Recall comparison on GloVe (d=200)" src="../../assets/articles/inference-optimization/images/turboquant/x13.png"></p>
 <p><em>图 5a：GloVe 数据集 (d=200) 上的召回率对比</em></p>
-<p><img alt="Figure 5b: Recall comparison on OpenAI3 (d=1536)" src="images/turboquant/x14.png"></p>
+<p><img alt="Figure 5b: Recall comparison on OpenAI3 (d=1536)" src="../../assets/articles/inference-optimization/images/turboquant/x14.png"></p>
 <p><em>图 5b：OpenAI3 数据集 (d=1536) 上的召回率对比</em></p>
-<p><img alt="Figure 5c: Recall comparison on OpenAI3 (d=3072)" src="images/turboquant/x15.png"></p>
+<p><img alt="Figure 5c: Recall comparison on OpenAI3 (d=3072)" src="../../assets/articles/inference-optimization/images/turboquant/x15.png"></p>
 <p><em>图 5c：OpenAI3 数据集 (d=3072) 上的召回率对比</em></p>
 <p><strong>Quantization Time (seconds) for 4-bit / 4-bit 量化时间（秒）：</strong></p>
 <table>

@@ -223,7 +223,7 @@ For x = 5, we have 25 - 40 + 15 = 0. ✓
 So the answer is a = -8, b = 15.
 </code></pre>
 <p><strong>那句 "Wait. Let me re-examine this carefully..." 不是训练数据里教的</strong>——是 RL 过程中模型发现"在 final answer 之前插入一次自检能显著提升 reward"而自行涌现的行为。</p>
-<p>这验证了 Sutton <a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a> 的核心论点：<strong>只要给对搜索/学习信号，通用算法会自己发现最优 meta-skill，不需要人类教</strong>。</p>
+<p>这验证了 Sutton <a href="bitter-lesson.html">Bitter Lesson</a> 的核心论点：<strong>只要给对搜索/学习信号，通用算法会自己发现最优 meta-skill，不需要人类教</strong>。</p>
 <hr>
 <h2 id="5-training-stack-overview">5. 训练栈全貌 / Training Stack Overview</h2>
 <pre><code>DeepSeek-V3 base（已预训练）
@@ -295,23 +295,23 @@ So the answer is a = -8, b = 15.
 </thead>
 <tbody>
 <tr>
-<td><a href="dpo.md">DPO</a></td>
+<td><a href="dpo.html">DPO</a></td>
 <td>DPO 处理对齐（偏好），GRPO 处理推理（可验证 reward）。<strong>DPO + GRPO 是 2025 年对齐 + 推理的双基础</strong></td>
 </tr>
 <tr>
-<td><a href="lora.md">LoRA</a></td>
+<td><a href="lora.html">LoRA</a></td>
 <td>R1 的多个开源复现用 LoRA + GRPO，降低训练成本到单卡可跑</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/autoresearch.md">autoresearch</a></td>
+<td><a href="autoresearch.html">autoresearch</a></td>
 <td>Karpathy 的 autoresearch 本质是在 train.py 上应用 R1 的思想：可验证目标（val_bpb）+ 迭代改进</td>
 </tr>
 <tr>
-<td><a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a></td>
+<td><a href="bitter-lesson.html">Bitter Lesson</a></td>
 <td>R1 是 Bitter Lesson 2025 年最大的印证：不教模型 chain-of-thought，让它自己涌现</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/self-improving-test-time.md">Self-Improving at Test-Time</a></td>
+<td><a href="self-improving-test-time.html">Self-Improving at Test-Time</a></td>
 <td>R1 把 test-time thinking 能力内化；两者互补</td>
 </tr>
 </tbody>
@@ -342,9 +342,9 @@ So the answer is a = -8, b = 15.
 <li><a href="https://github.com/deepseek-ai/DeepSeek-V3">DeepSeek-V3 技术报告</a> — R1 的 base model</li>
 <li><a href="https://arxiv.org/abs/2402.03300">DeepSeekMath (GRPO 最早提出)</a></li>
 <li><strong>本仓库相关:</strong></li>
-<li><a href="dpo.md">DPO</a> · <a href="lora.md">LoRA</a></li>
-<li><a href="../self-improving-agents/autoresearch.md">autoresearch</a> · <a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a></li>
-<li><a href="../open-source-models/README.md">开源模型目录</a></li>
+<li><a href="dpo.html">DPO</a> · <a href="lora.html">LoRA</a></li>
+<li><a href="autoresearch.html">autoresearch</a> · <a href="bitter-lesson.html">Bitter Lesson</a></li>
+<li><a href="../open-source-models.html">开源模型目录</a></li>
 </ul>
           </article>
 

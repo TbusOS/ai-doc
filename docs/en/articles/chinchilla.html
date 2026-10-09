@@ -54,7 +54,7 @@
 <p><strong>原文链接:</strong> <a href="https://arxiv.org/abs/2203.15556">arXiv:2203.15556</a></p>
 <p><strong>作者:</strong> Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza Rutherford, Diego de Las Casas, Lisa Anne Hendricks, Johannes Welbl, Aidan Clark, Tom Hennigan, Eric Noland, Katie Millican, George van den Driessche, Bogdan Damoc, Aurelia Guy, Simon Osindero, Karen Simonyan, Erich Elsen, Jack W. Rae, Oriol Vinyals, Laurent Sifre（DeepMind）</p>
 <p><strong>发表:</strong> 2022-03-29</p>
-<p><strong>主题:</strong> <strong>推翻了 <a href="scaling-laws.md">Kaplan Scaling Laws</a> 的数据分配结论</strong>——用<strong>同算力预算</strong>做三种不同的 N/D 配比实验,发现<strong>Kaplan 严重低估了数据的重要性</strong>。新结论:<strong>模型参数量 N 和训练 tokens D 应该同比例增长</strong>(不是 Kaplan 说的 N 增长更快)。直接导致 Llama / Mistral / DeepSeek 的训练配方——<strong>小模型用大量数据训,性能碾压"大模型少量数据"</strong>。</p>
+<p><strong>主题:</strong> <strong>推翻了 <a href="scaling-laws.html">Kaplan Scaling Laws</a> 的数据分配结论</strong>——用<strong>同算力预算</strong>做三种不同的 N/D 配比实验,发现<strong>Kaplan 严重低估了数据的重要性</strong>。新结论:<strong>模型参数量 N 和训练 tokens D 应该同比例增长</strong>(不是 Kaplan 说的 N 增长更快)。直接导致 Llama / Mistral / DeepSeek 的训练配方——<strong>小模型用大量数据训,性能碾压"大模型少量数据"</strong>。</p>
 </blockquote>
 <hr>
 <h2 id="why-this-matters">为什么这篇重要 / Why This Matters</h2>
@@ -216,7 +216,7 @@ Chinchilla 之后:算力预算 = <strong>训练 FLOPs + 期望推理总量</stro
 - 700B 模型 → ~14T tokens</p>
 <p><strong>如果你的模型训练数据远少于这个,几乎肯定 undertrained</strong>。</p>
 <h3 id="55">5.5 方法论 &gt; 具体数字</h3>
-<p><strong>Chinchilla 公式会再被下一篇推翻</strong>——2025 年的 <a href="deepseek-r1.md">DeepSeek-R1</a> 和多模态模型已经指出在 reasoning 任务下 data ratio 应该不同。</p>
+<p><strong>Chinchilla 公式会再被下一篇推翻</strong>——2025 年的 <a href="deepseek-r1.html">DeepSeek-R1</a> 和多模态模型已经指出在 reasoning 任务下 data ratio 应该不同。</p>
 <p>但 Chinchilla <strong>的方法论(多方法交叉、正确调超参、充分训练)是永恒的</strong>。做任何 scaling 相关实验都该学它。</p>
 <hr>
 <h2 id="6-relation-to-other-papers">6. 和本仓库其他文章的关联 / Relation to Other Papers</h2>
@@ -229,27 +229,27 @@ Chinchilla 之后:算力预算 = <strong>训练 FLOPs + 期望推理总量</stro
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="scaling-laws.md">Kaplan Scaling Laws</a></strong></td>
+<td><strong><a href="scaling-laws.html">Kaplan Scaling Laws</a></strong></td>
 <td><strong>必读前置</strong> — Chinchilla 是对 Kaplan 的直接修正</td>
 </tr>
 <tr>
-<td><a href="deepseek-r1.md">DeepSeek-R1</a></td>
+<td><a href="deepseek-r1.html">DeepSeek-R1</a></td>
 <td>R1 的训练配方是 Chinchilla 之上+reasoning-specific 调整</td>
 </tr>
 <tr>
-<td><a href="lora.md">LoRA</a></td>
+<td><a href="lora.html">LoRA</a></td>
 <td>LoRA 降微调成本,但<strong>预训练仍由 Chinchilla 决定</strong>大小</td>
 </tr>
 <tr>
-<td><a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a></td>
+<td><a href="bitter-lesson.html">Bitter Lesson</a></td>
 <td>Chinchilla 强化了 Bitter Lesson——<strong>"data scaling"作为 general method 更重要</strong></td>
 </tr>
 <tr>
-<td><a href="../ai-thinking/first-principles-engineering.md">First Principles in Engineering</a></td>
+<td><a href="first-principles-engineering.html">First Principles in Engineering</a></td>
 <td>Chinchilla 是第一性原理驱动的<strong>前人论断被实证推翻</strong>的范例</td>
 </tr>
 <tr>
-<td><a href="../open-source-models/README.md">开源模型目录</a></td>
+<td><a href="../open-source-models.html">开源模型目录</a></td>
 <td>列表里每个 2022+ 的模型都在用 Chinchilla 风格训练</td>
 </tr>
 </tbody>
@@ -267,14 +267,14 @@ Chinchilla 之后:算力预算 = <strong>训练 FLOPs + 期望推理总量</stro
 <h2 id="references">References / 参考</h2>
 <ul>
 <li><strong>论文:</strong> <a href="https://arxiv.org/abs/2203.15556">Training Compute-Optimal Large Language Models (arXiv:2203.15556)</a></li>
-<li><strong>前置论文:</strong> <a href="scaling-laws.md">Scaling Laws for Neural Language Models (Kaplan et al. 2020)</a></li>
+<li><strong>前置论文:</strong> <a href="scaling-laws.html">Scaling Laws for Neural Language Models (Kaplan et al. 2020)</a></li>
 <li><strong>相关论文:</strong></li>
 <li><a href="https://arxiv.org/abs/2112.11446">Gopher: Scaling Language Models (Rae et al. 2021)</a> — Chinchilla 对照的旧 DeepMind 模型</li>
 <li><a href="https://arxiv.org/abs/2302.13971">LLaMA (Touvron et al. 2023)</a> — 第一个明确按 Chinchilla 训练的开源模型</li>
 <li><a href="https://arxiv.org/abs/2407.21783">LLaMA 3 technical report</a> — 过量训练的现代实证</li>
 <li><strong>本仓库相关:</strong></li>
-<li><a href="scaling-laws.md">Kaplan Scaling Laws</a> · <a href="deepseek-r1.md">DeepSeek-R1</a> · <a href="lora.md">LoRA</a></li>
-<li><a href="../ai-thinking/bitter-lesson.md">Bitter Lesson</a> · <a href="../ai-thinking/first-principles-engineering.md">First Principles in Engineering</a></li>
+<li><a href="scaling-laws.html">Kaplan Scaling Laws</a> · <a href="deepseek-r1.html">DeepSeek-R1</a> · <a href="lora.html">LoRA</a></li>
+<li><a href="bitter-lesson.html">Bitter Lesson</a> · <a href="first-principles-engineering.html">First Principles in Engineering</a></li>
 </ul>
           </article>
 

@@ -203,7 +203,7 @@
 <li>想并行 agent 但共享 memory → 撞耦合</li>
 <li>想记录 trajectory 不记录 state → 做不到</li>
 </ul>
-<p><strong>Simple 替代:</strong> 三个独立模块,各自有 interface,通过函数组合而非对象嵌套协作。Anthropic 的 <a href="../agent-patterns/anthropic-building-effective-agents.md">Building Effective Agents</a> 提倡的 orchestrator-workers、evaluator-optimizer 就是 decomplecting 的典范。</p>
+<p><strong>Simple 替代:</strong> 三个独立模块,各自有 interface,通过函数组合而非对象嵌套协作。Anthropic 的 <a href="anthropic-building-effective-agents.html">Building Effective Agents</a> 提倡的 orchestrator-workers、evaluator-optimizer 就是 decomplecting 的典范。</p>
 <h3 id="43-prompt-model-complection">4.3 Prompt + Model 的 complection</h3>
 <p>很多系统把 prompt template <strong>硬编码</strong>到 model call 代码里:</p>
 <pre><code class="language-python">def classify(text):
@@ -284,31 +284,31 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="parnas-modules.md">Parnas — Decomposing Modules</a></td>
+<td><a href="parnas-modules.html">Parnas — Decomposing Modules</a></td>
 <td>Parnas 的"信息隐藏"<strong>是一种具体的 decomplection</strong>——把"决策"和"使用"拆开。Hickey 把 Parnas 的洞察推广成一整套词汇</td>
 </tr>
 <tr>
-<td><a href="no-silver-bullet.md">Brooks — No Silver Bullet</a></td>
+<td><a href="no-silver-bullet.html">Brooks — No Silver Bullet</a></td>
 <td>Brooks 说 essential complexity 不可消除——Hickey 给出<strong>具体方法</strong>:不要 complect,让 essence 独立显现</td>
 </tr>
 <tr>
-<td><a href="hoare-emperors-old-clothes.md">Hoare — Emperor's Old Clothes</a></td>
+<td><a href="hoare-emperors-old-clothes.html">Hoare — Emperor's Old Clothes</a></td>
 <td>Hoare 的 "simple obviously" 就是 Hickey 的 "simple"——两代人对 simplicity 的精确主张</td>
 </tr>
 <tr>
-<td><a href="../agent-patterns/anthropic-building-effective-agents.md">Anthropic Building Effective Agents</a></td>
+<td><a href="anthropic-building-effective-agents.html">Anthropic Building Effective Agents</a></td>
 <td>5 个 pattern 本质是 agent 系统的 decomplecting 指南——每个 pattern 把一种 concern 独立出来</td>
 </tr>
 <tr>
-<td><a href="../agent-patterns/harness-design-long-running-apps.md">Anthropic Harness Design</a></td>
+<td><a href="harness-design-long-running-apps.html">Anthropic Harness Design</a></td>
 <td>Generator / Evaluator / Planner 的三 agent 分工是 decomplecting 的典范——three decoupled roles, not one complected agent</td>
 </tr>
 <tr>
-<td><a href="../self-improving-agents/agent-factory.md">AgentFactory</a></td>
+<td><a href="agent-factory.html">AgentFactory</a></td>
 <td>每个子 agent 是<strong>一个独立的、不 complected 的单元</strong>,可组合可复用</td>
 </tr>
 <tr>
-<td><a href="software-2-0.md">Software 2.0</a></td>
+<td><a href="software-2-0.html">Software 2.0</a></td>
 <td>Software 1.0 / 2.0 分层<strong>本身</strong>是 decomplection——显式代码 vs 学习参数分开</td>
 </tr>
 </tbody>
@@ -339,10 +339,10 @@
 <li><strong>相关书:</strong></li>
 <li><a href="https://web.stanford.edu/~ouster/cgi-bin/book.php">A Philosophy of Software Design (John Ousterhout, 2018)</a> — 把 Hickey 思想扩展成系统性方法论</li>
 <li><strong>本仓库相关:</strong></li>
-<li><a href="parnas-modules.md">Parnas — Modules</a> · <a href="no-silver-bullet.md">Brooks — No Silver Bullet</a></li>
-<li><a href="hoare-emperors-old-clothes.md">Hoare — Emperor's Old Clothes</a></li>
-<li><a href="../agent-patterns/anthropic-building-effective-agents.md">Anthropic Building Effective Agents</a> · <a href="../self-improving-agents/agent-factory.md">AgentFactory</a></li>
-<li><a href="software-2-0.md">Software 2.0</a></li>
+<li><a href="parnas-modules.html">Parnas — Modules</a> · <a href="no-silver-bullet.html">Brooks — No Silver Bullet</a></li>
+<li><a href="hoare-emperors-old-clothes.html">Hoare — Emperor's Old Clothes</a></li>
+<li><a href="anthropic-building-effective-agents.html">Anthropic Building Effective Agents</a> · <a href="agent-factory.html">AgentFactory</a></li>
+<li><a href="software-2-0.html">Software 2.0</a></li>
 </ul>
           </article>
 
