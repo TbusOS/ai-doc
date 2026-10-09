@@ -14,7 +14,11 @@ A curated, open-source knowledge base of high-quality AI papers, articles, and m
 
 **📖 Read on the web:** Browse the articles in a styled reading experience at the bilingual GitHub Pages site — see [docs/](docs/) (landing page picks EN / 中文).
 
-**🗺️ Pending initiatives beyond the index:** See [ROADMAP.md](ROADMAP.md) (e.g. the ink-wash paper-comic series — design locked, execution paused pending a 64GB Mac).
+**🎬 Illustrated explainers (new):** papers explained with animations you can play, step through and toggle, plus a walk-through of the source and a short quiz. Every key statement is tagged as original text (checked word for word against the source), our reading, or an illustrative number. First one: [autoresearch](http://doc.tbusos.com/ai-doc/zh/explain/autoresearch.html) (in Chinese).
+
+[![autoresearch explainer: you sleep, an AI agent runs 83 experiments overnight](docs/assets/explain/autoresearch/media/intro.gif)](http://doc.tbusos.com/ai-doc/zh/explain/autoresearch.html)
+
+**🗺️ Pending initiatives beyond the index:** See [ROADMAP.md](ROADMAP.md) (more explainers; the ink-wash paper-comic series). To continue the work on another machine, see [MAINTENANCE.md](MAINTENANCE.md).
 
 ---
 
@@ -196,7 +200,11 @@ AI 领域优质论文、文章与模型的中英双语知识库。为训练模�
 
 **📖 在网页上阅读：** 通过双语 GitHub Pages 站点以设计化阅读体验浏览全部文章 —— 见 [docs/](docs/)（首页可选择中文 / English）。
 
-**🗺️ 索引之外的进行中方向：** 见 [ROADMAP.md](ROADMAP.md)（比如"水墨风论文漫画系列"——设计已锁定，执行暂停等 64GB Mac 到货）。
+**🎬 论文图解（新）：** 用能播放、能单步、能拨开关的动画把论文原理讲清楚，后面附原文逐段批注和自测题。关键说法都标了出处：「原文」（脚本逐字核对）、「解读」或「示意」。第一篇：[autoresearch](http://doc.tbusos.com/ai-doc/zh/explain/autoresearch.html)。
+
+[![autoresearch 图解：你睡觉，AI 一夜跑了 83 次实验](docs/assets/explain/autoresearch/media/intro.gif)](http://doc.tbusos.com/ai-doc/zh/explain/autoresearch.html)
+
+**🗺️ 索引之外的进行中方向：** 见 [ROADMAP.md](ROADMAP.md)（更多论文图解；水墨风论文漫画系列）。换电脑接着做，见 [MAINTENANCE.md](MAINTENANCE.md)。
 
 ---
 
